@@ -12,7 +12,7 @@ const pdfTemplates = {
       filename: 'Acord-25-certificate.pdf',
       category: 'acord',
       description: 'Standard certificate of liability insurance',
-      fillable: false
+      fillable: true
     },
     {
       id: 'acord-27',
@@ -20,7 +20,7 @@ const pdfTemplates = {
       filename: 'Acord-27-Evidence-of-Property.pdf',
       category: 'acord',
       description: 'Evidence of property insurance coverage',
-      fillable: false
+      fillable: true
     },
     {
       id: 'acord-35',
@@ -28,7 +28,7 @@ const pdfTemplates = {
       filename: 'Acord-35-Cancellation.pdf',
       category: 'acord',
       description: 'Request for policy cancellation',
-      fillable: false
+      fillable: true
     },
     {
       id: 'acord-37',
@@ -36,7 +36,7 @@ const pdfTemplates = {
       filename: 'Acord-37-SNL.pdf',
       category: 'acord',
       description: 'Statement of no loss form for policy changes',
-      fillable: false
+      fillable: true
     }
   ],
   'state': [
@@ -153,12 +153,17 @@ function createPDFCard(template) {
     </div>
     <div class="pdf-card-body">
       <p>${template.description}</p>
-      ${template.fillable ? '<span style="color: #28a745; font-size: 11px;">✓ Fillable Form</span>' : ''}
+      ${template.fillable ? '<span style="color: #28a745; font-size: 11px;">✓ Fillable Form - Download to fill in Adobe Reader</span>' : ''}
     </div>
     <div class="pdf-card-footer">
-      <button onclick="viewPDF('${template.category}', '${template.filename}', '${template.name}')">
-        👁️ View
-      </button>
+      ${template.fillable ? 
+        `<button onclick="downloadPDF('${template.category}', '${template.filename}', '${template.name}')" style="background: #28a745; color: white;">
+          ⬇️ Download to Fill
+        </button>` :
+        `<button onclick="viewPDF('${template.category}', '${template.filename}', '${template.name}')">
+          👁️ View
+        </button>`
+      }
       <button onclick="downloadPDF('${template.category}', '${template.filename}', '${template.name}')">
         ⬇️ Download
       </button>
@@ -205,6 +210,10 @@ function downloadPDF(category, filename, title) {
   const isLocal = window.location.protocol === 'file:';
   const pdfUrl = isLocal ? getLocalPDFUrl(category, filename) : getPDFUrl(category, filename);
   
+  // Check if this is a fillable form
+  const template = Object.values(pdfTemplates).flat().find(t => t.filename === filename);
+  const isFillable = template && template.fillable;
+  
   const a = document.createElement('a');
   a.href = pdfUrl;
   a.download = filename;
@@ -212,6 +221,13 @@ function downloadPDF(category, filename, title) {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
+  
+  // Show instructions for fillable forms
+  if (isFillable) {
+    setTimeout(() => {
+      alert(`📝 Fillable Form Downloaded!\n\n${title} has been downloaded to your computer.\n\nTo fill out this form:\n1. Open the downloaded PDF with Adobe Acrobat Reader (free)\n2. Click on the form fields to fill them out\n3. Save the completed form\n\nNote: Form fields may not work in browser PDF viewers.`);
+    }, 500);
+  }
 }
 
 function printPDF(category, filename) {
