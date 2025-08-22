@@ -632,7 +632,32 @@ function emailCurrentPDF() {
       const printWindow = window.open('', '_blank');
       printWindow.document.write(element.innerHTML);
       printWindow.document.close();
-      printWindow.print();
+      
+      // Wait for images to load before printing
+      const images = printWindow.document.getElementsByTagName('img');
+      if (images.length > 0) {
+        let loadedImages = 0;
+        const checkAllLoaded = () => {
+          loadedImages++;
+          if (loadedImages === images.length) {
+            setTimeout(() => {
+              printWindow.print();
+            }, 500); // Additional delay for rendering
+          }
+        };
+        
+        for (let img of images) {
+          if (img.complete) {
+            checkAllLoaded();
+          } else {
+            img.onload = checkAllLoaded;
+            img.onerror = checkAllLoaded; // Still print even if image fails
+          }
+        }
+      } else {
+        // No images, print immediately
+        printWindow.print();
+      }
     }
 
     // Copy document HTML for email
@@ -2226,6 +2251,21 @@ Save@BillLayneInsurance.com`);
         <html>
         <head>
           <style>
+            @page {
+              size: letter;
+              margin: 0.5in;
+            }
+            @media print {
+              body {
+                font-size: 12px !important;
+              }
+              img {
+                max-height: 60px !important;
+                display: block !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+              }
+            }
             body {
               font-family: Arial, sans-serif;
               font-size: 12px;
@@ -2266,7 +2306,7 @@ Save@BillLayneInsurance.com`);
               1283 N Bridge St, Elkin, NC 28621<br />
               (336) 835-1993
             </div>
-            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="max-height:60px;" />
+            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="max-height:60px;" onload="window.logoLoaded = true;" />
           </div>
 
           <div class="receipt-header">
