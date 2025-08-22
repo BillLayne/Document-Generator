@@ -184,9 +184,6 @@ function createPDFCard(template) {
       <button onclick="viewPDF('${template.category}', '${template.filename}', '${template.name}')">
         👁️ View
       </button>
-      <button onclick="downloadPDF('${template.category}', '${template.filename}', '${template.name}')">
-        ⬇️ Download
-      </button>
       <button onclick="printPDF('${template.category}', '${template.filename}')">
         🖨️ Print
       </button>
@@ -337,54 +334,26 @@ async function downloadPDF(category, filename, title) {
 }
 
 function printPDF(category, filename) {
-  // Construct the PDF path
-  const pdfPath = `pdf-templates/${category}-forms/${filename}`;
-  
-  // Determine the full URL based on environment
-  let fullUrl;
+  const isLocal = window.location.protocol === 'file:';
   const isGitHubPages = window.location.hostname.includes('github.io');
   
+  let pdfUrl;
   if (isGitHubPages) {
-    const baseUrl = window.location.origin + '/' + repoConfig.repository;
-    fullUrl = `${baseUrl}/${pdfPath}`;
-  } else if (window.location.protocol === 'file:') {
-    fullUrl = pdfPath;
+    pdfUrl = `pdf-templates/${category}-forms/${filename}`;
+  } else if (isLocal) {
+    pdfUrl = getLocalPDFUrl(category, filename);
   } else {
-    fullUrl = window.location.origin + '/' + pdfPath;
+    pdfUrl = getPDFUrl(category, filename);
   }
   
-  // Create an iframe for printing
-  const iframe = document.createElement('iframe');
-  iframe.style.position = 'fixed';
-  iframe.style.right = '0';
-  iframe.style.bottom = '0';
-  iframe.style.width = '0';
-  iframe.style.height = '0';
-  iframe.style.border = '0';
-  iframe.src = fullUrl;
-  
-  document.body.appendChild(iframe);
-  
-  // Wait for iframe to load then print
-  iframe.onload = function() {
-    setTimeout(function() {
-      iframe.contentWindow.print();
-      // Remove iframe after printing dialog closes
+  const printWindow = window.open(pdfUrl, '_blank');
+  if (printWindow) {
+    printWindow.addEventListener('load', () => {
       setTimeout(() => {
-        document.body.removeChild(iframe);
-      }, 1000);
-    }, 500);
-  };
-  
-  // Fallback if iframe doesn't load
-  setTimeout(() => {
-    if (iframe.parentNode) {
-      // If iframe still exists, try opening in new window
-      window.open(fullUrl, '_blank');
-      document.body.removeChild(iframe);
-      alert('If the print dialog did not appear, please use Ctrl+P (or Cmd+P on Mac) in the new window to print the PDF.');
-    }
-  }, 3000);
+        printWindow.print();
+      }, 500);
+    });
+  }
 }
 
 // Alternative print method using PDF.js (if available)
