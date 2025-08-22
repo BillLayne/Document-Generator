@@ -79,8 +79,8 @@ const pdfTemplates = {
 
 // GitHub repository configuration
 const repoConfig = {
-  username: 'YOUR_GITHUB_USERNAME', // UPDATE THIS
-  repository: 'Bill-Layne-Insurance-Documents',
+  username: 'BillLayne', // Updated with your GitHub username
+  repository: 'Document-Generator',
   branch: 'main'
 };
 
