@@ -178,17 +178,12 @@ function createPDFCard(template) {
     </div>
     <div class="pdf-card-body">
       <p>${template.description}</p>
-      ${template.fillable ? '<span style="color: #28a745; font-size: 11px;">✓ Fillable Form - Download to fill in Adobe Reader</span>' : ''}
+      ${template.fillable ? '<span style="color: #28a745; font-size: 11px;">✓ Fillable Form</span>' : ''}
     </div>
     <div class="pdf-card-footer">
-      ${template.fillable ? 
-        `<button onclick="downloadPDF('${template.category}', '${template.filename}', '${template.name}')" style="background: #28a745; color: white;">
-          ⬇️ Download to Fill
-        </button>` :
-        `<button onclick="viewPDF('${template.category}', '${template.filename}', '${template.name}')">
-          👁️ View
-        </button>`
-      }
+      <button onclick="viewPDF('${template.category}', '${template.filename}', '${template.name}')">
+        👁️ View
+      </button>
       <button onclick="downloadPDF('${template.category}', '${template.filename}', '${template.name}')">
         ⬇️ Download
       </button>
@@ -342,26 +337,111 @@ async function downloadPDF(category, filename, title) {
 }
 
 function printPDF(category, filename) {
-  const isLocal = window.location.protocol === 'file:';
+  // Construct the PDF path
+  const pdfPath = `pdf-templates/${category}-forms/${filename}`;
+  
+  // Determine the full URL based on environment
+  let fullUrl;
   const isGitHubPages = window.location.hostname.includes('github.io');
   
-  let pdfUrl;
   if (isGitHubPages) {
-    pdfUrl = `pdf-templates/${category}-forms/${filename}`;
-  } else if (isLocal) {
-    pdfUrl = getLocalPDFUrl(category, filename);
+    const baseUrl = window.location.origin + '/' + repoConfig.repository;
+    fullUrl = `${baseUrl}/${pdfPath}`;
+  } else if (window.location.protocol === 'file:') {
+    fullUrl = pdfPath;
   } else {
-    pdfUrl = getPDFUrl(category, filename);
+    fullUrl = window.location.origin + '/' + pdfPath;
   }
   
-  const printWindow = window.open(pdfUrl, '_blank');
-  if (printWindow) {
-    printWindow.addEventListener('load', () => {
+  // Create an iframe for printing
+  const iframe = document.createElement('iframe');
+  iframe.style.position = 'fixed';
+  iframe.style.right = '0';
+  iframe.style.bottom = '0';
+  iframe.style.width = '0';
+  iframe.style.height = '0';
+  iframe.style.border = '0';
+  iframe.src = fullUrl;
+  
+  document.body.appendChild(iframe);
+  
+  // Wait for iframe to load then print
+  iframe.onload = function() {
+    setTimeout(function() {
+      iframe.contentWindow.print();
+      // Remove iframe after printing dialog closes
       setTimeout(() => {
-        printWindow.print();
-      }, 500);
-    });
+        document.body.removeChild(iframe);
+      }, 1000);
+    }, 500);
+  };
+  
+  // Fallback if iframe doesn't load
+  setTimeout(() => {
+    if (iframe.parentNode) {
+      // If iframe still exists, try opening in new window
+      window.open(fullUrl, '_blank');
+      document.body.removeChild(iframe);
+      alert('If the print dialog did not appear, please use Ctrl+P (or Cmd+P on Mac) in the new window to print the PDF.');
+    }
+  }, 3000);
+}
+
+// Alternative print method using PDF.js (if available)
+function printPDFWithViewer(category, filename, title) {
+  // Open the PDF in the modal viewer first
+  viewPDF(category, filename, title);
+  
+  // Wait for modal to load, then trigger print
+  setTimeout(() => {
+    const viewer = document.getElementById('pdfViewer');
+    if (viewer && viewer.contentWindow) {
+      viewer.contentWindow.print();
+    } else {
+      alert('Please use the Print button in the PDF viewer toolbar, or press Ctrl+P (Cmd+P on Mac)');
+    }
+  }, 1000);
+}
+
+// Print helper function for fillable PDFs with instructions
+function openPrintHelper(category, filename, title) {
+  const pdfPath = `pdf-templates/${category}-forms/${filename}`;
+  const isGitHubPages = window.location.hostname.includes('github.io');
+  
+  let fullUrl;
+  if (isGitHubPages) {
+    fullUrl = `https://billlayne.github.io/Document-Generator/${pdfPath}`;
+  } else {
+    fullUrl = pdfPath;
   }
+  
+  // Create instruction modal
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.style.display = 'block';
+  modal.innerHTML = `
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Print ${title}</h3>
+        <span class="close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p><strong>To print this fillable PDF:</strong></p>
+        <ol>
+          <li>Click the button below to open the PDF</li>
+          <li>Once the PDF loads, press <strong>Ctrl+P</strong> (Windows) or <strong>Cmd+P</strong> (Mac)</li>
+          <li>Select your printer and print settings</li>
+          <li>Click Print</li>
+        </ol>
+        <div class="button-group" style="margin-top: 20px;">
+          <button onclick="window.open('${fullUrl}', '_blank'); this.parentElement.parentElement.parentElement.parentElement.remove();" style="background: #004080; color: white; padding: 10px 20px;">
+            Open PDF for Printing
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
 }
 
 function closePDFModal() {
