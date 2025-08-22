@@ -9,25 +9,33 @@ const pdfTemplates = {
     {
       id: 'acord-25',
       name: 'ACORD 25 - Certificate of Liability Insurance',
-      filename: 'acord-25-certificate.pdf',
+      filename: 'Acord-25-certificate.pdf',
       category: 'acord',
       description: 'Standard certificate of liability insurance',
       fillable: false
     },
     {
+      id: 'acord-27',
+      name: 'ACORD 27 - Evidence of Property Insurance',
+      filename: 'Acord-27-Evidence-of-Property.pdf',
+      category: 'acord',
+      description: 'Evidence of property insurance coverage',
+      fillable: false
+    },
+    {
       id: 'acord-35',
       name: 'ACORD 35 - Cancellation Request/Policy Release',
-      filename: 'acord-35-cancellation.pdf',
+      filename: 'Acord-35-Cancellation.pdf',
       category: 'acord',
       description: 'Request for policy cancellation',
       fillable: false
     },
     {
-      id: 'acord-27',
-      name: 'ACORD 27 - Evidence of Property Insurance',
-      filename: 'acord-27-property.pdf',
+      id: 'acord-37',
+      name: 'ACORD 37 - Statement of No Loss',
+      filename: 'Acord-37-SNL.pdf',
       category: 'acord',
-      description: 'Evidence of property insurance coverage',
+      description: 'Statement of no loss form for policy changes',
       fillable: false
     }
   ],
@@ -38,22 +46,6 @@ const pdfTemplates = {
       filename: 'dl-123-form.pdf',
       category: 'state',
       description: 'NC DMV insurance certification for license reinstatement',
-      fillable: false
-    },
-    {
-      id: 'fs-1',
-      name: 'FS-1 - Proof of Financial Responsibility',
-      filename: 'fs-1-form.pdf',
-      category: 'state',
-      description: 'NC financial responsibility form',
-      fillable: false
-    },
-    {
-      id: 'dh-14',
-      name: 'DH-14 - Notice of Termination',
-      filename: 'dh-14-termination.pdf',
-      category: 'state',
-      description: 'NC insurance termination notice',
       fillable: false
     }
   ],
