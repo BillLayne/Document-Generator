@@ -1,6 +1,15 @@
 /* Bill Layne Insurance Document Generator - JavaScript */
 
 // =================================================================
+// Authentication Functions
+// =================================================================
+
+function logout() {
+  sessionStorage.removeItem('authenticated');
+  window.location.href = 'login.html';
+}
+
+// =================================================================
 // PDF Template Management System (New)
 // =================================================================
 
