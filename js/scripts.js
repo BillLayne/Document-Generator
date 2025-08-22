@@ -2442,3 +2442,11 @@ Save@BillLayneInsurance.com`);
               </div>
             </div>
             
+            <div class="dl123-footer">
+              (This form is valid for 30 days after completion by the insurance agent.)
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+    }
