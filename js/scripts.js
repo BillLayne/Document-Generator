@@ -1130,7 +1130,7 @@ Save@BillLayneInsurance.com`);
         case 'Nationwide':
           return 'https://i.imgur.com/GWZBW1W.png';
         case 'Progressive':
-          return 'https://i.imgur.com/mI7NVCS.png';
+          return 'https://github.com/BillLayne/bill-layne-images/blob/main/logos/Progressive%20Logo.png?raw=true';
         case 'National General':
           return 'https://i.imgur.com/nZZmaLh.png';
         case 'Alamance':
