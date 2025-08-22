@@ -1066,7 +1066,7 @@ Save@BillLayneInsurance.com`);
         case 'Travelers':
           return 'https://i.imgur.com/I6ONc0K.png';
         case 'NC Grange Mutual':
-          return 'https://i.imgur.com/empThOB.png';
+          return 'https://github.com/BillLayne/bill-layne-images/blob/main/logos/NC%20Grange%20Logo.png?raw=true';
         case 'Universal Property':
           return 'https://i.imgur.com/otPRl9b.png';
         default:
