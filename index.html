@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bill Layne Insurance - Document Generator & Resources</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- PDF.js for PDF viewing (optional) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+  <!-- Navigation Tabs -->
+  <div class="navigation-tabs">
+    <button class="tab-button active" onclick="showTab('generator')">Document Generator</button>
+    <button class="tab-button" onclick="showTab('templates')">PDF Templates</button>
+    <button class="tab-button" onclick="showTab('resources')">Resources</button>
+  </div>
+
+  <!-- Document Generator Tab (main content) -->
+  <div id="generator-tab" class="tab-content active">
+    <div class="form-container">
+      <h2>Insurance Document Generator - Multi-Template</h2>
+      
+      <!-- Template Selector -->
+      <div class="template-selector">
+        <label for="documentType">Select Document Type:</label>
+        <select id="documentType" onchange="switchTemplate()">
+          <option value="closing">Home Closing Package (Declaration & Invoice)</option>
+          <option value="binder">Binder Letter</option>
+          <option value="mortgagee-change">Mortgagee Change Letter</option>
+          <option value="cancellation">Cancellation Notice</option>
+          <option value="renewal">Renewal Notice</option>
+          <option value="coverage-change">Coverage Change Confirmation</option>
+          <option value="payment-receipt">Payment Receipt</option>
+          <option value="claim-info">Claim Information Sheet</option>
+          <option value="dl123">DL-123 Driver License Insurance Certification</option>
+        </select>
+      </div>
+
+      <!-- Template Description -->
+      <div id="templateDescription" class="template-description">
+        Select a document type above to begin. Each template is designed for specific insurance documentation needs.
+      </div>
+      
+      <!-- Save/Load buttons -->
+      <div class="no-print" style="text-align: right; margin-bottom: 20px;">
+        <button type="button" onclick="saveFormData()" class="save-btn">💾 Save Form Data</button>
+        <button type="button" onclick="loadFormData()" class="load-btn">📂 Load Saved Data</button>
+        <button type="button" onclick="clearForm()" class="clear-btn">🗑️ Clear Form</button>
+      </div>
+
+      <!-- Common Fields Section (shown for all templates) -->
+      <div class="form-section active" id="commonFields">
+        <div class="section-title">Agency & Company Information</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Insurance Company</label>
+            <select id="insuranceCompany" onchange="updateAgencyCodeDL123()">
+              <option value="">Select Company</option>
+              <option value="Nationwide">Nationwide</option>
+              <option value="Progressive">Progressive</option>
+              <option value="National General">National General</option>
+              <option value="Alamance">Alamance</option>
+              <option value="Travelers">Travelers</option>
+              <option value="NC Grange Mutual">NC Grange Mutual</option>
+              <option value="Universal Property">Universal Property</option>
+              <option value="Dairyland">Dairyland</option>
+              <option value="Allstate">Allstate</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Policy Number</label>
+            <input type="text" id="policyNumber" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Insured Information (most templates) -->
+      <div class="form-section" id="insuredSection">
+        <div class="section-title">Insured Information</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Policyholder Name</label>
+            <input type="text" id="policyholderName" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Address Line 1</label>
+            <input type="text" id="addressLine1" />
+          </div>
+          <div class="form-group">
+            <label>Address Line 2</label>
+            <input type="text" id="addressLine2" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" id="city" />
+          </div>
+          <div class="form-group">
+            <label>State</label>
+            <input type="text" id="state" value="NC" />
+          </div>
+          <div class="form-group">
+            <label>ZIP Code</label>
+            <input type="text" id="zipCode" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" id="phoneNumber" />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="emailAddress" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Policy Dates Section -->
+      <div class="form-section" id="policyDatesSection">
+        <div class="section-title">Policy Dates</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Effective Date</label>
+            <input type="date" id="effectiveDate" onchange="updateExpirationDate()" />
+          </div>
+          <div class="form-group">
+            <label>Expiration Date</label>
+            <input type="date" id="expirationDate" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Coverage Information (for closing, binder, renewal, coverage change) -->
+      <div class="form-section" id="coverageSection">
+        <div class="section-title">Coverage Information</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Coverage A - Dwelling</label>
+            <input type="number" id="coverageA" min="0" step="1000" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Deductible</label>
+            <input type="number" id="deductible" min="0" step="100" />
+          </div>
+          <div class="form-group">
+            <label>Annual Premium</label>
+            <input type="number" id="annualPremium" min="0" step="0.01" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Wind and Hail Deductible</label>
+            <input type="text" id="windHailDeductible" placeholder="e.g., 1% or $2500" />
+          </div>
+          <div class="form-group">
+            <label>Replacement Cost</label>
+            <select id="replacementCost">
+              <option value="100%">100%</option>
+              <option value="125%">125%</option>
+              <option value="150%">150%</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mortgage Information -->
+      <div class="form-section" id="mortgageeSection">
+        <div class="section-title">Mortgage Information</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Mortgagee Name</label>
+            <input type="text" id="mortgageeName" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Mortgagee Address Line 1</label>
+            <input type="text" id="mortgageeAddressLine1" />
+          </div>
+          <div class="form-group">
+            <label>Mortgagee Address Line 2</label>
+            <input type="text" id="mortgageeAddressLine2" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" id="mortgageeCity" />
+          </div>
+          <div class="form-group">
+            <label>State</label>
+            <input type="text" id="mortgageeState" value="NC" />
+          </div>
+          <div class="form-group">
+            <label>ZIP Code</label>
+            <input type="text" id="mortgageeZipCode" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Loan Number</label>
+            <input type="text" id="loanNumber" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Attorney Information (for closing) -->
+      <div class="form-section" id="attorneySection">
+        <div class="section-title">Closing Attorney Information</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Attorney/Law Firm Name</label>
+            <input type="text" id="attorneyName" />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="attorneyEmail" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Address Line 1</label>
+            <input type="text" id="attorneyAddressLine1" />
+          </div>
+          <div class="form-group">
+            <label>Address Line 2</label>
+            <input type="text" id="attorneyAddressLine2" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" id="attorneyCity" />
+          </div>
+          <div class="form-group">
+            <label>State</label>
+            <input type="text" id="attorneyState" value="NC" />
+          </div>
+          <div class="form-group">
+            <label>ZIP Code</label>
+            <input type="text" id="attorneyZipCode" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Cancellation Specific Fields -->
+      <div class="form-section" id="cancellationSection">
+        <div class="section-title">Cancellation Details</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Cancellation Date</label>
+            <input type="date" id="cancellationDate" />
+          </div>
+          <div class="form-group">
+            <label>Cancellation Reason</label>
+            <select id="cancellationReason">
+              <option value="">Select Reason</option>
+              <option value="nonpayment">Non-Payment</option>
+              <option value="insured-request">Insured Request</option>
+              <option value="underwriting">Underwriting Decision</option>
+              <option value="sold">Property Sold</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Additional Notes</label>
+            <textarea id="cancellationNotes" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Renewal Specific Fields -->
+      <div class="form-section" id="renewalSection">
+        <div class="section-title">Renewal Information</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Current Premium</label>
+            <input type="number" id="currentPremium" min="0" step="0.01" />
+          </div>
+          <div class="form-group">
+            <label>Renewal Premium</label>
+            <input type="number" id="renewalPremium" min="0" step="0.01" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Renewal Date</label>
+            <input type="date" id="renewalDate" />
+          </div>
+          <div class="form-group">
+            <label>Payment Due Date</label>
+            <input type="date" id="paymentDueDate" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Coverage Change Fields -->
+      <div class="form-section" id="coverageChangeSection">
+        <div class="section-title">Coverage Change Details</div>
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Change Description</label>
+            <textarea id="changeDescription" rows="3" placeholder="Describe the coverage changes..."></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Previous Premium</label>
+            <input type="number" id="previousPremium" min="0" step="0.01" />
+          </div>
+          <div class="form-group">
+            <label>New Premium</label>
+            <input type="number" id="newPremium" min="0" step="0.01" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Change Effective Date</label>
+            <input type="date" id="changeEffectiveDate" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Receipt Fields -->
+      <div class="form-section" id="paymentSection">
+        <div class="section-title">Payment Information</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Payment Amount</label>
+            <input type="number" id="paymentAmount" min="0" step="0.01" />
+          </div>
+          <div class="form-group">
+            <label>Payment Date</label>
+            <input type="date" id="paymentDate" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Payment Method</label>
+            <select id="paymentMethod">
+              <option value="">Select Method</option>
+              <option value="check">Check</option>
+              <option value="cash">Cash</option>
+              <option value="card">Credit/Debit Card</option>
+              <option value="eft">Electronic Transfer</option>
+              <option value="escrow">Escrow Payment</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Reference Number</label>
+            <input type="text" id="referenceNumber" placeholder="Check # or Transaction ID" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Claim Information Fields -->
+      <div class="form-section" id="claimSection">
+        <div class="section-title">Claim Contact Information</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Claim Phone Number</label>
+            <input type="tel" id="claimPhone" />
+          </div>
+          <div class="form-group">
+            <label>Claim Email</label>
+            <input type="email" id="claimEmail" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Special Instructions</label>
+            <textarea id="claimInstructions" placeholder="Enter any special claim filing instructions..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- DL-123 Specific Fields -->
+      <div class="form-section" id="dl123Section">
+        <div class="section-title">DL-123 Driver Information</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Insured Driver Name</label>
+            <input type="text" id="insuredDriverName" />
+          </div>
+          <div class="form-group">
+            <label>Date of Birth</label>
+            <input type="date" id="driverDateOfBirth" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Agency Code #</label>
+            <input type="text" id="agencyCode" />
+          </div>
+          <div class="form-group">
+            <label>Agent Signature Name</label>
+            <input type="text" id="agentSignatureName" placeholder="Agent's printed name" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date of Certification</label>
+            <input type="date" id="certificationDate" />
+          </div>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button type="button" onclick="generateDocuments()">Generate Documents</button>
+      </div>
+
+      <!-- Preview Section -->
+      <div id="previewSection" style="display: none;">
+        <h2>Generated Documents</h2>
+        <div id="documentPreviewContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF Templates Tab -->
+  <div id="templates-tab" class="tab-content" style="display: none;">
+    <div class="pdf-templates-container">
+      <h2>PDF Template Library</h2>
+      <p style="margin-bottom: 20px;">Browse and download commonly used insurance forms and templates.</p>
+      <div class="pdf-category-selector">
+        <label for="pdfCategory">Filter by Category:</label>
+        <select id="pdfCategory" onchange="loadPDFCategory()">
+          <option value="all">All Templates</option>
+          <option value="acord">ACORD Forms</option>
+          <option value="state">State Forms</option>
+          <option value="company">Company Forms</option>
+        </select>
+      </div>
+      <div id="pdfGrid" class="pdf-grid">
+        <!-- PDF cards will be dynamically loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Resources Tab -->
+  <div id="resources-tab" class="tab-content" style="display: none;">
+    <div class="resources-container">
+      <h2>Quick Links & Resources</h2>
+      <div class="resource-grid">
+        <div class="resource-card">
+          <h4>📞 Contact Information</h4>
+          <p><strong>Bill Layne Insurance Agency</strong><br>
+          1283 N Bridge St<br>
+          Elkin, NC 28621<br>
+          Phone: (336) 835-1993<br>
+          Email: Save@BillLayneInsurance.com</p>
+        </div>
+        
+        <div class="resource-card">
+          <h4>🏢 Insurance Companies</h4>
+          <p>Quick links to carrier websites:</p>
+          <ul style="list-style: none; padding: 0;">
+            <li><a href="https://www.nationwide.com" target="_blank">Nationwide</a></li>
+            <li><a href="https://www.progressive.com" target="_blank">Progressive</a></li>
+            <li><a href="https://www.travelers.com" target="_blank">Travelers</a></li>
+            <li><a href="https://www.nationalgeneral.com" target="_blank">National General</a></li>
+          </ul>
+        </div>
+        
+        <div class="resource-card">
+          <h4>📋 NC DMV Resources</h4>
+          <p>North Carolina DMV forms and information:</p>
+          <ul style="list-style: none; padding: 0;">
+            <li><a href="https://www.ncdot.gov/dmv" target="_blank">NC DMV Website</a></li>
+            <li><a href="https://www.ncdot.gov/dmv/insurance" target="_blank">Insurance Requirements</a></li>
+            <li><a href="https://www.ncdot.gov/dmv/forms" target="_blank">DMV Forms</a></li>
+          </ul>
+        </div>
+        
+        <div class="resource-card">
+          <h4>🔧 Tools & Calculators</h4>
+          <p>Helpful insurance tools:</p>
+          <ul style="list-style: none; padding: 0;">
+            <li><a href="#" onclick="alert('Coming soon!')">Premium Calculator</a></li>
+            <li><a href="#" onclick="alert('Coming soon!')">Coverage Estimator</a></li>
+            <li><a href="#" onclick="alert('Coming soon!')">Deductible Comparison</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF Viewer Modal -->
+  <div id="pdfModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="pdfTitle"></h3>
+        <span class="close" onclick="closePDFModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <iframe id="pdfViewer" style="width: 100%; height: 600px; border: none;"></iframe>
+      </div>
+      <div class="modal-footer">
+        <button onclick="downloadCurrentPDF()">⬇️ Download</button>
+        <button onclick="printCurrentPDF()">🖨️ Print</button>
+        <button onclick="emailCurrentPDF()">📧 Email</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Helper function for downloading HTML files -->
+  <script>
+    function downloadHtmlFile(elementId, title) {
+      const element = document.getElementById(elementId);
+      const html = element.innerHTML;
+      
+      const fullHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>${title}</title>
+        </head>
+        <body>
+          ${html}
+        </body>
+        </html>
+      `;
+      
+      const blob = new Blob([fullHtml], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const fileName = `${title.replace(/\s+/g, '_')}.html`;
+      
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      showNotification(`Document saved as ${fileName}`, 'success');
+    }
+  </script>
+
+  <!-- Load external JavaScript -->
+  <script src="js/scripts.js"></script>
+</body>
+</html>
