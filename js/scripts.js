@@ -60,19 +60,35 @@ const pdfTemplates = {
   ],
   'company': [
     {
-      id: 'nationwide-auto',
-      name: 'Nationwide Auto Application',
-      filename: 'nationwide-auto-app.pdf',
+      id: 'ncgrange-rle-roof',
+      name: 'NC Grange - Roof Life Expectancy Form',
+      filename: 'NC-Grange-RLE-Roof.pdf',
       category: 'company',
-      description: 'Nationwide auto insurance application',
+      description: 'NC Grange underwriting form for roof life expectancy',
       fillable: true
     },
     {
-      id: 'progressive-home',
-      name: 'Progressive Home Application',
-      filename: 'progressive-home-app.pdf',
+      id: 'ncgrange-special-property',
+      name: 'NC Grange - Special Property Exclusion',
+      filename: 'NC-Grange-Special-Property-Exclustion.pdf',
       category: 'company',
-      description: 'Progressive homeowners application',
+      description: 'NC Grange underwriting form for special property exclusions',
+      fillable: true
+    },
+    {
+      id: 'ncgrange-trampoline',
+      name: 'NC Grange - Trampoline Exclusion',
+      filename: 'NC-Grange-Trampoline-Exc.pdf',
+      category: 'company',
+      description: 'NC Grange underwriting form for trampoline liability exclusion',
+      fillable: true
+    },
+    {
+      id: 'ncgrange-wood-stove',
+      name: 'NC Grange - Wood Stove Form',
+      filename: 'NC-Grange-Wood-Stove.pdf',
+      category: 'company',
+      description: 'NC Grange underwriting form for wood stove installation',
       fillable: true
     }
   ]
