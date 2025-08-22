@@ -184,7 +184,8 @@ function viewPDF(category, filename, title) {
   const titleElement = document.getElementById('pdfTitle');
   
   if (!modal || !viewer || !titleElement) {
-    alert('PDF viewer not available. Please download the PDF instead.');
+    // If modal not available, open in new tab
+    window.open(`pdf-templates/${category}-forms/${filename}`, '_blank');
     return;
   }
   
@@ -193,46 +194,93 @@ function viewPDF(category, filename, title) {
   
   // Check if running locally or from GitHub
   const isLocal = window.location.protocol === 'file:';
-  const pdfUrl = isLocal ? getLocalPDFUrl(category, filename) : getPDFUrl(category, filename);
+  const isGitHubPages = window.location.hostname.includes('github.io');
   
-  // Use Google Docs viewer for GitHub hosted PDFs
-  if (!isLocal) {
+  if (isGitHubPages) {
+    // For GitHub Pages, use direct path
+    viewer.src = `pdf-templates/${category}-forms/${filename}`;
+  } else if (!isLocal) {
+    // For other hosting, use Google Docs viewer
+    const pdfUrl = getPDFUrl(category, filename);
     viewer.src = `https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
   } else {
-    viewer.src = pdfUrl;
+    // For local file system
+    viewer.src = getLocalPDFUrl(category, filename);
   }
   
   titleElement.textContent = title;
   modal.style.display = 'block';
 }
 
-function downloadPDF(category, filename, title) {
+async function downloadPDF(category, filename, title) {
   const isLocal = window.location.protocol === 'file:';
-  const pdfUrl = isLocal ? getLocalPDFUrl(category, filename) : getPDFUrl(category, filename);
+  const isGitHubPages = window.location.hostname.includes('github.io');
   
   // Check if this is a fillable form
   const template = Object.values(pdfTemplates).flat().find(t => t.filename === filename);
   const isFillable = template && template.fillable;
   
-  const a = document.createElement('a');
-  a.href = pdfUrl;
-  a.download = filename;
-  a.target = '_blank';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  
-  // Show instructions for fillable forms
-  if (isFillable) {
-    setTimeout(() => {
-      alert(`📝 Fillable Form Downloaded!\n\n${title} has been downloaded to your computer.\n\nTo fill out this form:\n1. Open the downloaded PDF with Adobe Acrobat Reader (free)\n2. Click on the form fields to fill them out\n3. Save the completed form\n\nNote: Form fields may not work in browser PDF viewers.`);
-    }, 500);
+  try {
+    if (isGitHubPages || !isLocal) {
+      // For GitHub Pages, use the relative path from the repository
+      const pdfPath = `pdf-templates/${category}-forms/${filename}`;
+      const response = await fetch(pdfPath);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch PDF: ${response.status}`);
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      
+      // Clean up
+      setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    } else {
+      // For local file system
+      const pdfUrl = getLocalPDFUrl(category, filename);
+      const a = document.createElement('a');
+      a.href = pdfUrl;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+    
+    // Show instructions for fillable forms
+    if (isFillable) {
+      setTimeout(() => {
+        alert(`📝 Fillable Form Downloaded!\n\n${title} has been downloaded to your computer.\n\nTo fill out this form:\n1. Open the downloaded PDF with Adobe Acrobat Reader (free)\n2. Click on the form fields to fill them out\n3. Save the completed form\n\nNote: Form fields may not work in browser PDF viewers.`);
+      }, 1000);
+    }
+  } catch (error) {
+    console.error('Download error:', error);
+    alert(`Unable to download the PDF. Please try again or use the direct link:\n\n${window.location.origin}/${repoConfig.repository}/pdf-templates/${category}-forms/${filename}`);
   }
 }
 
 function printPDF(category, filename) {
   const isLocal = window.location.protocol === 'file:';
-  const pdfUrl = isLocal ? getLocalPDFUrl(category, filename) : getPDFUrl(category, filename);
+  const isGitHubPages = window.location.hostname.includes('github.io');
+  
+  let pdfUrl;
+  if (isGitHubPages) {
+    pdfUrl = `pdf-templates/${category}-forms/${filename}`;
+  } else if (isLocal) {
+    pdfUrl = getLocalPDFUrl(category, filename);
+  } else {
+    pdfUrl = getPDFUrl(category, filename);
+  }
   
   const printWindow = window.open(pdfUrl, '_blank');
   if (printWindow) {
