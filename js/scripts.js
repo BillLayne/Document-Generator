@@ -192,89 +192,136 @@ function viewPDF(category, filename, title) {
   const viewer = document.getElementById('pdfViewer');
   const titleElement = document.getElementById('pdfTitle');
   
-  if (!modal || !viewer || !titleElement) {
-    // If modal not available, open in new tab
-    window.open(`pdf-templates/${category}-forms/${filename}`, '_blank');
-    return;
-  }
-  
   // Store current PDF info
   currentPDF = { category, filename, title };
   
-  // Check if running locally or from GitHub
-  const isLocal = window.location.protocol === 'file:';
+  // Construct the PDF path
+  const pdfPath = `pdf-templates/${category}-forms/${filename}`;
+  
+  // For GitHub Pages, use direct path
   const isGitHubPages = window.location.hostname.includes('github.io');
   
   if (isGitHubPages) {
-    // For GitHub Pages, use direct path
-    viewer.src = `pdf-templates/${category}-forms/${filename}`;
-  } else if (!isLocal) {
-    // For other hosting, use Google Docs viewer
-    const pdfUrl = getPDFUrl(category, filename);
-    viewer.src = `https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
-  } else {
+    // Use the full URL for GitHub Pages
+    const baseUrl = window.location.origin + '/' + repoConfig.repository;
+    const fullUrl = `${baseUrl}/${pdfPath}`;
+    
+    // Try to use iframe first
+    if (modal && viewer && titleElement) {
+      viewer.src = fullUrl;
+      titleElement.textContent = title;
+      modal.style.display = 'block';
+    } else {
+      // Fallback: open in new tab
+      window.open(fullUrl, '_blank');
+    }
+  } else if (window.location.protocol === 'file:') {
     // For local file system
-    viewer.src = getLocalPDFUrl(category, filename);
+    if (modal && viewer && titleElement) {
+      viewer.src = pdfPath;
+      titleElement.textContent = title;
+      modal.style.display = 'block';
+    } else {
+      window.open(pdfPath, '_blank');
+    }
+  } else {
+    // For other hosting
+    if (modal && viewer && titleElement) {
+      viewer.src = pdfPath;
+      titleElement.textContent = title;
+      modal.style.display = 'block';
+    } else {
+      window.open(pdfPath, '_blank');
+    }
   }
-  
-  titleElement.textContent = title;
-  modal.style.display = 'block';
 }
 
 async function downloadPDF(category, filename, title) {
-  const isLocal = window.location.protocol === 'file:';
-  const isGitHubPages = window.location.hostname.includes('github.io');
-  
-  // Check if this is a fillable form
-  const template = Object.values(pdfTemplates).flat().find(t => t.filename === filename);
-  const isFillable = template && template.fillable;
-  
   try {
-    if (isGitHubPages || !isLocal) {
-      // For GitHub Pages, use the relative path from the repository
-      const pdfPath = `pdf-templates/${category}-forms/${filename}`;
-      const response = await fetch(pdfPath);
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch PDF: ${response.status}`);
-      }
-      
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      
+    // Construct the correct path for GitHub Pages
+    const pdfPath = `pdf-templates/${category}-forms/${filename}`;
+    
+    // For GitHub Pages, we need to use the full URL
+    const isGitHubPages = window.location.hostname.includes('github.io');
+    let fullUrl;
+    
+    if (isGitHubPages) {
+      // Use the full GitHub Pages URL
+      const baseUrl = window.location.origin + '/' + repoConfig.repository;
+      fullUrl = `${baseUrl}/${pdfPath}`;
+    } else if (window.location.protocol === 'file:') {
+      // For local file system - just open the file
       const a = document.createElement('a');
-      a.href = url;
+      a.href = pdfPath;
       a.download = filename;
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      
-      // Clean up
-      setTimeout(() => {
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-      }, 100);
-    } else {
-      // For local file system
-      const pdfUrl = getLocalPDFUrl(category, filename);
-      const a = document.createElement('a');
-      a.href = pdfUrl;
-      a.download = filename;
-      a.style.display = 'none';
+      a.target = '_blank';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
+      return;
+    } else {
+      // For other hosting
+      fullUrl = window.location.origin + '/' + pdfPath;
     }
     
+    // Fetch the PDF as a blob
+    const response = await fetch(fullUrl);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch PDF: ${response.status} ${response.statusText}`);
+    }
+    
+    const blob = await response.blob();
+    
+    // Create object URL and trigger download
+    const blobUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    
+    // Clean up
+    setTimeout(() => {
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(blobUrl);
+    }, 100);
+    
     // Show instructions for fillable forms
-    if (isFillable) {
+    const template = Object.values(pdfTemplates).flat().find(t => t.filename === filename);
+    if (template && template.fillable) {
       setTimeout(() => {
         alert(`📝 Fillable Form Downloaded!\n\n${title} has been downloaded to your computer.\n\nTo fill out this form:\n1. Open the downloaded PDF with Adobe Acrobat Reader (free)\n2. Click on the form fields to fill them out\n3. Save the completed form\n\nNote: Form fields may not work in browser PDF viewers.`);
       }, 1000);
     }
+    
   } catch (error) {
     console.error('Download error:', error);
-    alert(`Unable to download the PDF. Please try again or use the direct link:\n\n${window.location.origin}/${repoConfig.repository}/pdf-templates/${category}-forms/${filename}`);
+    
+    // Fallback: Open in new tab with instructions
+    const pdfPath = `pdf-templates/${category}-forms/${filename}`;
+    const fallbackUrl = window.location.origin + '/' + repoConfig.repository + '/' + pdfPath;
+    
+    const userChoice = confirm(
+      `Unable to download directly. Would you like to:\n\n` +
+      `OK = Open PDF in new tab (then right-click to save)\n` +
+      `Cancel = Copy link to clipboard`
+    );
+    
+    if (userChoice) {
+      window.open(fallbackUrl, '_blank');
+      alert('PDF opened in new tab. Right-click on the PDF and select "Save as..." to download.');
+    } else {
+      // Copy URL to clipboard
+      const tempInput = document.createElement('input');
+      tempInput.value = fallbackUrl;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      alert('PDF link copied to clipboard! You can paste it in a new tab.');
+    }
   }
 }
 
