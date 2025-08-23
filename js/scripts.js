@@ -2711,8 +2711,6 @@ Save@BillLayneInsurance.com`);
         letterClosing: document.getElementById('letterClosing').value || 'Sincerely'
       };
 
-      const companyLogoUrl = 'https://github.com/BillLayne/bill-layne-images/blob/main/logos/Bill%20Layne%20Insurance%20Logo.png?raw=true';
-
       return `
         <!DOCTYPE html>
         <html>
@@ -2736,11 +2734,6 @@ Save@BillLayneInsurance.com`);
               border-bottom: 3px solid #004080;
               padding-bottom: 20px;
               margin-bottom: 30px;
-            }
-            .letterhead-logo {
-              width: 200px;
-              height: auto;
-              margin-bottom: 10px;
             }
             .letterhead-company {
               font-size: 24pt;
@@ -2810,7 +2803,6 @@ Save@BillLayneInsurance.com`);
         </head>
         <body>
           <div class="letterhead-header">
-            <img src="${companyLogoUrl}" alt="Bill Layne Insurance" class="letterhead-logo" />
             <div class="letterhead-company">BILL LAYNE INSURANCE</div>
             <div class="letterhead-tagline">Your Trusted Insurance Partner Since 1985</div>
             <div class="letterhead-contact">
