@@ -2883,64 +2883,117 @@ Save@BillLayneInsurance.com`);
               margin: 0;
             }
             
-            html, body {
-              margin: 0;
-              padding: 0;
-              width: ${width};
-              height: ${height};
-              overflow: hidden;
-              font-family: Arial, Helvetica, sans-serif;
+            /* Screen display styles */
+            @media screen {
+              html, body {
+                margin: 0;
+                padding: 20px;
+                font-family: Arial, Helvetica, sans-serif;
+                background: #f5f5f5;
+              }
+              
+              .envelope-container {
+                position: relative;
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 30px;
+                box-sizing: border-box;
+                border: 2px solid #ddd;
+                background: white;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                min-height: 350px;
+                aspect-ratio: ${data.envelopeSize === 'a7' ? '7.25 / 5.25' : data.envelopeSize === '9' ? '8.875 / 3.875' : '9.5 / 4.125'};
+              }
+              
+              .return-address {
+                position: absolute;
+                top: 30px;
+                left: 30px;
+                font-size: 11pt;
+                line-height: 1.4;
+                display: ${data.includeReturn ? 'block' : 'none'};
+              }
+              
+              .recipient-address {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 14pt;
+                line-height: 1.6;
+                font-weight: 500;
+                letter-spacing: 0.5px;
+                color: #000;
+                white-space: pre-line;
+                text-align: center;
+              }
             }
             
-            .envelope-container {
-              position: relative;
-              width: ${width};
-              height: ${height};
-              padding: 0.25in;
-              box-sizing: border-box;
-              border: 1px solid #ddd;
-              background: white;
-            }
-            
-            .return-address {
-              position: absolute;
-              top: 0.5in;
-              left: 0.5in;
-              font-size: 10pt;
-              line-height: 1.4;
-              display: ${data.includeReturn ? 'block' : 'none'};
+            /* Print styles */
+            @media print {
+              html, body {
+                margin: 0;
+                padding: 0;
+                width: ${width};
+                height: ${height};
+                overflow: hidden;
+                font-family: Arial, Helvetica, sans-serif;
+              }
+              
+              .envelope-container {
+                position: relative;
+                width: ${width};
+                height: ${height};
+                padding: 0.25in;
+                box-sizing: border-box;
+                border: none;
+                background: white;
+                box-shadow: none;
+              }
+              
+              .return-address {
+                position: absolute;
+                top: 0.5in;
+                left: 0.5in;
+                font-size: 10pt;
+                line-height: 1.4;
+                display: ${data.includeReturn ? 'block' : 'none'};
+              }
+              
+              .recipient-address {
+                position: absolute;
+                top: ${data.envelopeSize === 'a7' ? '2.5in' : '2in'};
+                left: ${data.envelopeSize === 'a7' ? '3.5in' : '4.5in'};
+                transform: none;
+                text-align: left;
+                font-size: 14pt;
+                line-height: 1.5;
+                font-weight: 500;
+                letter-spacing: 0.5px;
+                color: #000;
+                white-space: pre-line;
+              }
             }
             
             .return-company {
               font-weight: bold;
-              font-size: 11pt;
+              font-size: 12pt;
               color: #004080;
-              margin-bottom: 2px;
+              margin-bottom: 4px;
             }
             
-            .recipient-address {
+            .envelope-info {
               position: absolute;
-              top: ${data.envelopeSize === 'a7' ? '2.5in' : '2in'};
-              left: ${data.envelopeSize === 'a7' ? '3.5in' : '4.5in'};
-              font-size: 14pt;
-              line-height: 1.5;
-              font-weight: 500;
-              letter-spacing: 0.5px;
-              color: #000;
-              white-space: pre-line;
+              bottom: 10px;
+              right: 10px;
+              font-size: 9pt;
+              color: #999;
+              font-style: italic;
             }
-
-            @media screen {
-              .envelope-container {
-                margin: 20px auto;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-              }
-            }
-
+            
             @media print {
-              .envelope-container {
-                border: none;
-                box-shadow: none;
+              .envelope-info {
+                display: none;
               }
             }
           </style>
@@ -2951,7 +3004,8 @@ Save@BillLayneInsurance.com`);
               <div class="return-company">Bill Layne Insurance</div>
               ${data.returnAddress.replace(/\n/g, '<br>')}
             </div>
-            <div class="recipient-address">${data.recipientAddress}</div>
+            <div class="recipient-address">${data.recipientAddress.replace(/\n/g, '<br>')}</div>
+            <div class="envelope-info">Envelope Size: ${data.envelopeSize === '9' ? '#9 Business' : data.envelopeSize === 'a7' ? 'A7 Announcement' : '#10 Standard'}</div>
           </div>
         </body>
         </html>
