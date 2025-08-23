@@ -1463,7 +1463,7 @@ Save@BillLayneInsurance.com`);
                 <img
                   src="${companyLogoUrl}"
                   alt="Company Logo"
-                  style="max-height:60px;"
+                  style="width:250px; height:auto; display:block; margin:0 auto;"
                 />
               </div>
             </div>
@@ -1661,7 +1661,7 @@ Save@BillLayneInsurance.com`);
                 <img
                   src="${invoiceLogoUrl}"
                   alt="Company Logo"
-                  style="max-height:60px;"
+                  style="width:250px; height:auto; display:block; margin:0 auto;"
                 />
               </div>
             </div>
@@ -1680,6 +1680,7 @@ Save@BillLayneInsurance.com`);
 
             <div class="section">
               <div class="section-title">INVOICE DETAILS:</div>
+              <p><strong>Insurance Company:</strong> ${data.insuranceCompany}</p>
               <p><strong>Policy Number:</strong> ${data.policyNumber}</p>
               <p><strong>Due Date:</strong> ${data.effectiveDate}</p>
               <p><strong>Insured Name:</strong> ${data.policyHolder}</p>
@@ -1782,7 +1783,7 @@ Save@BillLayneInsurance.com`);
               1283 N Bridge St, Elkin, NC 28621<br />
               (336) 835-1993 | Save@BillLayneInsurance.com
             </div>
-            <img src="${companyLogoUrl}" alt="Company Logo" style="max-height:60px;" />
+            <img src="${companyLogoUrl}" alt="Company Logo" style="width:250px; height:auto; display:block; margin:10px auto;" />
           </div>
 
           <div class="date">${today}</div>
@@ -1885,12 +1886,13 @@ Save@BillLayneInsurance.com`);
               1283 N Bridge St, Elkin, NC 28621<br />
               (336) 835-1993
             </div>
-            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="max-height:60px;" />
+            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="width:250px; height:auto; display:block; margin:10px auto;" />
           </div>
 
           <p>${today}</p>
 
           <p><strong>RE: Mortgagee Change Confirmation</strong></p>
+          <p><strong>Insurance Company: ${data.insuranceCompany}</strong></p>
           <p><strong>Policy Number: ${data.policyNumber}</strong></p>
 
           <p>Dear ${data.policyHolder},</p>
@@ -1984,7 +1986,7 @@ Save@BillLayneInsurance.com`);
               1283 N Bridge St, Elkin, NC 28621<br />
               (336) 835-1993
             </div>
-            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="max-height:60px;" />
+            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="width:250px; height:auto; display:block; margin:10px auto;" />
           </div>
 
           <div class="notice-header">
@@ -1995,6 +1997,7 @@ Save@BillLayneInsurance.com`);
           ${data.addressLine1}<br />
           ${data.city}, ${data.state} ${data.zipCode}</p>
 
+          <p><strong>Insurance Company:</strong> ${data.insuranceCompany}</p>
           <p><strong>Policy Number:</strong> ${data.policyNumber}</p>
 
           <div class="important-box">
@@ -2094,7 +2097,7 @@ Save@BillLayneInsurance.com`);
               1283 N Bridge St, Elkin, NC 28621<br />
               (336) 835-1993
             </div>
-            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="max-height:60px;" />
+            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="width:250px; height:auto; display:block; margin:10px auto;" />
           </div>
 
           <div class="renewal-header">
@@ -2106,6 +2109,7 @@ Save@BillLayneInsurance.com`);
           ${data.addressLine1}<br />
           ${data.city}, ${data.state} ${data.zipCode}</p>
 
+          <p><strong>Insurance Company:</strong> ${data.insuranceCompany}</p>
           <p><strong>Policy Number:</strong> ${data.policyNumber}</p>
 
           <table class="comparison-table">
@@ -2195,14 +2199,14 @@ Save@BillLayneInsurance.com`);
               1283 N Bridge St, Elkin, NC 28621<br />
               (336) 835-1993
             </div>
-            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="max-height:60px;" />
+            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="width:250px; height:auto; display:block; margin:10px auto;" />
           </div>
 
           <h2>Coverage Change Confirmation</h2>
           
           <p>Dear ${data.policyHolder},</p>
           
-          <p>This letter confirms the following changes to your policy #${data.policyNumber}:</p>
+          <p>This letter confirms the following changes to your ${data.insuranceCompany} policy #${data.policyNumber}:</p>
           
           <div class="change-summary">
             <strong>Changes Made:</strong><br /><br />
@@ -2260,7 +2264,8 @@ Save@BillLayneInsurance.com`);
                 font-size: 12px !important;
               }
               img {
-                max-height: 60px !important;
+                width: 250px !important;
+                height: auto !important;
                 display: block !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
@@ -2306,7 +2311,7 @@ Save@BillLayneInsurance.com`);
               1283 N Bridge St, Elkin, NC 28621<br />
               (336) 835-1993
             </div>
-            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="max-height:60px;" onload="window.logoLoaded = true;" />
+            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="width:250px; height:auto; display:block; margin:10px auto;" onload="window.logoLoaded = true;" />
           </div>
 
           <div class="receipt-header">
@@ -2320,6 +2325,10 @@ Save@BillLayneInsurance.com`);
               <tr>
                 <td><strong>From:</strong></td>
                 <td>${data.policyHolder}</td>
+              </tr>
+              <tr>
+                <td><strong>Insurance Company:</strong></td>
+                <td>${data.insuranceCompany}</td>
               </tr>
               <tr>
                 <td><strong>Policy Number:</strong></td>
@@ -2423,9 +2432,10 @@ Save@BillLayneInsurance.com`);
             <div>
               <h2>CLAIM INFORMATION SHEET</h2>
               <p><strong>${data.policyHolder}</strong><br />
+              ${data.insuranceCompany}<br />
               Policy #: ${data.policyNumber}</p>
             </div>
-            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="max-height:60px;" />
+            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="width:250px; height:auto; display:block; margin:10px auto;" />
           </div>
 
           <div class="emergency-box">
