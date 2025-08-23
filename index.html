@@ -44,6 +44,8 @@
           <option value="payment-receipt">Payment Receipt</option>
           <option value="claim-info">Claim Information Sheet</option>
           <option value="dl123">DL-123 Driver License Insurance Certification</option>
+          <option value="letterhead">Professional Letterhead</option>
+          <option value="envelope">Envelope</option>
         </select>
       </div>
 
@@ -420,6 +422,111 @@
           <div class="form-group">
             <label>Date of Certification</label>
             <input type="date" id="certificationDate" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Letterhead Specific Fields -->
+      <div class="form-section" id="letterheadSection">
+        <div class="section-title">Professional Letter Information</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Recipient Name</label>
+            <input type="text" id="letterRecipientName" placeholder="John Doe" />
+          </div>
+          <div class="form-group">
+            <label>Recipient Company (Optional)</label>
+            <input type="text" id="letterRecipientCompany" placeholder="ABC Corporation" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Recipient Address</label>
+            <input type="text" id="letterRecipientAddress" placeholder="123 Main Street" />
+          </div>
+          <div class="form-group">
+            <label>City, State ZIP</label>
+            <input type="text" id="letterRecipientCityStateZip" placeholder="New York, NY 10001" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Letter Date</label>
+            <input type="date" id="letterDate" />
+          </div>
+          <div class="form-group">
+            <label>Letter Subject</label>
+            <input type="text" id="letterSubject" placeholder="RE: Insurance Policy Update" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Sender Name</label>
+            <input type="text" id="letterSenderName" placeholder="Jane Smith" />
+          </div>
+          <div class="form-group">
+            <label>Sender Position</label>
+            <input type="text" id="letterSenderPosition" placeholder="Insurance Agent" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Letter Content</label>
+            <textarea id="letterContent" rows="8" placeholder="Dear [Recipient],
+
+Thank you for your interest in our insurance services. I am writing to provide you with important information regarding your policy...
+
+Please feel free to contact me if you have any questions or need additional information."></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Closing</label>
+            <select id="letterClosing">
+              <option value="Sincerely">Sincerely</option>
+              <option value="Best Regards">Best Regards</option>
+              <option value="Respectfully">Respectfully</option>
+              <option value="Thank you">Thank you</option>
+              <option value="Cordially">Cordially</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Envelope Specific Fields -->
+      <div class="form-section" id="envelopeSection">
+        <div class="section-title">Envelope Information</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Envelope Size</label>
+            <select id="envelopeSize">
+              <option value="10">#10 Standard (9.5" × 4.125")</option>
+              <option value="9">#9 Business (8.875" × 3.875")</option>
+              <option value="a7">A7 Announcement (7.25" × 5.25")</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Include Return Address</label>
+            <select id="envelopeIncludeReturn">
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Recipient Address</label>
+            <textarea id="envelopeRecipientAddress" rows="4" placeholder="John Doe
+123 Main Street
+New York, NY 10001"></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Return Address (Optional - Leave blank to use default)</label>
+            <textarea id="envelopeReturnAddress" rows="3" placeholder="Bill Layne Insurance
+PO Box 827
+Elkin, NC 28621"></textarea>
           </div>
         </div>
       </div>

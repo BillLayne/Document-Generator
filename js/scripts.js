@@ -497,6 +497,16 @@ function emailCurrentPDF() {
         sections: ['commonFields', 'insuredSection', 'dl123Section', 'policyDatesSection'],
         description: 'Generates DL-123 Driver License Liability Insurance Certification form required by NC DMV for license reinstatement.',
         documents: ['dl123Form']
+      },
+      'letterhead': {
+        sections: ['letterheadSection'],
+        description: 'Creates a professional business letter on Bill Layne Insurance letterhead for official correspondence.',
+        documents: ['letterhead']
+      },
+      'envelope': {
+        sections: ['envelopeSection'],
+        description: 'Generates a properly formatted envelope for mailing documents. Supports multiple envelope sizes (#10, #9, A7).',
+        documents: ['envelope']
       }
     };
 
@@ -1307,6 +1317,14 @@ Save@BillLayneInsurance.com`);
           case 'dl123Form':
             html = generateDL123Html();
             title = 'DL-123 Insurance Certification';
+            break;
+          case 'letterhead':
+            html = generateLetterheadHtml();
+            title = 'Professional Letter';
+            break;
+          case 'envelope':
+            html = generateEnvelopeHtml();
+            title = 'Envelope';
             break;
         }
         
@@ -2672,6 +2690,268 @@ Save@BillLayneInsurance.com`);
             <div class="dl123-footer">
               (This form is valid for 30 days after completion by the insurance agent.)
             </div>
+          </div>
+        </body>
+        </html>
+      `;
+    }
+
+    // Generate Professional Letterhead
+    function generateLetterheadHtml() {
+      const data = {
+        recipientName: document.getElementById('letterRecipientName').value,
+        recipientCompany: document.getElementById('letterRecipientCompany').value,
+        recipientAddress: document.getElementById('letterRecipientAddress').value,
+        recipientCityStateZip: document.getElementById('letterRecipientCityStateZip').value,
+        letterDate: formatDate(document.getElementById('letterDate').value || new Date().toISOString().split('T')[0]),
+        letterSubject: document.getElementById('letterSubject').value,
+        senderName: document.getElementById('letterSenderName').value || 'Bill Layne',
+        senderPosition: document.getElementById('letterSenderPosition').value || 'Insurance Agent',
+        letterContent: document.getElementById('letterContent').value,
+        letterClosing: document.getElementById('letterClosing').value || 'Sincerely'
+      };
+
+      const companyLogoUrl = 'https://github.com/BillLayne/bill-layne-images/blob/main/logos/Bill%20Layne%20Insurance%20Logo.png?raw=true';
+
+      return `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            @page {
+              size: letter;
+              margin: 0.75in;
+            }
+            body {
+              font-family: 'Georgia', 'Times New Roman', serif;
+              font-size: 12pt;
+              line-height: 1.6;
+              color: #333;
+              max-width: 6.5in;
+              margin: 0 auto;
+              padding: 20px;
+            }
+            .letterhead-header {
+              text-align: center;
+              border-bottom: 3px solid #004080;
+              padding-bottom: 20px;
+              margin-bottom: 30px;
+            }
+            .letterhead-logo {
+              width: 200px;
+              height: auto;
+              margin-bottom: 10px;
+            }
+            .letterhead-company {
+              font-size: 24pt;
+              font-weight: bold;
+              color: #004080;
+              margin: 10px 0;
+              letter-spacing: 1px;
+            }
+            .letterhead-tagline {
+              font-style: italic;
+              color: #666;
+              font-size: 11pt;
+              margin-bottom: 10px;
+            }
+            .letterhead-contact {
+              font-size: 10pt;
+              color: #666;
+              line-height: 1.4;
+            }
+            .letterhead-contact a {
+              color: #004080;
+              text-decoration: none;
+            }
+            .letter-date {
+              margin: 30px 0 20px 0;
+              font-size: 11pt;
+            }
+            .letter-recipient {
+              margin-bottom: 20px;
+              line-height: 1.4;
+            }
+            .letter-subject {
+              font-weight: bold;
+              margin: 20px 0;
+            }
+            .letter-salutation {
+              margin-bottom: 15px;
+            }
+            .letter-body {
+              text-align: justify;
+              margin-bottom: 20px;
+              white-space: pre-wrap;
+              word-wrap: break-word;
+            }
+            .letter-closing {
+              margin-top: 30px;
+            }
+            .letter-signature {
+              margin-top: 60px;
+            }
+            .letter-sender-name {
+              font-weight: bold;
+            }
+            .letter-sender-position {
+              font-style: italic;
+              color: #666;
+            }
+            @media print {
+              body {
+                font-size: 11pt;
+              }
+              .letterhead-header {
+                border-bottom-color: #000;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="letterhead-header">
+            <img src="${companyLogoUrl}" alt="Bill Layne Insurance" class="letterhead-logo" />
+            <div class="letterhead-company">BILL LAYNE INSURANCE</div>
+            <div class="letterhead-tagline">Your Trusted Insurance Partner Since 1985</div>
+            <div class="letterhead-contact">
+              1283 N Bridge St, Elkin, NC 28621 | PO Box 827, Elkin, NC 28621<br>
+              Phone: (336) 835-1993 | Fax: (336) 835-2886<br>
+              Email: <a href="mailto:Save@BillLayneInsurance.com">Save@BillLayneInsurance.com</a><br>
+              Website: <a href="https://www.BillLayneInsurance.com">www.BillLayneInsurance.com</a>
+            </div>
+          </div>
+
+          <div class="letter-date">${data.letterDate}</div>
+
+          <div class="letter-recipient">
+            ${data.recipientName}<br>
+            ${data.recipientCompany ? data.recipientCompany + '<br>' : ''}
+            ${data.recipientAddress}<br>
+            ${data.recipientCityStateZip}
+          </div>
+
+          ${data.letterSubject ? '<div class="letter-subject">RE: ' + data.letterSubject + '</div>' : ''}
+
+          <div class="letter-salutation">Dear ${data.recipientName},</div>
+
+          <div class="letter-body">${data.letterContent}</div>
+
+          <div class="letter-closing">${data.letterClosing},</div>
+
+          <div class="letter-signature">
+            <div class="letter-sender-name">${data.senderName}</div>
+            <div class="letter-sender-position">${data.senderPosition}</div>
+            <div>Bill Layne Insurance Agency</div>
+          </div>
+        </body>
+        </html>
+      `;
+    }
+
+    // Generate Envelope
+    function generateEnvelopeHtml() {
+      const data = {
+        envelopeSize: document.getElementById('envelopeSize').value,
+        includeReturn: document.getElementById('envelopeIncludeReturn').value === 'yes',
+        recipientAddress: document.getElementById('envelopeRecipientAddress').value,
+        returnAddress: document.getElementById('envelopeReturnAddress').value || `Bill Layne Insurance\nPO Box 827\nElkin, NC 28621`
+      };
+
+      // Get envelope dimensions based on size
+      let width, height;
+      switch(data.envelopeSize) {
+        case '9':
+          width = '8.875in';
+          height = '3.875in';
+          break;
+        case 'a7':
+          width = '7.25in';
+          height = '5.25in';
+          break;
+        default: // #10
+          width = '9.5in';
+          height = '4.125in';
+      }
+
+      return `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            @page {
+              size: ${width} ${height};
+              margin: 0;
+            }
+            
+            html, body {
+              margin: 0;
+              padding: 0;
+              width: ${width};
+              height: ${height};
+              overflow: hidden;
+              font-family: Arial, Helvetica, sans-serif;
+            }
+            
+            .envelope-container {
+              position: relative;
+              width: ${width};
+              height: ${height};
+              padding: 0.25in;
+              box-sizing: border-box;
+              border: 1px solid #ddd;
+              background: white;
+            }
+            
+            .return-address {
+              position: absolute;
+              top: 0.5in;
+              left: 0.5in;
+              font-size: 10pt;
+              line-height: 1.4;
+              display: ${data.includeReturn ? 'block' : 'none'};
+            }
+            
+            .return-company {
+              font-weight: bold;
+              font-size: 11pt;
+              color: #004080;
+              margin-bottom: 2px;
+            }
+            
+            .recipient-address {
+              position: absolute;
+              top: ${data.envelopeSize === 'a7' ? '2.5in' : '2in'};
+              left: ${data.envelopeSize === 'a7' ? '3.5in' : '4.5in'};
+              font-size: 14pt;
+              line-height: 1.5;
+              font-weight: 500;
+              letter-spacing: 0.5px;
+              color: #000;
+              white-space: pre-line;
+            }
+
+            @media screen {
+              .envelope-container {
+                margin: 20px auto;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+              }
+            }
+
+            @media print {
+              .envelope-container {
+                border: none;
+                box-shadow: none;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="envelope-container">
+            <div class="return-address">
+              <div class="return-company">Bill Layne Insurance</div>
+              ${data.returnAddress.replace(/\n/g, '<br>')}
+            </div>
+            <div class="recipient-address">${data.recipientAddress}</div>
           </div>
         </body>
         </html>
