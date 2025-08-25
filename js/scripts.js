@@ -548,12 +548,9 @@ function emailCurrentPDF() {
         documents: ['envelope']
       },
       'underwriting': {
-        sections: [],
-        description: 'Professional underwriting email template for sending documentation to insurance companies. Click "Underwriting Email Tool" button above to access the full-featured email composition tool.',
-        documents: [],
-        customAction: function() {
-          window.open('underwriting-form.html', '_blank');
-        }
+        sections: ['underwritingSection'],
+        description: 'Create professional underwriting document requests for insurance companies with all necessary information and documentation requirements.',
+        documents: ['underwritingDocument']
       },
       'auto-id-card': {
         sections: ['autoIDCardSection'],
@@ -1389,6 +1386,10 @@ Save@BillLayneInsurance.com`);
           case 'autoIDCard':
             html = generateAutoIDCard();
             title = 'Auto Insurance ID Card';
+            break;
+          case 'underwritingDocument':
+            html = generateUnderwritingDocument();
+            title = 'Underwriting Request Document';
             break;
         }
         
@@ -2940,6 +2941,255 @@ Save@BillLayneInsurance.com`);
         </body>
         </html>
       `;
+    }
+
+    // Generate Underwriting Document
+    function generateUnderwritingDocument() {
+      const data = {
+        company: document.getElementById('underwritingCompany').value || 'Insurance Company',
+        underwriterEmail: document.getElementById('underwriterEmail').value || '',
+        subject: document.getElementById('underwritingSubject').value || 'Underwriting Information Request',
+        policyNumber: document.getElementById('underwritingPolicyNumber').value || '',
+        insuredName: document.getElementById('underwritingInsuredName').value || '',
+        propertyAddress: document.getElementById('underwritingPropertyAddress').value || '',
+        requestType: document.getElementById('underwritingRequestType').value || 'new',
+        priority: document.getElementById('underwritingPriority').value || 'normal',
+        documentsNeeded: document.getElementById('underwritingDocumentsNeeded').value || '',
+        notes: document.getElementById('underwritingNotes').value || '',
+        deadline: document.getElementById('underwritingDeadline').value || '',
+        agentName: document.getElementById('underwritingAgentName').value || 'Bill Layne',
+        date: new Date().toLocaleDateString()
+      };
+
+      // Get company logo
+      const companyLogoUrl = getCompanyLogoUrl(data.company);
+
+      // Format deadline
+      const formattedDeadline = data.deadline ? new Date(data.deadline).toLocaleDateString() : 'As soon as possible';
+
+      // Get priority styling
+      let priorityColor = '#004080';
+      let priorityText = 'Normal Priority';
+      if (data.priority === 'urgent') {
+        priorityColor = '#d32f2f';
+        priorityText = 'URGENT - Time Sensitive';
+      } else if (data.priority === 'high') {
+        priorityColor = '#ff6b00';
+        priorityText = 'HIGH PRIORITY';
+      }
+
+      const requestTypeText = {
+        'new': 'New Business Quote Request',
+        'renewal': 'Renewal Documentation',
+        'endorsement': 'Policy Endorsement/Change Request',
+        'inspection': 'Inspection Photos/Reports',
+        'claims': 'Claims History Request',
+        'documentation': 'Additional Documentation',
+        'custom': 'Custom Request'
+      };
+
+      return `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            @media print {
+              @page {
+                size: letter;
+                margin: 0.5in;
+              }
+              body {
+                margin: 0;
+                padding: 0;
+              }
+            }
+            body {
+              font-family: Arial, sans-serif;
+              font-size: 12px;
+              line-height: 1.6;
+              color: #333;
+              max-width: 8.5in;
+              margin: 0 auto;
+              padding: 20px;
+            }
+            .header {
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+              padding: 20px;
+              background: #004080;
+              color: white;
+              margin-bottom: 20px;
+            }
+            .company-info {
+              flex: 1;
+            }
+            .logo-container {
+              background: white;
+              padding: 10px;
+              border-radius: 5px;
+            }
+            .priority-banner {
+              background: ${priorityColor};
+              color: white;
+              padding: 10px;
+              text-align: center;
+              font-weight: bold;
+              font-size: 14px;
+              margin-bottom: 20px;
+            }
+            .section {
+              margin-bottom: 20px;
+              padding: 15px;
+              border: 1px solid #ddd;
+              background: #f9f9f9;
+            }
+            .section-title {
+              font-weight: bold;
+              color: #004080;
+              margin-bottom: 10px;
+              font-size: 14px;
+              border-bottom: 2px solid #004080;
+              padding-bottom: 5px;
+            }
+            .info-row {
+              display: flex;
+              margin-bottom: 8px;
+            }
+            .label {
+              font-weight: bold;
+              width: 150px;
+              color: #555;
+            }
+            .value {
+              flex: 1;
+            }
+            .documents-list {
+              white-space: pre-wrap;
+              background: white;
+              padding: 10px;
+              border-left: 3px solid #004080;
+              margin: 10px 0;
+            }
+            .footer {
+              margin-top: 30px;
+              padding-top: 20px;
+              border-top: 2px solid #004080;
+              text-align: center;
+              color: #666;
+            }
+            .contact-info {
+              background: #e8f4f8;
+              padding: 15px;
+              margin-top: 20px;
+              border-radius: 5px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="company-info">
+              <h2 style="margin: 0 0 10px 0;">UNDERWRITING REQUEST</h2>
+              <div>Bill Layne Insurance Agency</div>
+              <div>1283 N Bridge St, Elkin, NC 28621</div>
+              <div>Phone: (336) 835-1993 | Fax: (336) 835-2886</div>
+            </div>
+            ${companyLogoUrl ? `<div class="logo-container"><img src="${companyLogoUrl}" style="height: 50px; width: auto;" alt="${data.company}"></div>` : ''}
+          </div>
+
+          ${data.priority !== 'normal' ? `<div class="priority-banner">${priorityText}</div>` : ''}
+
+          <div class="section">
+            <div class="section-title">REQUEST INFORMATION</div>
+            <div class="info-row">
+              <span class="label">Date:</span>
+              <span class="value">${data.date}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">To:</span>
+              <span class="value">${data.company} Underwriting Department</span>
+            </div>
+            ${data.underwriterEmail ? `
+            <div class="info-row">
+              <span class="label">Email:</span>
+              <span class="value">${data.underwriterEmail}</span>
+            </div>` : ''}
+            <div class="info-row">
+              <span class="label">Request Type:</span>
+              <span class="value"><strong>${requestTypeText[data.requestType] || data.requestType}</strong></span>
+            </div>
+            <div class="info-row">
+              <span class="label">Response Needed By:</span>
+              <span class="value" style="color: ${data.priority === 'urgent' ? '#d32f2f' : '#004080'}; font-weight: bold;">${formattedDeadline}</span>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">POLICY/QUOTE INFORMATION</div>
+            <div class="info-row">
+              <span class="label">Insured Name:</span>
+              <span class="value"><strong>${data.insuredName || 'TBD'}</strong></span>
+            </div>
+            <div class="info-row">
+              <span class="label">Property Address:</span>
+              <span class="value">${data.propertyAddress || 'TBD'}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Policy/Quote #:</span>
+              <span class="value"><strong>${data.policyNumber || 'TBD'}</strong></span>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">DOCUMENTS/INFORMATION REQUESTED</div>
+            <div class="documents-list">${data.documentsNeeded || 'Please provide all necessary underwriting documentation.'}</div>
+          </div>
+
+          ${data.notes ? `
+          <div class="section">
+            <div class="section-title">ADDITIONAL NOTES/CONTEXT</div>
+            <div style="white-space: pre-wrap;">${data.notes}</div>
+          </div>` : ''}
+
+          <div class="contact-info">
+            <div class="section-title">AGENT CONTACT INFORMATION</div>
+            <div style="font-size: 14px;">
+              <strong>${data.agentName}</strong><br>
+              Bill Layne Insurance Agency<br>
+              Direct: (336) 835-1993<br>
+              Fax: (336) 835-2886<br>
+              Email: Save@BillLayneInsurance.com<br>
+              Office Hours: Monday-Friday 8:30 AM - 5:00 PM
+            </div>
+          </div>
+
+          <div class="footer">
+            <p><strong>Thank you for your prompt attention to this request.</strong></p>
+            <p style="font-size: 10px;">This document was generated on ${data.date} by Bill Layne Insurance Agency Document System</p>
+          </div>
+        </body>
+        </html>
+      `;
+    }
+
+    // Helper function for updating underwriting template
+    function updateUnderwritingTemplate() {
+      const requestType = document.getElementById('underwritingRequestType').value;
+      const documentsField = document.getElementById('underwritingDocumentsNeeded');
+      
+      const templates = {
+        'new': 'Please provide:\n- Property inspection report (4-point or full)\n- Wind mitigation form\n- Photos of property (all sides)\n- Prior insurance information\n- Loss history report',
+        'renewal': 'Please provide:\n- Updated inspection if required\n- Current year photos\n- Any changes to property\n- Updated reconstruction cost estimate',
+        'endorsement': 'Please provide:\n- Details of requested changes\n- Supporting documentation\n- Effective date confirmation',
+        'inspection': 'Please provide:\n- Full exterior photos (all 4 sides)\n- Roof photos showing condition\n- Interior photos if applicable\n- Any areas of concern',
+        'claims': 'Please provide:\n- 5-year loss history\n- Details of any open claims\n- Claim resolution documentation',
+        'documentation': 'Please provide the following additional documentation:\n- ',
+        'custom': ''
+      };
+      
+      if (documentsField && templates[requestType] !== undefined) {
+        documentsField.value = templates[requestType];
+      }
     }
 
     // Generate Auto ID Card

@@ -534,6 +534,105 @@ Elkin, NC 28621"></textarea>
         </div>
       </div>
 
+      <!-- Underwriting Document Fields -->
+      <div class="form-section" id="underwritingSection">
+        <div class="section-title">Underwriting Information Request</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Insurance Company</label>
+            <select id="underwritingCompany">
+              <option value="">Select Company</option>
+              <option value="Nationwide">Nationwide</option>
+              <option value="Progressive">Progressive</option>
+              <option value="National General">National General</option>
+              <option value="Travelers">Travelers</option>
+              <option value="NC Grange Mutual">NC Grange Mutual</option>
+              <option value="Alamance">Alamance</option>
+              <option value="Universal Property">Universal Property</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Underwriter Email</label>
+            <input type="email" id="underwriterEmail" placeholder="underwriter@insurance.com" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Subject Line</label>
+            <input type="text" id="underwritingSubject" placeholder="Underwriting Request - Policy #123456" />
+          </div>
+          <div class="form-group">
+            <label>Policy/Quote Number</label>
+            <input type="text" id="underwritingPolicyNumber" placeholder="Enter policy or quote number" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Insured Name</label>
+            <input type="text" id="underwritingInsuredName" placeholder="John and Jane Doe" />
+          </div>
+          <div class="form-group">
+            <label>Property Address</label>
+            <input type="text" id="underwritingPropertyAddress" placeholder="123 Main St, Elkin, NC 28621" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Request Type</label>
+            <select id="underwritingRequestType" onchange="updateUnderwritingTemplate()">
+              <option value="new">New Business Quote</option>
+              <option value="renewal">Renewal</option>
+              <option value="endorsement">Endorsement/Change</option>
+              <option value="inspection">Inspection Photos</option>
+              <option value="claims">Claims History</option>
+              <option value="documentation">Additional Documentation</option>
+              <option value="custom">Custom Request</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Priority Level</label>
+            <select id="underwritingPriority">
+              <option value="normal">Normal</option>
+              <option value="urgent">Urgent - Closing/Time Sensitive</option>
+              <option value="high">High Priority</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Documents/Information Needed</label>
+            <textarea id="underwritingDocumentsNeeded" rows="4" placeholder="Please provide:
+- 4-point inspection report
+- Wind mitigation form
+- Photos of roof (all sides)
+- Proof of roof replacement"></textarea>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label>Additional Notes/Context</label>
+            <textarea id="underwritingNotes" rows="3" placeholder="Any additional information or special circumstances..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Response Needed By</label>
+            <input type="date" id="underwritingDeadline" />
+          </div>
+          <div class="form-group">
+            <label>Agent Name</label>
+            <input type="text" id="underwritingAgentName" placeholder="Your name" value="Bill Layne" />
+          </div>
+        </div>
+      </div>
+
       <!-- Auto ID Card Specific Fields -->
       <div class="form-section" id="autoIDCardSection">
         <div class="section-title">Auto Insurance ID Card Information</div>
