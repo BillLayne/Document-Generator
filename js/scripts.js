@@ -10,6 +10,45 @@ function logout() {
 }
 
 // =================================================================
+// Auto ID Card Functions
+// =================================================================
+
+function updateVehicleFields() {
+  const count = parseInt(document.getElementById('idCardVehicleCount').value);
+  
+  // Show/hide vehicle sections based on count
+  for (let i = 1; i <= 4; i++) {
+    const section = document.getElementById(`vehicle${i}Section`);
+    if (section) {
+      section.style.display = i <= count ? 'block' : 'none';
+    }
+  }
+}
+
+function updateIDCardCompanyInfo() {
+  const company = document.getElementById('idCardCompany').value;
+  const naicField = document.getElementById('idCardNAIC');
+  
+  // NAIC numbers for different companies
+  const naicNumbers = {
+    'Nationwide': '25453',
+    'Progressive': '24260',
+    'National General': '23728',
+    'Travelers': '25658',
+    'NC Grange Mutual': '14129',
+    'Alamance': '10190',
+    'Universal Property': '10783',
+    'Dairyland': '21164'
+  };
+  
+  if (naicField && naicNumbers[company]) {
+    naicField.value = naicNumbers[company];
+  } else if (naicField) {
+    naicField.value = '';
+  }
+}
+
+// =================================================================
 // PDF Template Management System (New)
 // =================================================================
 
@@ -515,6 +554,11 @@ function emailCurrentPDF() {
         customAction: function() {
           window.open('underwriting-form.html', '_blank');
         }
+      },
+      'auto-id-card': {
+        sections: ['autoIDCardSection'],
+        description: 'Generate digital auto insurance ID cards. Enter vehicle and policy information to create printable ID cards.',
+        documents: ['autoIDCard']
       }
     };
 
@@ -1341,6 +1385,10 @@ Save@BillLayneInsurance.com`);
           case 'envelope':
             html = generateEnvelopeHtml();
             title = 'Envelope';
+            break;
+          case 'autoIDCard':
+            html = generateAutoIDCard();
+            title = 'Auto Insurance ID Card';
             break;
         }
         
@@ -2892,6 +2940,215 @@ Save@BillLayneInsurance.com`);
         </body>
         </html>
       `;
+    }
+
+    // Generate Auto ID Card
+    function generateAutoIDCard() {
+      const data = {
+        company: document.getElementById('idCardCompany').value || 'Insurance Company',
+        policyNumber: document.getElementById('idCardPolicyNumber').value || 'POLICY123456',
+        naic: document.getElementById('idCardNAIC').value || '00000',
+        effectiveDate: document.getElementById('idCardEffectiveDate').value || new Date().toISOString().split('T')[0],
+        expirationDate: document.getElementById('idCardExpirationDate').value || new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
+        driverName: document.getElementById('idCardDriverName').value || 'John Doe',
+        additionalDriver: document.getElementById('idCardAdditionalDriver').value,
+        vehicleCount: parseInt(document.getElementById('idCardVehicleCount').value)
+      };
+      
+      // Company-specific claims phone numbers
+      const claimsPhoneNumbers = {
+        'Nationwide': '1-800-421-3535',
+        'Progressive': '1-800-776-4737',
+        'National General': '1-800-325-1088',
+        'Travelers': '1-800-252-4633',
+        'NC Grange Mutual': '1-800-438-4778',
+        'Alamance': '1-866-985-9031',
+        'Universal Property': '1-888-322-2126',
+        'Dairyland': '1-800-334-0090'
+      };
+      
+      data.claimsPhone = claimsPhoneNumbers[data.company] || '1-800-CLAIMS';
+
+      // Collect vehicle information
+      const vehicles = [];
+      for (let i = 1; i <= data.vehicleCount; i++) {
+        const vehicle = {
+          year: document.getElementById(`vehicle${i}Year`).value || '2024',
+          make: document.getElementById(`vehicle${i}Make`).value || 'Make',
+          model: document.getElementById(`vehicle${i}Model`).value || 'Model',
+          vin: document.getElementById(`vehicle${i}VIN`).value || 'VIN123456789'
+        };
+        vehicles.push(vehicle);
+      }
+
+      // Get company logo
+      const companyLogoUrl = getCompanyLogoUrl(data.company);
+
+      // Generate ID card HTML
+      let cardsHtml = '';
+      
+      vehicles.forEach((vehicle, index) => {
+        // Add page break after each vehicle except the last one
+        const pageBreakClass = index < vehicles.length - 1 ? 'page-break' : '';
+        
+        cardsHtml += `
+          <div class="card-container ${pageBreakClass}">
+            <!-- Front of Card -->
+            <div class="id-card">
+              <div class="card-header">
+                <div style="font-size: 10px;">
+                  <strong style="color: #004080;">NORTH CAROLINA</strong><br>
+                  <strong>AUTO INSURANCE ID CARD</strong>
+                </div>
+                ${companyLogoUrl ? `<img src="${companyLogoUrl}" style="height: 30px; width: auto;" alt="${data.company}">` : `<div style="font-weight: bold; font-size: 12px;">${data.company}</div>`}
+              </div>
+              
+              <div class="card-info">
+                <div>
+                  <strong>INSURED:</strong> ${data.driverName}
+                  ${data.additionalDriver ? `<br>${data.additionalDriver}` : ''}
+                </div>
+                
+                <div>
+                  <strong>POLICY NUMBER:</strong> ${data.policyNumber}
+                </div>
+                
+                <div style="display: flex; justify-content: space-between;">
+                  <div><strong>EFF DATE:</strong> ${formatDateForCard(data.effectiveDate)}</div>
+                  <div><strong>EXP DATE:</strong> ${formatDateForCard(data.expirationDate)}</div>
+                </div>
+                
+                <div>
+                  <strong>VEHICLE ${index + 1}:</strong><br>
+                  ${vehicle.year} ${vehicle.make} ${vehicle.model}
+                </div>
+                
+                <div>
+                  <strong>VIN:</strong> ${vehicle.vin}
+                </div>
+              </div>
+              
+              <div class="naic-number">
+                NAIC# ${data.naic}
+              </div>
+            </div>
+            
+            <!-- Back of Card -->
+            <div class="id-card" style="margin-top: 20px;">
+              <div style="font-size: 9px; font-weight: bold; margin-bottom: 10px;">NORTH CAROLINA MINIMUM LIABILITY LIMITS</div>
+              
+              <div style="font-size: 8px; line-height: 1.4;">
+                <div style="margin-bottom: 8px;">
+                  <strong>Bodily Injury:</strong> $50,000 per person / $100,000 per accident<br>
+                  <strong>Property Damage:</strong> $50,000 per accident<br>
+                  <strong>Uninsured Motorist:</strong> $50,000 per person / $100,000 per accident<br>
+                  <strong>Underinsured Motorist:</strong> $50,000 per person / $100,000 per accident
+                </div>
+                
+                <div style="border-top: 1px solid #ccc; padding-top: 8px; margin-top: 8px;">
+                  <strong>IMPORTANT:</strong> This card must be carried in the insured vehicle for presentation upon demand. Coverage is provided where required by state law.
+                </div>
+                
+                <div style="margin-top: 10px; border-top: 1px solid #ccc; padding-top: 8px;">
+                  <strong style="color: #d32f2f;">${data.company} 24-Hour Claims:</strong> ${data.claimsPhone}<br>
+                  <strong>Agent:</strong> Bill Layne Insurance Agency<br>
+                  <span style="margin-left: 40px;">(336) 835-1993</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Cutting instructions -->
+            <div style="margin-top: 30px; text-align: center; color: #666; font-size: 10px;">
+              <div style="border-top: 1px dashed #ccc; margin: 20px 0;"></div>
+              ✂ Cut along the dotted line and fold to create wallet-sized card
+            </div>
+          </div>
+        `;
+      });
+
+      return `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            @media print {
+              @page {
+                size: letter;
+                margin: 0.5in;
+              }
+              body {
+                margin: 0;
+                padding: 0;
+              }
+              .page-break {
+                page-break-after: always;
+              }
+              .card-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+                padding: 20px;
+              }
+            }
+            @media screen {
+              body {
+                font-family: Arial, sans-serif;
+                padding: 20px;
+                background: #f5f5f5;
+              }
+              .card-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+                margin-bottom: 40px;
+              }
+            }
+            .id-card {
+              width: 3.375in;
+              height: 2.125in;
+              border: 2px solid #000;
+              border-radius: 10px;
+              padding: 10px;
+              background: white;
+              font-family: Arial, sans-serif;
+              position: relative;
+              box-sizing: border-box;
+            }
+            .card-header {
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+              margin-bottom: 10px;
+            }
+            .card-info {
+              font-size: 9px;
+              line-height: 1.3;
+            }
+            .card-info div {
+              margin-bottom: 5px;
+            }
+            .naic-number {
+              position: absolute;
+              bottom: 5px;
+              right: 10px;
+              font-size: 8px;
+            }
+          </style>
+        </head>
+        <body>
+          ${cardsHtml}
+        </body>
+        </html>
+      `;
+    }
+
+    // Helper function to format date for ID card
+    function formatDateForCard(dateString) {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      return `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}/${date.getFullYear()}`;
     }
 
     // Generate Envelope

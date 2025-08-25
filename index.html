@@ -23,6 +23,7 @@
     <button class="tab-button active" onclick="showTab('generator')">Document Generator</button>
     <button class="tab-button" onclick="showTab('templates')">PDF Templates</button>
     <button class="tab-button" onclick="showTab('resources')">Resources</button>
+    <button class="tab-button" onclick="window.open('underwriting-form.html', '_blank')" style="background: #00539B;">Underwriting Email Tool</button>
     <button class="tab-button" onclick="logout()" style="float: right; background: #d32f2f;">Logout</button>
   </div>
 
@@ -44,8 +45,10 @@
           <option value="payment-receipt">Payment Receipt</option>
           <option value="claim-info">Claim Information Sheet</option>
           <option value="dl123">DL-123 Driver License Insurance Certification</option>
+          <option value="underwriting">Underwriting Email Template</option>
           <option value="letterhead">Professional Letterhead</option>
           <option value="envelope">Envelope</option>
+          <option value="auto-id-card">Auto ID Card Maker</option>
         </select>
       </div>
 
@@ -527,6 +530,171 @@ New York, NY 10001"></textarea>
             <textarea id="envelopeReturnAddress" rows="3" placeholder="Bill Layne Insurance
 PO Box 827
 Elkin, NC 28621"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auto ID Card Specific Fields -->
+      <div class="form-section" id="autoIDCardSection">
+        <div class="section-title">Auto Insurance ID Card Information</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Insurance Company</label>
+            <select id="idCardCompany" onchange="updateIDCardCompanyInfo()">
+              <option value="">Select Company</option>
+              <option value="Nationwide">Nationwide</option>
+              <option value="Progressive">Progressive</option>
+              <option value="National General">National General</option>
+              <option value="Travelers">Travelers</option>
+              <option value="NC Grange Mutual">NC Grange Mutual</option>
+              <option value="Alamance">Alamance</option>
+              <option value="Universal Property">Universal Property</option>
+              <option value="Dairyland">Dairyland</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Number of Vehicles</label>
+            <select id="idCardVehicleCount" onchange="updateVehicleFields()">
+              <option value="1">1 Vehicle</option>
+              <option value="2">2 Vehicles</option>
+              <option value="3">3 Vehicles</option>
+              <option value="4">4 Vehicles</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Vehicle 1 Information -->
+        <div id="vehicle1Section">
+          <h4 style="color: #004080; margin-top: 20px;">Vehicle 1 Information</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Year</label>
+              <input type="text" id="vehicle1Year" placeholder="2024" />
+            </div>
+            <div class="form-group">
+              <label>Make</label>
+              <input type="text" id="vehicle1Make" placeholder="Honda" />
+            </div>
+            <div class="form-group">
+              <label>Model</label>
+              <input type="text" id="vehicle1Model" placeholder="Accord" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>VIN</label>
+              <input type="text" id="vehicle1VIN" placeholder="Vehicle Identification Number" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Vehicle 2 Information (Hidden by default) -->
+        <div id="vehicle2Section" style="display: none;">
+          <h4 style="color: #004080; margin-top: 20px;">Vehicle 2 Information</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Year</label>
+              <input type="text" id="vehicle2Year" placeholder="2024" />
+            </div>
+            <div class="form-group">
+              <label>Make</label>
+              <input type="text" id="vehicle2Make" placeholder="Toyota" />
+            </div>
+            <div class="form-group">
+              <label>Model</label>
+              <input type="text" id="vehicle2Model" placeholder="Camry" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>VIN</label>
+              <input type="text" id="vehicle2VIN" placeholder="Vehicle Identification Number" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Vehicle 3 Information (Hidden by default) -->
+        <div id="vehicle3Section" style="display: none;">
+          <h4 style="color: #004080; margin-top: 20px;">Vehicle 3 Information</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Year</label>
+              <input type="text" id="vehicle3Year" placeholder="2024" />
+            </div>
+            <div class="form-group">
+              <label>Make</label>
+              <input type="text" id="vehicle3Make" placeholder="Ford" />
+            </div>
+            <div class="form-group">
+              <label>Model</label>
+              <input type="text" id="vehicle3Model" placeholder="F-150" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>VIN</label>
+              <input type="text" id="vehicle3VIN" placeholder="Vehicle Identification Number" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Vehicle 4 Information (Hidden by default) -->
+        <div id="vehicle4Section" style="display: none;">
+          <h4 style="color: #004080; margin-top: 20px;">Vehicle 4 Information</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Year</label>
+              <input type="text" id="vehicle4Year" placeholder="2024" />
+            </div>
+            <div class="form-group">
+              <label>Make</label>
+              <input type="text" id="vehicle4Make" placeholder="Chevrolet" />
+            </div>
+            <div class="form-group">
+              <label>Model</label>
+              <input type="text" id="vehicle4Model" placeholder="Silverado" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>VIN</label>
+              <input type="text" id="vehicle4VIN" placeholder="Vehicle Identification Number" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Driver Information -->
+        <div class="form-row" style="margin-top: 20px;">
+          <div class="form-group">
+            <label>Primary Driver Name</label>
+            <input type="text" id="idCardDriverName" placeholder="John Doe" />
+          </div>
+          <div class="form-group">
+            <label>Additional Driver (Optional)</label>
+            <input type="text" id="idCardAdditionalDriver" placeholder="Jane Doe" />
+          </div>
+        </div>
+
+        <!-- Policy Information for ID Card -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Policy Number</label>
+            <input type="text" id="idCardPolicyNumber" placeholder="Enter Policy Number" />
+          </div>
+          <div class="form-group">
+            <label>NAIC #</label>
+            <input type="text" id="idCardNAIC" placeholder="Auto-filled based on company" readonly style="background-color: #f0f0f0;" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Effective Date</label>
+            <input type="date" id="idCardEffectiveDate" />
+          </div>
+          <div class="form-group">
+            <label>Expiration Date</label>
+            <input type="date" id="idCardExpirationDate" />
           </div>
         </div>
       </div>
