@@ -507,6 +507,14 @@ function emailCurrentPDF() {
         sections: ['envelopeSection'],
         description: 'Generates a properly formatted envelope for mailing documents. Supports multiple envelope sizes (#10, #9, A7).',
         documents: ['envelope']
+      },
+      'underwriting': {
+        sections: [],
+        description: 'Professional underwriting email template for sending documentation to insurance companies. Click "Underwriting Email Tool" button above to access the full-featured email composition tool.',
+        documents: [],
+        customAction: function() {
+          window.open('underwriting-form.html', '_blank');
+        }
       }
     };
 
@@ -552,6 +560,14 @@ function emailCurrentPDF() {
       
       // Update description
       document.getElementById('templateDescription').innerHTML = config.description;
+      
+      // Check if template has custom action
+      if (config.customAction && typeof config.customAction === 'function') {
+        config.customAction();
+        // Reset to previous selection or default
+        document.getElementById('documentType').value = 'closing';
+        return;
+      }
       
       // Hide all sections first
       document.querySelectorAll('.form-section').forEach(section => {
@@ -1401,15 +1417,27 @@ Save@BillLayneInsurance.com`);
             .letterhead {
               display: flex;
               justify-content: space-between;
-              align-items: center;
+              align-items: flex-start;
               background-color: #004080;
               color: #fff;
               padding: 15px;
               margin-bottom: 15px;
+              position: relative;
             }
             .agency-info {
-              max-width: 70%;
+              max-width: 40%;
               font-size: 11px;
+            }
+            .logo-container {
+              display: flex;
+              justify-content: flex-end;
+              align-items: center;
+              gap: 15px;
+              flex: 1;
+            }
+            .logo-container img {
+              max-height: 60px;
+              width: auto;
             }
             .document-title {
               text-align: center;
@@ -1477,12 +1505,12 @@ Save@BillLayneInsurance.com`);
                 Elkin, NC 28621<br />
                 (336) 835-1993
               </div>
-              <div>
-                <img
+              <div class="logo-container">
+                ${companyLogoUrl ? `<img
                   src="${companyLogoUrl}"
-                  alt="Company Logo"
-                  style="width:250px; height:auto; display:block; margin:0 auto;"
-                />
+                  alt="${data.insuranceCompany}"
+                  style="background: white; padding: 5px; border-radius: 4px; max-height: 60px;"
+                />` : ''}
               </div>
             </div>
 
@@ -1617,15 +1645,27 @@ Save@BillLayneInsurance.com`);
             .letterhead {
               display: flex;
               justify-content: space-between;
-              align-items: center;
+              align-items: flex-start;
               background-color: #004080;
               color: #fff;
               padding: 15px;
               margin-bottom: 15px;
+              position: relative;
             }
             .agency-info {
-              max-width: 70%;
+              max-width: 40%;
               font-size: 11px;
+            }
+            .logo-container {
+              display: flex;
+              justify-content: flex-end;
+              align-items: center;
+              gap: 15px;
+              flex: 1;
+            }
+            .logo-container img {
+              max-height: 60px;
+              width: auto;
             }
             .header-title {
               text-align: center;
@@ -1675,12 +1715,12 @@ Save@BillLayneInsurance.com`);
                 Elkin, NC 28621<br />
                 (336) 835-1993
               </div>
-              <div>
-                <img
+              <div class="logo-container">
+                ${invoiceLogoUrl ? `<img
                   src="${invoiceLogoUrl}"
-                  alt="Company Logo"
-                  style="width:250px; height:auto; display:block; margin:0 auto;"
-                />
+                  alt="${data.insuranceCompany}"
+                  style="background: white; padding: 5px; border-radius: 4px; max-height: 60px;"
+                />` : ''}
               </div>
             </div>
 
@@ -1801,7 +1841,9 @@ Save@BillLayneInsurance.com`);
               1283 N Bridge St, Elkin, NC 28621<br />
               (336) 835-1993 | Save@BillLayneInsurance.com
             </div>
-            <img src="${companyLogoUrl}" alt="Company Logo" style="width:250px; height:auto; display:block; margin:10px auto;" />
+            <div style="text-align: right; margin: 10px 0;">
+              ${companyLogoUrl ? `<img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="max-width:200px; height:auto;" />` : ''}
+            </div>
           </div>
 
           <div class="date">${today}</div>
@@ -1904,7 +1946,9 @@ Save@BillLayneInsurance.com`);
               1283 N Bridge St, Elkin, NC 28621<br />
               (336) 835-1993
             </div>
-            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="width:250px; height:auto; display:block; margin:10px auto;" />
+            <div style="text-align: right; margin: 10px 0;">
+              ${companyLogoUrl ? `<img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="max-width:200px; height:auto;" />` : ''}
+            </div>
           </div>
 
           <p>${today}</p>
@@ -2004,7 +2048,9 @@ Save@BillLayneInsurance.com`);
               1283 N Bridge St, Elkin, NC 28621<br />
               (336) 835-1993
             </div>
-            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="width:250px; height:auto; display:block; margin:10px auto;" />
+            <div style="text-align: right; margin: 10px 0;">
+              ${companyLogoUrl ? `<img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="max-width:200px; height:auto;" />` : ''}
+            </div>
           </div>
 
           <div class="notice-header">
@@ -2115,7 +2161,9 @@ Save@BillLayneInsurance.com`);
               1283 N Bridge St, Elkin, NC 28621<br />
               (336) 835-1993
             </div>
-            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="width:250px; height:auto; display:block; margin:10px auto;" />
+            <div style="text-align: right; margin: 10px 0;">
+              ${companyLogoUrl ? `<img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="max-width:200px; height:auto;" />` : ''}
+            </div>
           </div>
 
           <div class="renewal-header">
@@ -2217,7 +2265,9 @@ Save@BillLayneInsurance.com`);
               1283 N Bridge St, Elkin, NC 28621<br />
               (336) 835-1993
             </div>
-            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="width:250px; height:auto; display:block; margin:10px auto;" />
+            <div style="text-align: right; margin: 10px 0;">
+              ${companyLogoUrl ? `<img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="max-width:200px; height:auto;" />` : ''}
+            </div>
           </div>
 
           <h2>Coverage Change Confirmation</h2>
@@ -2329,7 +2379,9 @@ Save@BillLayneInsurance.com`);
               1283 N Bridge St, Elkin, NC 28621<br />
               (336) 835-1993
             </div>
-            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="width:250px; height:auto; display:block; margin:10px auto;" onload="window.logoLoaded = true;" />
+            <div style="text-align: right; margin: 10px 0;">
+              ${companyLogoUrl ? `<img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="max-width:200px; height:auto;" onload="window.logoLoaded = true;" />` : ''}
+            </div>
           </div>
 
           <div class="receipt-header">
@@ -2453,7 +2505,9 @@ Save@BillLayneInsurance.com`);
               ${data.insuranceCompany}<br />
               Policy #: ${data.policyNumber}</p>
             </div>
-            <img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="width:250px; height:auto; display:block; margin:10px auto;" />
+            <div style="text-align: right; margin: 10px 0;">
+              ${companyLogoUrl ? `<img src="${companyLogoUrl}" alt="${data.insuranceCompany}" style="max-width:200px; height:auto;" />` : ''}
+            </div>
           </div>
 
           <div class="emergency-box">

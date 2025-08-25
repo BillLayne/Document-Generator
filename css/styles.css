@@ -35,6 +35,19 @@ body {
     box-shadow: none;
     border: none;
   }
+  /* Ensure logos are properly aligned when printing */
+  .logo-container,
+  .logo-header {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+  }
+  .logo-container img,
+  .logo-header img {
+    max-width: 200px !important;
+    height: auto !important;
+    margin: 0 !important;
+  }
 }
 
 /* =================================================================
@@ -96,6 +109,43 @@ h2 {
   margin: 0 0 20px 0;
   padding-bottom: 10px;
   border-bottom: 2px solid #004080;
+}
+
+/* =================================================================
+   Logo Alignment Styles
+   ================================================================= */
+
+.logo-container,
+.logo-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px 20px 10px 0;
+}
+
+.logo-container img,
+.logo-header img {
+  max-width: 200px;
+  height: auto;
+  margin: 0;
+}
+
+.document-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.company-info {
+  flex: 1;
+}
+
+.logo-section {
+  flex-shrink: 0;
+  text-align: right;
 }
 
 /* =================================================================
