@@ -174,6 +174,13 @@ function showTab(tabName) {
   if (tabName === 'templates') {
     loadPDFCategory();
   }
+  
+  // Initialize prompts if prompts tab
+  if (tabName === 'prompts') {
+    if (typeof initializePrompts === 'function') {
+      initializePrompts();
+    }
+  }
 }
 
 // Load PDF templates by category
@@ -1282,6 +1289,12 @@ Save@BillLayneInsurance.com`);
           return 'https://github.com/BillLayne/bill-layne-images/blob/main/logos/NC%20Grange%20Logo.png?raw=true';
         case 'Universal Property':
           return 'https://i.imgur.com/otPRl9b.png';
+        case 'Foremost':
+          return 'https://github.com/BillLayne/bill-layne-images/blob/main/logos/Foremost%20Insurance.jpg?raw=true';
+        case 'JSA':
+          return 'https://github.com/BillLayne/bill-layne-images/blob/main/logos/JSA%20LOGO.png?raw=true';
+        case 'NCJUA':
+          return 'https://github.com/BillLayne/bill-layne-images/blob/main/logos/ncjua%20LOGO.png?raw=true';
         default:
           return 'https://i.imgur.com/nZZmaLh.png';
       }
