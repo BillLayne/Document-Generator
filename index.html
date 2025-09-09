@@ -2343,7 +2343,7 @@ Save@BillLayneInsurance.com`;
       .cancel-button-group {
         margin-top: 30px;
         display: grid;
-        grid-template-columns: 2fr 1fr 1fr;
+        grid-template-columns: 2fr 1fr;
         gap: 10px;
       }
       
@@ -2436,6 +2436,15 @@ Save@BillLayneInsurance.com`;
       
       .cancel-btn-copy:hover {
         background: #0056b3;
+      }
+      
+      .cancel-btn-email {
+        background: #2196F3;
+        color: white;
+      }
+      
+      .cancel-btn-email:hover {
+        background: #0b7dda;
       }
       
       .cancel-btn-preview {
@@ -2625,16 +2634,12 @@ Save@BillLayneInsurance.com`;
               </select>
             </div>
             <div class="cancel-form-group">
-              <label>Refund Amount</label>
-              <input type="text" id="cancelRefundAmount" placeholder="$0.00">
+              <label>Effective Date</label>
+              <input type="date" id="cancelEffectiveDate">
             </div>
           </div>
           
           <div class="cancel-row">
-            <div class="cancel-form-group">
-              <label>Effective Date</label>
-              <input type="date" id="cancelEffectiveDate">
-            </div>
             <div class="cancel-form-group">
               <label>Expiration Date</label>
               <input type="date" id="cancelExpirationDate">
@@ -2691,9 +2696,6 @@ Save@BillLayneInsurance.com`;
             <button type="button" class="cancel-btn cancel-btn-generate" onclick="cancelGenerateLink()">
               🔗 Generate Cancellation Link
             </button>
-            <button type="button" class="cancel-btn cancel-btn-test" onclick="cancelTestWithSampleData()">
-              🧪 Test Sample
-            </button>
             <button type="button" class="cancel-btn cancel-btn-clear" onclick="cancelClearForm()">
               🔄 Clear Form
             </button>
@@ -2708,8 +2710,8 @@ Save@BillLayneInsurance.com`;
             <button class="cancel-btn-action cancel-btn-copy" onclick="cancelCopyLink()">
               📋 Copy Link
             </button>
-            <button class="cancel-btn-action cancel-btn-preview" onclick="cancelPreviewForm()">
-              👁️ Preview Form
+            <button class="cancel-btn-action cancel-btn-email" onclick="cancelEmailToCustomer()">
+              📧 Email Customer
             </button>
             <button class="cancel-btn-action cancel-btn-text" onclick="cancelSendToAgencyMatrix()">
               📱 Text Customer
@@ -2717,8 +2719,21 @@ Save@BillLayneInsurance.com`;
           </div>
           
           <div class="cancel-text-template" id="cancelTextTemplate" style="display: none;">
-            <strong>Text Message Template:</strong><br><br>
+            <strong>📱 Text Message Template:</strong><br><br>
             <span id="cancelTextMessage"></span>
+            <br><br>
+            <button class="cancel-btn-action cancel-btn-copy" style="width: 100%; margin-bottom: 10px;" onclick="cancelCopyTextMessage()">
+              📋 Copy Text Message
+            </button>
+          </div>
+          
+          <div class="cancel-text-template" id="cancelEmailTemplate" style="display: none; margin-top: 15px;">
+            <strong>📧 Email Template:</strong><br><br>
+            <span id="cancelEmailMessage"></span>
+            <br><br>
+            <button class="cancel-btn-action cancel-btn-copy" style="width: 100%;" onclick="cancelCopyEmailMessage()">
+              📋 Copy Email Template
+            </button>
           </div>
           
           <div class="cancel-copy-status" id="cancelCopyStatus"></div>
@@ -2728,21 +2743,6 @@ Save@BillLayneInsurance.com`;
     
     <script>
       let cancelCurrentGeneratedUrl = '';
-      
-      function cancelTestWithSampleData() {
-        document.getElementById('cancelInsuredName').value = 'John Smith';
-        document.getElementById('cancelInsuredAddress').value = '123 Main St, Elkin, NC 28621';
-        document.getElementById('cancelInsuredPhone').value = '336-555-1234';
-        document.getElementById('cancelInsuredEmail').value = 'test@example.com';
-        document.getElementById('cancelPolicyNumber').value = 'TEST-123456';
-        document.getElementById('cancelCompany').value = 'Progressive';
-        document.getElementById('cancelPolicyType').value = 'Auto';
-        document.getElementById('cancelEffectiveDate').value = '2024-01-15';
-        document.getElementById('cancelExpirationDate').value = '2025-01-15';
-        document.getElementById('cancelCancelDate').value = new Date().toISOString().split('T')[0];
-        document.getElementById('cancelReason').value = 'Insured Request';
-        document.getElementById('cancelNotes').value = 'Test cancellation - Sample notes for testing';
-      }
       
       function cancelGenerateLink() {
         // Get form values
@@ -2773,7 +2773,6 @@ Save@BillLayneInsurance.com`;
           cancelDate: cancelDate,
           cancelTime: document.getElementById('cancelCancelTime').value || '12:01 PM',
           reason: reason,
-          refundAmount: document.getElementById('cancelRefundAmount').value || '',
           notes: document.getElementById('cancelNotes').value || ''
         });
         
@@ -2789,8 +2788,13 @@ Save@BillLayneInsurance.com`;
         const phone = document.getElementById('cancelInsuredPhone').value || 'No phone';
         const textMsg = `Hi ${insuredName.split(' ')[0]},\n\nPer your request, here's the link to sign your ${policyType} policy cancellation form (Policy: ${policyNumber}).\n\nCancellation Date: ${cancelFormatDate(cancelDate)} at ${document.getElementById('cancelCancelTime').value}\n\nPlease review and sign:\n${cancelCurrentGeneratedUrl}\n\nThank you,\nBill Layne Insurance Agency\n336-835-1993`;
         
+        // Generate email template
+        const emailMsg = `Subject: Action Required - Sign Cancellation Request for Policy ${policyNumber}\n\nDear ${insuredName},\n\nPer your request to cancel your ${policyType} policy, please complete the electronic cancellation form.\n\nPolicy Details:\n• Policy Number: ${policyNumber}\n• Insurance Company: ${company}\n• Cancellation Date: ${cancelFormatDate(cancelDate)}\n• Cancellation Time: ${document.getElementById('cancelCancelTime').value}\n• Reason: ${reason}\n\nPlease click the link below to review and sign your cancellation request:\n\n${cancelCurrentGeneratedUrl}\n\nIMPORTANT: Your coverage will terminate on the date and time shown above. Please ensure you have replacement coverage if needed.\n\nIf you have any questions or wish to discuss alternatives, please call us at 336-835-1993.\n\nThank you,\nBill Layne Insurance Agency\n1283 N Bridge St, Elkin NC 28621\nSave@BillLayneInsurance.com`;
+        
         document.getElementById('cancelTextMessage').textContent = textMsg;
+        document.getElementById('cancelEmailMessage').textContent = emailMsg;
         document.getElementById('cancelTextTemplate').style.display = 'block';
+        document.getElementById('cancelEmailTemplate').style.display = 'block';
         
         // Scroll to results
         document.getElementById('cancelResultSection').scrollIntoView({ behavior: 'smooth' });
@@ -2816,23 +2820,124 @@ Save@BillLayneInsurance.com`;
         });
       }
       
-      function cancelPreviewForm() {
-        if (cancelCurrentGeneratedUrl) {
-          window.open(cancelCurrentGeneratedUrl, '_blank');
+      function cancelEmailToCustomer() {
+        const insuredName = document.getElementById('cancelInsuredName').value;
+        const insuredEmail = document.getElementById('cancelInsuredEmail').value;
+        const policyNumber = document.getElementById('cancelPolicyNumber').value;
+        const policyType = document.getElementById('cancelPolicyType').value;
+        const cancelDate = document.getElementById('cancelCancelDate').value;
+        const cancelTime = document.getElementById('cancelCancelTime').value;
+        const reason = document.getElementById('cancelReason').value;
+        const company = document.getElementById('cancelCompany').value;
+        
+        if (!insuredEmail) {
+          alert('Please enter customer email address first');
+          document.getElementById('cancelInsuredEmail').focus();
+          return;
         }
+        
+        // Create email subject
+        const subject = `Action Required - Sign Cancellation Request for Policy ${policyNumber}`;
+        
+        // Create email body
+        const body = `Dear ${insuredName},
+
+Per your request to cancel your ${policyType} policy, please complete the electronic cancellation form.
+
+Policy Details:
+• Policy Number: ${policyNumber}
+• Insurance Company: ${company}
+• Cancellation Date: ${cancelFormatDate(cancelDate)}
+• Cancellation Time: ${cancelTime}
+• Reason: ${reason}
+
+Please click the link below to review and sign your cancellation request:
+
+${cancelCurrentGeneratedUrl}
+
+IMPORTANT: Your coverage will terminate on the date and time shown above. Please ensure you have replacement coverage if needed.
+
+If you have any questions or wish to discuss alternatives, please call us at 336-835-1993.
+
+Thank you,
+Bill Layne Insurance Agency
+1283 N Bridge St, Elkin NC 28621
+Save@BillLayneInsurance.com`;
+        
+        // Copy the email content to clipboard
+        const emailContent = `To: ${insuredEmail}\nSubject: ${subject}\n\n${body}`;
+        navigator.clipboard.writeText(emailContent).then(function() {
+          cancelShowCopyStatus('✔ Email copied! Opening Gmail...');
+        }).catch(function(err) {
+          // Fallback if clipboard fails
+          const textArea = document.createElement('textarea');
+          textArea.value = emailContent;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+          cancelShowCopyStatus('✔ Email copied! Opening Gmail...');
+        });
+        
+        // Open Gmail compose in new tab
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(insuredEmail)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.open(gmailUrl, '_blank');
+      }
+      
+      function cancelCopyTextMessage() {
+        const text = document.getElementById('cancelTextMessage').textContent;
+        navigator.clipboard.writeText(text).then(function() {
+          cancelShowCopyStatus('✔ Text message copied!');
+        }).catch(function(err) {
+          const textArea = document.createElement('textarea');
+          textArea.value = text;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+          cancelShowCopyStatus('✔ Text message copied!');
+        });
+      }
+      
+      function cancelCopyEmailMessage() {
+        const email = document.getElementById('cancelEmailMessage').textContent;
+        navigator.clipboard.writeText(email).then(function() {
+          cancelShowCopyStatus('✔ Email template copied!');
+        }).catch(function(err) {
+          const textArea = document.createElement('textarea');
+          textArea.value = email;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+          cancelShowCopyStatus('✔ Email template copied!');
+        });
       }
       
       function cancelSendToAgencyMatrix() {
+        const phone = document.getElementById('cancelInsuredPhone').value;
+        
+        if (!phone) {
+          alert('Please enter a phone number to use Agency Matrix');
+          document.getElementById('cancelInsuredPhone').focus();
+          return;
+        }
+        
+        const phoneDigits = phone.replace(/\D/g, '');
+        
+        if (phoneDigits.length < 10) {
+          alert('Please enter a complete 10-digit phone number');
+          return;
+        }
+        
         const textMessage = document.getElementById('cancelTextMessage').textContent;
-        const phone = document.getElementById('cancelInsuredPhone').value.replace(/\D/g, '');
-        const phoneDigits = phone.substring(phone.length - 10);
         
         navigator.clipboard.writeText(textMessage).then(function() {
-          cancelShowCopyStatus('✔ Text message copied! Opening Agency Matrix...');
+          cancelShowCopyStatus('✔ Text copied! Opening Agency Matrix - paste the message there');
           setTimeout(() => {
             const agencyMatrixUrl = `https://agents.agencymatrix.com/#/customer/search?selection=Phone&query=${phoneDigits}`;
             window.open(agencyMatrixUrl, '_blank');
-          }, 1500);
+          }, 1000);
         }).catch(function(err) {
           alert('Please copy the text message manually, then click OK to open Agency Matrix');
           const agencyMatrixUrl = `https://agents.agencymatrix.com/#/customer/search?selection=Phone&query=${phoneDigits}`;
@@ -2865,6 +2970,24 @@ Save@BillLayneInsurance.com`;
         const cancelDateElement = document.getElementById('cancelCancelDate');
         if (cancelDateElement) {
           cancelDateElement.value = today;
+        }
+        
+        // Auto-format phone number
+        const phoneElement = document.getElementById('cancelInsuredPhone');
+        if (phoneElement) {
+          phoneElement.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0) {
+              if (value.length <= 3) {
+                value = '(' + value;
+              } else if (value.length <= 6) {
+                value = '(' + value.slice(0, 3) + ') ' + value.slice(3);
+              } else {
+                value = '(' + value.slice(0, 3) + ') ' + value.slice(3, 6) + '-' + value.slice(6, 10);
+              }
+            }
+            e.target.value = value;
+          });
         }
       });
     </script>
