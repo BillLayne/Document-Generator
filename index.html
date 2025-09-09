@@ -1580,6 +1580,17 @@ Elkin, NC 28621"></textarea>
         opacity: 0.9;
       }
       
+      .snl-system-badge {
+        display: inline-block;
+        background: #FF9800;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+      
       .snl-form-container {
         padding: 25px 20px;
       }
@@ -1713,6 +1724,15 @@ Elkin, NC 28621"></textarea>
         background: #0b7dda;
       }
       
+      .snl-btn-open {
+        background: #9C27B0;
+        color: white;
+      }
+      
+      .snl-btn-open:hover {
+        background: #7B1FA2;
+      }
+      
       .snl-result-section {
         display: none;
         margin-top: 25px;
@@ -1800,6 +1820,11 @@ Elkin, NC 28621"></textarea>
         margin-bottom: 5px;
       }
       
+      .snl-email-notice {
+        color: #d9534f; 
+        font-weight: bold;
+      }
+      
       @media (max-width: 600px) {
         .snl-row {
           grid-template-columns: 1fr;
@@ -1827,6 +1852,7 @@ Elkin, NC 28621"></textarea>
       <div class="snl-header">
         <h1>📋 No Loss Statement Link Generator</h1>
         <p>Bill Layne Insurance Agency - Staff Tool</p>
+        <span class="snl-system-badge">DOCS EMAIL SYSTEM</span>
       </div>
       
       <div class="snl-form-container">
@@ -1837,6 +1863,7 @@ Elkin, NC 28621"></textarea>
             <li>Click "Generate Link"</li>
             <li>Copy the link or use email/text templates</li>
             <li>Send to customer - they just need to sign!</li>
+            <li class="snl-email-notice">⚠️ This sends to Docs@BillLayneInsurance.com</li>
           </ol>
         </div>
         
@@ -1926,11 +1953,13 @@ Elkin, NC 28621"></textarea>
         
         <div id="snlResultSection" class="snl-result-section">
           <h3>✅ Link Generated Successfully!</h3>
+          <p style="color: #856404; font-weight: bold; margin-bottom: 10px;">📧 This form sends to: Docs@BillLayneInsurance.com</p>
           
           <div class="snl-link-display" id="snlGeneratedLink"></div>
           
           <div class="snl-button-group">
             <button class="snl-btn snl-btn-copy" onclick="snlCopyLink()">📋 Copy Link</button>
+            <button class="snl-btn snl-btn-open" onclick="snlOpenLink()">🔗 Open Form</button>
             <button class="snl-btn snl-btn-clear" onclick="snlClearForm()">🔄 Start Over</button>
           </div>
           
@@ -1957,8 +1986,11 @@ Elkin, NC 28621"></textarea>
     </div>
     
     <script>
-      // Base URL for the No Loss Statement form
+      // Base URL for the No Loss Statement form - CORRECTED URL
       const SNL_BASE_URL = 'https://billlayne.github.io/no-loss-statement/';
+      
+      // Store the generated URL globally
+      let snlCurrentGeneratedUrl = '';
       
       // Auto-format phone number
       document.getElementById('snlPhone').addEventListener('input', function(e) {
@@ -2019,6 +2051,9 @@ Elkin, NC 28621"></textarea>
         
         // Generate the full URL
         const fullUrl = SNL_BASE_URL + '?' + params.toString();
+        
+        // Store the URL globally
+        snlCurrentGeneratedUrl = fullUrl;
         
         // Display the link
         document.getElementById('snlGeneratedLink').textContent = fullUrl;
@@ -2091,13 +2126,39 @@ Save@BillLayneInsurance.com`;
       function snlCopyLink() {
         const link = document.getElementById('snlGeneratedLink').textContent;
         navigator.clipboard.writeText(link).then(function() {
-          snlShowCopyStatus();
+          snlShowCopyStatus('✔ Link copied to clipboard!');
+        }).catch(function(err) {
+          // Fallback for older browsers
+          const textArea = document.createElement('textarea');
+          textArea.value = link;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+          snlShowCopyStatus('✔ Link copied to clipboard!');
         });
+      }
+      
+      function snlOpenLink() {
+        if (snlCurrentGeneratedUrl) {
+          window.open(snlCurrentGeneratedUrl, '_blank');
+        } else {
+          alert('Please generate a link first');
+        }
       }
       
       function snlCopyText() {
         const text = document.getElementById('snlTextTemplate').textContent;
         navigator.clipboard.writeText(text).then(function() {
+          snlShowCopyStatus('✔ Text message copied!');
+        }).catch(function(err) {
+          // Fallback for older browsers
+          const textArea = document.createElement('textarea');
+          textArea.value = text;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
           snlShowCopyStatus('✔ Text message copied!');
         });
       }
@@ -2105,6 +2166,15 @@ Save@BillLayneInsurance.com`;
       function snlCopyEmail() {
         const email = document.getElementById('snlEmailTemplate').textContent;
         navigator.clipboard.writeText(email).then(function() {
+          snlShowCopyStatus('✔ Email template copied!');
+        }).catch(function(err) {
+          // Fallback for older browsers
+          const textArea = document.createElement('textarea');
+          textArea.value = email;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
           snlShowCopyStatus('✔ Email template copied!');
         });
       }
@@ -2149,12 +2219,13 @@ Save@BillLayneInsurance.com`;
         status.style.display = 'block';
         setTimeout(() => {
           status.style.display = 'none';
-        }, 2000);
+        }, 3000);
       }
       
       function snlClearForm() {
         document.getElementById('snlLinkGenerator').reset();
         document.getElementById('snlResultSection').style.display = 'none';
+        snlCurrentGeneratedUrl = '';
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
       
