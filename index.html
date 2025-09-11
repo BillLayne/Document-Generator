@@ -1562,696 +1562,866 @@ Elkin, NC 28621"></textarea>
     </script>
   </div>
 
-  <!-- SNL Tab (Statement of No Loss Generator) -->
-  <div id="snl-tab" class="tab-content" style="display: none;">
+<!-- SNL Tab (Statement of No Loss Generator) -->
+<div id="snl-tab" class="tab-content" style="display: none;">
     <style>
-      .snl-container {
-        max-width: 700px;
-        margin: 0 auto;
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        overflow: hidden;
-      }
-      
-      .snl-header {
-        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-        color: white;
-        padding: 25px 20px;
-        text-align: center;
-      }
-      
-      .snl-header h1 {
-        font-size: 24px;
-        margin-bottom: 10px;
-      }
-      
-      .snl-header p {
-        font-size: 14px;
-        opacity: 0.9;
-      }
-      
-      .snl-system-badge {
-        display: inline-block;
-        background: #FF9800;
-        color: white;
-        padding: 5px 15px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: bold;
-        margin-top: 10px;
-      }
-      
-      .snl-form-container {
-        padding: 25px 20px;
-      }
-      
-      .snl-section-title {
-        background: #f8f9fa;
-        padding: 10px 15px;
-        margin: 20px -20px 15px -20px;
-        border-left: 4px solid #667eea;
-        font-weight: 600;
-        color: #2a5298;
-      }
-      
-      .snl-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-        margin-bottom: 15px;
-      }
-      
-      .snl-form-group {
-        margin-bottom: 15px;
-      }
-      
-      .snl-form-group.full-width {
-        grid-column: span 2;
-      }
-      
-      .snl-form-group label {
-        display: block;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 5px;
-        font-size: 14px;
-      }
-      
-      .snl-required {
-        color: #f44336;
-      }
-      
-      .snl-form-group input[type="text"],
-      .snl-form-group input[type="email"],
-      .snl-form-group input[type="tel"],
-      .snl-form-group input[type="date"],
-      .snl-form-group select {
-        width: 100%;
-        padding: 10px 12px;
-        border: 2px solid #e0e0e0;
-        border-radius: 8px;
-        font-size: 15px;
-        transition: all 0.3s;
-      }
-      
-      .snl-form-group input:focus,
-      .snl-form-group select:focus {
-        outline: none;
-        border-color: #667eea;
-        background: #f8f9ff;
-      }
-      
-      .snl-button-group {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-top: 25px;
-      }
-      
-      .snl-btn {
-        padding: 12px 20px;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-      }
-      
-      .snl-btn-generate {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        grid-column: span 2;
-      }
-      
-      .snl-btn-generate:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-      }
-      
-      .snl-btn-copy {
-        background: #4CAF50;
-        color: white;
-      }
-      
-      .snl-btn-copy:hover {
-        background: #45a049;
-      }
-      
-      .snl-btn-email {
-        background: #2196F3;
-        color: white;
-      }
-      
-      .snl-btn-email:hover {
-        background: #0b7dda;
-      }
-      
-      .snl-btn-text {
-        background: #FF9800;
-        color: white;
-      }
-      
-      .snl-btn-text:hover {
-        background: #e68900;
-      }
-      
-      .snl-btn-clear {
-        background: #f44336;
-        color: white;
-      }
-      
-      .snl-btn-clear:hover {
-        background: #da190b;
-      }
-      
-      .snl-btn-matrix {
-        background: #2196F3;
-        color: white;
-      }
-      
-      .snl-btn-matrix:hover {
-        background: #0b7dda;
-      }
-      
-      .snl-btn-open {
-        background: #9C27B0;
-        color: white;
-      }
-      
-      .snl-btn-open:hover {
-        background: #7B1FA2;
-      }
-      
-      .snl-result-section {
-        display: none;
-        margin-top: 25px;
-        padding: 20px;
-        background: #f0f4ff;
-        border-radius: 10px;
-        border: 2px solid #667eea;
-      }
-      
-      .snl-result-section h3 {
-        color: #2a5298;
-        margin-bottom: 15px;
-        font-size: 18px;
-      }
-      
-      .snl-link-display {
-        background: white;
-        padding: 15px;
-        border-radius: 8px;
-        word-break: break-all;
-        font-family: monospace;
-        font-size: 13px;
-        color: #333;
-        border: 1px solid #ddd;
-        margin-bottom: 15px;
-        user-select: all;
-      }
-      
-      .snl-message-templates {
-        margin-top: 20px;
-        padding: 15px;
-        background: white;
-        border-radius: 8px;
-      }
-      
-      .snl-template {
-        margin-bottom: 15px;
-        padding: 12px;
-        background: #f8f9fa;
-        border-radius: 6px;
-        border-left: 3px solid #667eea;
-      }
-      
-      .snl-template h4 {
-        color: #2a5298;
-        font-size: 14px;
-        margin-bottom: 8px;
-      }
-      
-      .snl-template-text {
-        font-size: 13px;
-        line-height: 1.5;
-        color: #555;
-        white-space: pre-wrap;
-      }
-      
-      .snl-copy-status {
-        display: none;
-        color: #4CAF50;
-        font-weight: 600;
-        text-align: center;
-        margin-top: 10px;
-      }
-      
-      .snl-instructions {
-        background: #fff3cd;
-        border: 1px solid #ffc107;
-        border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 20px;
-      }
-      
-      .snl-instructions h4 {
-        color: #856404;
-        margin-bottom: 8px;
-      }
-      
-      .snl-instructions ol {
-        margin-left: 20px;
-        color: #856404;
-        font-size: 14px;
-      }
-      
-      .snl-instructions li {
-        margin-bottom: 5px;
-      }
-      
-      .snl-email-notice {
-        color: #d9534f; 
-        font-weight: bold;
-      }
-      
-      @media (max-width: 600px) {
-        .snl-row {
-          grid-template-columns: 1fr;
+        .snl-container * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
-        .snl-form-group.full-width {
-          grid-column: span 1;
+        .snl-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
         }
         
-        .snl-button-group {
-          grid-template-columns: 1fr;
-        }
-        
-        .snl-btn-generate {
-          grid-column: span 1;
+        .snl-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
         }
         
         .snl-header h1 {
-          font-size: 20px;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
         }
-      }
+        
+        .snl-header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        /* Instructions Box */
+        .snl-instructions-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .snl-instructions-box h3 {
+            color: #d63384;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .snl-instructions-box ol {
+            margin-left: 20px;
+            color: #333;
+            line-height: 1.8;
+        }
+        
+        .snl-instructions-box li {
+            margin-bottom: 8px;
+        }
+        
+        .snl-instructions-box .important {
+            background: #dc3545;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+        
+        .snl-instructions-box .highlight {
+            color: #dc3545;
+            font-weight: 600;
+        }
+        
+        .snl-language-selector {
+            background: #e7f3ff;
+            border: 2px solid #0066cc;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 0 20px 20px 20px;
+            text-align: center;
+        }
+        
+        .snl-language-label {
+            color: #0066cc;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .snl-lang-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .snl-lang-btn {
+            padding: 10px 30px;
+            border: 2px solid #0066cc;
+            background: white;
+            color: #0066cc;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            flex: 1;
+            max-width: 200px;
+        }
+        
+        .snl-lang-btn.active {
+            background: #0066cc;
+            color: white;
+        }
+        
+        .snl-lang-btn:hover:not(.active) {
+            background: #e7f3ff;
+        }
+        
+        .snl-form-container {
+            padding: 20px;
+        }
+        
+        .snl-form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .snl-form-group {
+            margin-bottom: 0;
+        }
+        
+        .snl-form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .snl-form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .snl-form-group input[type="text"],
+        .snl-form-group input[type="email"],
+        .snl-form-group input[type="tel"],
+        .snl-form-group input[type="date"],
+        .snl-form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+        
+        .snl-form-group input:focus,
+        .snl-form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+        
+        .snl-button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
+        .snl-btn {
+            padding: 14px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+        
+        .snl-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .snl-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .snl-btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .snl-btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .snl-output-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .snl-output-section.show {
+            display: block;
+            animation: slideDown 0.5s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .snl-output-group {
+            margin-bottom: 20px;
+        }
+        
+        .snl-output-label {
+            font-weight: 600;
+            color: #2a5298;
+            margin-bottom: 10px;
+            display: block;
+            font-size: 14px;
+        }
+        
+        .snl-output-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            position: relative;
+            word-break: break-all;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        
+        .snl-copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .snl-copy-btn:hover {
+            background: #5568d3;
+        }
+        
+        .snl-copy-btn.copied {
+            background: #4CAF50;
+        }
+        
+        .snl-action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .snl-action-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .snl-action-btn.copy-open {
+            background: #28a745;
+            grid-column: 1 / -1;
+        }
+        
+        .snl-action-btn.copy-open:hover {
+            background: #218838;
+        }
+        
+        .snl-action-btn.send-email {
+            background: #17a2b8;
+        }
+        
+        .snl-action-btn.send-email:hover {
+            background: #138496;
+        }
+        
+        .snl-action-btn.open-matrix {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .snl-action-btn.open-matrix:hover {
+            background: #e0a800;
+        }
+        
+        .snl-action-btn.copy-link {
+            background: #6c757d;
+        }
+        
+        .snl-action-btn.copy-link:hover {
+            background: #5a6268;
+        }
+        
+        .snl-action-btn.blank-form {
+            background: #dc3545;
+        }
+        
+        .snl-action-btn.blank-form:hover {
+            background: #c82333;
+        }
+        
+        .snl-success-message {
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .snl-success-message.show {
+            display: block;
+            animation: slideDown 0.5s ease-out;
+        }
+        
+        .snl-footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .snl-footer p {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+        
+        .snl-footer a {
+            color: #2a5298;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .snl-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 600px) {
+            .snl-form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .snl-action-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .snl-action-btn.copy-open {
+                grid-column: 1;
+            }
+            
+            .snl-button-group {
+                flex-direction: column;
+            }
+            
+            .snl-lang-buttons {
+                flex-direction: column;
+            }
+        }
     </style>
     
     <div class="snl-container">
-      <div class="snl-header">
-        <h1>📋 No Loss Statement Link Generator</h1>
-        <p>Bill Layne Insurance Agency - Staff Tool</p>
-        <span class="snl-system-badge">DOCS EMAIL SYSTEM</span>
-      </div>
-      
-      <div class="snl-form-container">
-        <div class="snl-instructions">
-          <h4>📌 Quick Instructions:</h4>
-          <ol>
-            <li>Fill in customer's information below</li>
-            <li>Click "Generate Link"</li>
-            <li>Copy the link or use email/text templates</li>
-            <li>Send to customer - they just need to sign!</li>
-            <li class="snl-email-notice">⚠️ This sends to Docs@BillLayneInsurance.com</li>
-          </ol>
+        <div class="snl-header">
+            <h1>📋 No Loss Statement Link Generator</h1>
+            <p>Bill Layne Insurance Agency - Staff Tool</p>
         </div>
         
-        <form id="snlLinkGenerator">
-          <div class="snl-section-title">Customer Information</div>
-          
-          <div class="snl-row">
-            <div class="snl-form-group full-width">
-              <label for="snlCustomerName">Customer Name <span class="snl-required">*</span></label>
-              <input type="text" id="snlCustomerName" required placeholder="John Smith">
+        <div class="snl-instructions-box">
+            <h3>⚡ Quick Instructions:</h3>
+            <ol>
+                <li>Fill in customer's information below</li>
+                <li><span class="highlight">Select customer's language preference</span> (English or Español)</li>
+                <li>Click "Generate Link"</li>
+                <li>Copy the link or use email/text templates</li>
+                <li>Send to customer - they just need to sign!</li>
+                <li>⚠️ This sends to <strong>Docs@BillLayneInsurance.com</strong></li>
+            </ol>
+            <div style="margin-top: 15px; padding: 10px; background: #ffeaa7; border-radius: 5px;">
+                <strong>Note:</strong> The form below stays in English for staff. Only the customer's messages and form will be in their selected language.
             </div>
-          </div>
-          
-          <div class="snl-row">
-            <div class="snl-form-group">
-              <label for="snlEmail">Email Address</label>
-              <input type="email" id="snlEmail" placeholder="customer@email.com">
-            </div>
-            
-            <div class="snl-form-group">
-              <label for="snlPhone">Phone Number</label>
-              <input type="tel" id="snlPhone" placeholder="(336) 555-1234">
-            </div>
-          </div>
-          
-          <div class="snl-section-title">Policy Information</div>
-          
-          <div class="snl-row">
-            <div class="snl-form-group">
-              <label for="snlPolicyNumber">Policy Number <span class="snl-required">*</span></label>
-              <input type="text" id="snlPolicyNumber" required placeholder="ABC123456">
-            </div>
-            
-            <div class="snl-form-group">
-              <label for="snlInsuranceCompany">Insurance Company <span class="snl-required">*</span></label>
-              <select id="snlInsuranceCompany" required>
-                <option value="">Select Company</option>
-                <option value="Nationwide">Nationwide</option>
-                <option value="Progressive">Progressive</option>
-                <option value="National General">National General</option>
-                <option value="Alamance">Alamance</option>
-                <option value="Travelers">Travelers</option>
-                <option value="Foremost">Foremost</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-          </div>
-          
-          <div class="snl-row">
-            <div class="snl-form-group">
-              <label for="snlPolicyType">Policy Type</label>
-              <select id="snlPolicyType">
-                <option value="">Select Type</option>
-                <option value="Auto">Auto Insurance</option>
-                <option value="Home">Homeowners Insurance</option>
-                <option value="Renters">Renters Insurance</option>
-                <option value="Life">Life Insurance</option>
-                <option value="Business">Business Insurance</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            
-            <div class="snl-form-group">
-              <label for="snlAmountPaid">Reinstatement Amount <span class="snl-required">*</span></label>
-              <input type="text" id="snlAmountPaid" required placeholder="425.00">
-            </div>
-          </div>
-          
-          <div class="snl-section-title">Important Dates</div>
-          
-          <div class="snl-row">
-            <div class="snl-form-group">
-              <label for="snlCancelDate">Cancellation/Lapse Date <span class="snl-required">*</span></label>
-              <input type="date" id="snlCancelDate" required>
-            </div>
-            
-            <div class="snl-form-group">
-              <label for="snlReinstateDate">Reinstatement Date <span class="snl-required">*</span></label>
-              <input type="date" id="snlReinstateDate" required>
-            </div>
-          </div>
-          
-          <div class="snl-button-group">
-            <button type="submit" class="snl-btn snl-btn-generate">🔗 Generate Link</button>
-          </div>
-        </form>
-        
-        <div id="snlResultSection" class="snl-result-section">
-          <h3>✅ Link Generated Successfully!</h3>
-          <p style="color: #856404; font-weight: bold; margin-bottom: 10px;">📧 This form sends to: Docs@BillLayneInsurance.com</p>
-          
-          <div class="snl-link-display" id="snlGeneratedLink"></div>
-          
-          <div class="snl-button-group">
-            <button class="snl-btn snl-btn-copy" onclick="snlCopyLink()">📋 Copy Link</button>
-            <button class="snl-btn snl-btn-open" onclick="snlOpenLink()">🔗 Open Form</button>
-            <button class="snl-btn snl-btn-clear" onclick="snlClearForm()">🔄 Start Over</button>
-          </div>
-          
-          <div class="snl-copy-status" id="snlCopyStatus">✔ Link copied to clipboard!</div>
-          
-          <div class="snl-message-templates">
-            <div class="snl-template">
-              <h4>📱 Text Message Template:</h4>
-              <div class="snl-template-text" id="snlTextTemplate"></div>
-              <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button class="snl-btn snl-btn-text" style="flex: 1;" onclick="snlCopyText()">Copy Text Message</button>
-                <button class="snl-btn snl-btn-matrix" style="flex: 1;" onclick="snlOpenAgencyMatrix()">🔍 Find in Agency Matrix</button>
-              </div>
-            </div>
-            
-            <div class="snl-template">
-              <h4>📧 Email Template:</h4>
-              <div class="snl-template-text" id="snlEmailTemplate"></div>
-              <button class="snl-btn snl-btn-email" style="margin-top: 10px; width: 100%;" onclick="snlCopyEmail()">Copy Email</button>
-            </div>
-          </div>
         </div>
-      </div>
+        
+        <div class="snl-language-selector">
+            <span class="snl-language-label">🌐 Customer's Preferred Language:</span>
+            <div class="snl-lang-buttons">
+                <button class="snl-lang-btn active" onclick="snlSetLanguage('en')">English</button>
+                <button class="snl-lang-btn" onclick="snlSetLanguage('es')">Español</button>
+            </div>
+        </div>
+        
+        <div class="snl-form-container">
+            <form id="snlLinkGenerator">
+                <div class="snl-form-row">
+                    <div class="snl-form-group">
+                        <label for="snlCompany">Insurance Company</label>
+                        <select id="snlCompany" required>
+                            <option value="">Select Company</option>
+                            <option value="Nationwide">Nationwide</option>
+                            <option value="Progressive">Progressive</option>
+                            <option value="National General">National General</option>
+                            <option value="Alamance">Alamance</option>
+                            <option value="Travelers">Travelers</option>
+                            <option value="Foremost">Foremost</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="snl-form-group">
+                        <label for="snlPolicyNumber">Policy Number</label>
+                        <input type="text" id="snlPolicyNumber" required>
+                    </div>
+                </div>
+                
+                <div class="snl-form-row">
+                    <div class="snl-form-group full-width">
+                        <label for="snlInsuredName">Insured Name</label>
+                        <input type="text" id="snlInsuredName" required>
+                    </div>
+                </div>
+                
+                <div class="snl-form-row">
+                    <div class="snl-form-group">
+                        <label for="snlEmail">Email Address</label>
+                        <input type="email" id="snlEmail" required>
+                    </div>
+                    
+                    <div class="snl-form-group">
+                        <label for="snlPhone">Phone Number</label>
+                        <input type="tel" id="snlPhone" required placeholder="(336) 555-1234">
+                    </div>
+                </div>
+                
+                <div class="snl-form-row">
+                    <div class="snl-form-group">
+                        <label for="snlPolicyType">Policy Type</label>
+                        <select id="snlPolicyType" required>
+                            <option value="">Select Type</option>
+                            <option value="Auto">Auto Insurance</option>
+                            <option value="Home">Homeowners</option>
+                            <option value="Renters">Renters</option>
+                            <option value="Life">Life</option>
+                            <option value="Business">Business</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="snl-form-group">
+                        <label for="snlAmountPaid">Amount Paid</label>
+                        <input type="text" id="snlAmountPaid" required placeholder="$0.00">
+                    </div>
+                </div>
+                
+                <div class="snl-form-row">
+                    <div class="snl-form-group">
+                        <label for="snlCancelDate">Cancellation Date</label>
+                        <input type="date" id="snlCancelDate" required>
+                    </div>
+                    
+                    <div class="snl-form-group">
+                        <label for="snlReinstateDate">Reinstatement Date</label>
+                        <input type="date" id="snlReinstateDate" required>
+                    </div>
+                </div>
+                
+                <div class="snl-button-group">
+                    <button type="submit" class="snl-btn snl-btn-primary">Generate Link</button>
+                    <button type="button" class="snl-btn snl-btn-secondary" onclick="snlClearForm()">Clear Form</button>
+                </div>
+            </form>
+            
+            <div id="snlOutput" class="snl-output-section">
+                <div class="snl-output-group">
+                    <label class="snl-output-label">Generated Link</label>
+                    <div class="snl-output-content">
+                        <span id="snlGeneratedLink"></span>
+                        <button class="snl-copy-btn" onclick="snlCopyToClipboard('snlGeneratedLink')">Copy</button>
+                    </div>
+                </div>
+                
+                <div class="snl-output-group">
+                    <label class="snl-output-label">Text Message Template</label>
+                    <div class="snl-output-content">
+                        <span id="snlTextTemplate"></span>
+                        <button class="snl-copy-btn" onclick="snlCopyToClipboard('snlTextTemplate')">Copy</button>
+                    </div>
+                </div>
+                
+                <div class="snl-output-group">
+                    <label class="snl-output-label">Email Template</label>
+                    <div class="snl-output-content">
+                        <span id="snlEmailTemplate"></span>
+                        <button class="snl-copy-btn" onclick="snlCopyToClipboard('snlEmailTemplate')">Copy</button>
+                    </div>
+                </div>
+                
+                <div class="snl-action-buttons">
+                    <button class="snl-action-btn copy-open" onclick="snlCopyAndOpenMatrix()">
+                        📋 Copy Text & Open Agency Matrix
+                    </button>
+                    <a href="#" id="snlEmailLink" class="snl-action-btn send-email" onclick="snlOpenGmailCompose(event)">
+                        ✉️ Send Email (Gmail)
+                    </a>
+                    <button class="snl-action-btn open-matrix" onclick="snlOpenMatrix()">
+                        🚀 Open Agency Matrix
+                    </button>
+                    <button class="snl-action-btn copy-link" onclick="snlCopyLinkOnly()">
+                        🔗 Copy Link Only
+                    </button>
+                    <a href="https://billlayne.github.io/no-loss-statement/" target="_blank" class="snl-action-btn blank-form">
+                        📝 Blank Form
+                    </a>
+                    <a href="https://www.BillLayneInsurance.com" target="_blank" class="snl-action-btn" style="background: #563d7c;">
+                        🌐 Agency Website
+                    </a>
+                </div>
+                
+                <div id="snlSuccessMessage" class="snl-success-message">
+                    ✅ Text copied! Opening Agency Matrix to customer search...
+                </div>
+            </div>
+        </div>
+        
+        <div class="snl-footer">
+            <p>
+                Bill Layne Insurance Agency<br>
+                1283 N Bridge St, Elkin NC 28621<br>
+                📞 336-835-1993 | ✉️ Save@BillLayneInsurance.com
+            </p>
+            <a href="https://www.BillLayneInsurance.com" target="_blank">www.BillLayneInsurance.com</a>
+        </div>
     </div>
-    
+
     <script>
-      // Base URL for the No Loss Statement form - CORRECTED URL
-      const SNL_BASE_URL = 'https://billlayne.github.io/no-loss-statement/';
-      
-      // Store the generated URL globally
-      let snlCurrentGeneratedUrl = '';
-      
-      // Auto-format phone number
-      document.getElementById('snlPhone').addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length > 0) {
-          if (value.length <= 3) {
-            value = '(' + value;
-          } else if (value.length <= 6) {
-            value = '(' + value.slice(0, 3) + ') ' + value.slice(3);
-          } else {
-            value = '(' + value.slice(0, 3) + ') ' + value.slice(3, 6) + '-' + value.slice(6, 10);
-          }
+        let snlCustomerLanguage = 'en';
+        let snlGeneratedData = {};
+        
+        // Language switching function - ONLY for customer messages, not the interface
+        function snlSetLanguage(lang) {
+            snlCustomerLanguage = lang;
+            
+            // Update button states
+            document.querySelectorAll('.snl-lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Re-generate output if it exists with new language
+            if (snlGeneratedData.link) {
+                snlGenerateLink();
+            }
         }
-        e.target.value = value;
-      });
-      
-      // Auto-format amount
-      document.getElementById('snlAmountPaid').addEventListener('blur', function(e) {
-        let value = e.target.value.replace(/[^\d.]/g, '');
-        if (value && !isNaN(value)) {
-          e.target.value = parseFloat(value).toFixed(2);
+        
+        // Auto-format phone number
+        document.getElementById('snlPhone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                if (value.length <= 3) {
+                    value = '(' + value;
+                } else if (value.length <= 6) {
+                    value = '(' + value.slice(0, 3) + ') ' + value.slice(3);
+                } else {
+                    value = '(' + value.slice(0, 3) + ') ' + value.slice(3, 6) + '-' + value.slice(6, 10);
+                }
+            }
+            e.target.value = value;
+        });
+        
+        // Auto-format amount
+        document.getElementById('snlAmountPaid').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/[^\d.]/g, '');
+            if (value && !e.target.value.startsWith('$')) {
+                e.target.value = '$' + value;
+            }
+        });
+        
+        // Form submission
+        document.getElementById('snlLinkGenerator').addEventListener('submit', function(e) {
+            e.preventDefault();
+            snlGenerateLink();
+        });
+        
+        function snlGenerateLink() {
+            // Get form values
+            const company = document.getElementById('snlCompany').value;
+            const policyNumber = document.getElementById('snlPolicyNumber').value;
+            const name = document.getElementById('snlInsuredName').value;
+            const email = document.getElementById('snlEmail').value;
+            const phone = document.getElementById('snlPhone').value;
+            const policyType = document.getElementById('snlPolicyType').value;
+            const cancelDate = document.getElementById('snlCancelDate').value;
+            const reinstateDate = document.getElementById('snlReinstateDate').value;
+            const amount = document.getElementById('snlAmountPaid').value;
+            
+            // Build URL with parameters
+            const baseUrl = 'https://billlayne.github.io/no-loss-statement/';
+            const params = new URLSearchParams({
+                company: company,
+                policy: policyNumber,
+                name: name,
+                email: email,
+                phone: phone,
+                type: policyType,
+                cancelDate: cancelDate,
+                reinstateDate: reinstateDate,
+                amount: amount.replace('$', '')
+            });
+            
+            // Add language parameter if Spanish is selected
+            const langParam = snlCustomerLanguage === 'es' ? '&lang=es' : '';
+            const link = `${baseUrl}?${params.toString()}${langParam}`;
+            
+            // Store data globally (including clean phone for Agency Matrix)
+            snlGeneratedData = {
+                link: link,
+                name: name,
+                phone: phone,
+                phoneClean: phone.replace(/\D/g, ''), // Remove all non-digits for Agency Matrix URL
+                email: email,
+                company: company,
+                policyNumber: policyNumber
+            };
+            
+            // Display output
+            snlDisplayOutput();
+            
+            // Show output section
+            document.getElementById('snlOutput').classList.add('show');
         }
-      });
-      
-      // Handle form submission
-      document.getElementById('snlLinkGenerator').addEventListener('submit', function(e) {
-        e.preventDefault();
-        snlGenerateLink();
-      });
-      
-      function snlGenerateLink() {
-        // Get form values
-        const name = document.getElementById('snlCustomerName').value;
-        const email = document.getElementById('snlEmail').value;
-        const phone = document.getElementById('snlPhone').value;
-        const policyNumber = document.getElementById('snlPolicyNumber').value;
-        const company = document.getElementById('snlInsuranceCompany').value;
-        const policyType = document.getElementById('snlPolicyType').value;
-        const amount = document.getElementById('snlAmountPaid').value;
-        const cancelDate = document.getElementById('snlCancelDate').value;
-        const reinstateDate = document.getElementById('snlReinstateDate').value;
         
-        // Build URL parameters with CORRECT parameter names
-        let params = new URLSearchParams();
-        
-        // FIXED: Using the correct parameter names that the form expects
-        params.append('policyNumber', policyNumber);
-        params.append('amountPaid', amount);
-        params.append('insuranceCompany', company);
-        params.append('insuredName', name);
-        params.append('cancellationDate', cancelDate);
-        params.append('reinstatementDate', reinstateDate);
-        
-        // Add optional fields with correct names
-        if (email) params.append('email', email);
-        if (phone) params.append('phone', phone);
-        if (policyType) params.append('policyType', policyType);
-        
-        // Generate the full URL
-        const fullUrl = SNL_BASE_URL + '?' + params.toString();
-        
-        // Store the URL globally
-        snlCurrentGeneratedUrl = fullUrl;
-        
-        // Display the link
-        document.getElementById('snlGeneratedLink').textContent = fullUrl;
-        document.getElementById('snlResultSection').style.display = 'block';
-        
-        // Generate message templates
-        snlGenerateTemplates(name, policyNumber, amount, cancelDate, reinstateDate, fullUrl);
-        
-        // Scroll to results
-        document.getElementById('snlResultSection').scrollIntoView({ behavior: 'smooth' });
-      }
-      
-      function snlGenerateTemplates(name, policy, amount, cancelDate, reinstateDate, url) {
-        // Format dates for display
-        const formatDate = (dateStr) => {
-          const date = new Date(dateStr + 'T12:00:00');
-          return date.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
-        };
-        
-        const cancelFormatted = formatDate(cancelDate);
-        const reinstateFormatted = formatDate(reinstateDate);
-        const firstName = name.split(' ')[0];
-        
-        // Text message template
-        const textMsg = `Hi ${firstName}, 
+        function snlDisplayOutput() {
+            // Display link
+            document.getElementById('snlGeneratedLink').textContent = snlGeneratedData.link;
+            
+            // Generate text template based on CUSTOMER language
+            let textTemplate;
+            if (snlCustomerLanguage === 'es') {
+                // Spanish version
+                const firstName = snlGeneratedData.name.split(' ')[0];
+                const cancelDateFormatted = new Date(document.getElementById('snlCancelDate').value).toLocaleDateString();
+                textTemplate = `Hola ${firstName}
 
-To reinstate your insurance policy #${policy}, please complete the No Loss Statement:
+Para reinstalar su póliza de seguro #${snlGeneratedData.policyNumber}, complete la Declaración de No Pérdida:
 
-Amount: $${amount}
-Cancelled: ${cancelFormatted}
+Cantidad: ${document.getElementById('snlAmountPaid').value}
+Cancelado: ${cancelDateFormatted}
 
-Click here: ${url}
+Haga clic aquí:
+${snlGeneratedData.link}
 
-Just verify info & sign. Takes 2 minutes!
+Solo verifique la información y firme. Toma 2 minutos
+¿Preguntas? Llame al 336-835-1993
+Bill Layne Insurance`;
+            } else {
+                // English version - YOUR EXACT FORMAT
+                const firstName = snlGeneratedData.name.split(' ')[0];
+                const cancelDateFormatted = new Date(document.getElementById('snlCancelDate').value).toLocaleDateString();
+                textTemplate = `Hi ${firstName}
 
+To reinstate your insurance policy #${snlGeneratedData.policyNumber}, please complete the No Loss Statement:
+
+Amount: ${document.getElementById('snlAmountPaid').value}
+Cancelled: ${cancelDateFormatted}
+
+Click here:
+${snlGeneratedData.link}
+
+Just verify info & sign. Takes 2 minutes
 Questions? Call 336-835-1993
+Bill Layne Insurance`;
+            }
+            document.getElementById('snlTextTemplate').textContent = textTemplate;
+            
+            // Generate email template based on CUSTOMER language
+            let emailSubject, emailBody;
+            if (snlCustomerLanguage === 'es') {
+                emailSubject = `Declaración de No Pérdida - ${snlGeneratedData.company} Póliza ${snlGeneratedData.policyNumber}`;
+                emailBody = `Estimado/a ${snlGeneratedData.name},
 
--Bill Layne Insurance`;
-        
-        // Email template
-        const emailMsg = `Subject: Action Required - Complete No Loss Statement for Policy Reinstatement
+Según lo solicitado, aquí está el enlace para completar su Declaración de No Pérdida para reinstalar su póliza con ${snlGeneratedData.company}.
 
-Dear ${name},
+Número de Póliza: ${snlGeneratedData.policyNumber}
 
-To complete the reinstatement of your insurance policy, we need you to sign a Statement of No Loss.
+Por favor haga clic en el siguiente enlace para completar el formulario:
+${snlGeneratedData.link}
 
-Policy Details:
-• Policy Number: ${policy}
-• Cancellation Date: ${cancelFormatted}
-• Reinstatement Date: ${reinstateFormatted}
-• Amount Due: $${amount}
+Este formulario requiere su firma electrónica. Una vez completado, recibirá una confirmación.
 
-Please click the link below to complete the form. All your information has been pre-filled - you just need to verify and sign:
+Si tiene alguna pregunta, no dude en contactarnos.
 
-${url}
-
-This takes less than 2 minutes to complete on any device.
-
-If you have any questions, please don't hesitate to call us at 336-835-1993.
-
-Thank you,
+Saludos cordiales,
 Bill Layne Insurance Agency
-1283 N Bridge St, Elkin NC 28621
+336-835-1993
 Save@BillLayneInsurance.com`;
-        
-        document.getElementById('snlTextTemplate').textContent = textMsg;
-        document.getElementById('snlEmailTemplate').textContent = emailMsg;
-      }
-      
-      function snlCopyLink() {
-        const link = document.getElementById('snlGeneratedLink').textContent;
-        navigator.clipboard.writeText(link).then(function() {
-          snlShowCopyStatus('✔ Link copied to clipboard!');
-        }).catch(function(err) {
-          // Fallback for older browsers
-          const textArea = document.createElement('textarea');
-          textArea.value = link;
-          document.body.appendChild(textArea);
-          textArea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textArea);
-          snlShowCopyStatus('✔ Link copied to clipboard!');
-        });
-      }
-      
-      function snlOpenLink() {
-        if (snlCurrentGeneratedUrl) {
-          window.open(snlCurrentGeneratedUrl, '_blank');
-        } else {
-          alert('Please generate a link first');
-        }
-      }
-      
-      function snlCopyText() {
-        const text = document.getElementById('snlTextTemplate').textContent;
-        navigator.clipboard.writeText(text).then(function() {
-          snlShowCopyStatus('✔ Text message copied!');
-        }).catch(function(err) {
-          // Fallback for older browsers
-          const textArea = document.createElement('textarea');
-          textArea.value = text;
-          document.body.appendChild(textArea);
-          textArea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textArea);
-          snlShowCopyStatus('✔ Text message copied!');
-        });
-      }
-      
-      function snlCopyEmail() {
-        const email = document.getElementById('snlEmailTemplate').textContent;
-        navigator.clipboard.writeText(email).then(function() {
-          snlShowCopyStatus('✔ Email template copied!');
-        }).catch(function(err) {
-          // Fallback for older browsers
-          const textArea = document.createElement('textarea');
-          textArea.value = email;
-          document.body.appendChild(textArea);
-          textArea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textArea);
-          snlShowCopyStatus('✔ Email template copied!');
-        });
-      }
-      
-      function snlOpenAgencyMatrix() {
-        const phoneValue = document.getElementById('snlPhone').value;
-        
-        if (!phoneValue) {
-          alert('Please enter a phone number first');
-          document.getElementById('snlPhone').focus();
-          return;
-        }
-        
-        // Strip all non-numeric characters from phone
-        const phoneDigits = phoneValue.replace(/\D/g, '');
-        
-        if (phoneDigits.length < 10) {
-          alert('Please enter a complete 10-digit phone number');
-          return;
-        }
-        
-        // First, copy the text message to clipboard
-        const text = document.getElementById('snlTextTemplate').textContent;
-        navigator.clipboard.writeText(text).then(function() {
-          // Then open Agency Matrix
-          const agencyMatrixUrl = `https://agents.agencymatrix.com/#/customer/search?selection=Phone&query=${phoneDigits}`;
-          window.open(agencyMatrixUrl, '_blank');
-          
-          // Show status message
-          snlShowCopyStatus('✔ Text copied! Opening Agency Matrix - paste the message there');
-        }).catch(function(err) {
-          // Fallback if clipboard fails
-          alert('Please copy the text message manually, then click OK to open Agency Matrix');
-          const agencyMatrixUrl = `https://agents.agencymatrix.com/#/customer/search?selection=Phone&query=${phoneDigits}`;
-          window.open(agencyMatrixUrl, '_blank');
-        });
-      }
-      
-      function snlShowCopyStatus(message = '✔ Link copied to clipboard!') {
-        const status = document.getElementById('snlCopyStatus');
-        status.textContent = message;
-        status.style.display = 'block';
-        setTimeout(() => {
-          status.style.display = 'none';
-        }, 3000);
-      }
-      
-      function snlClearForm() {
-        document.getElementById('snlLinkGenerator').reset();
-        document.getElementById('snlResultSection').style.display = 'none';
-        snlCurrentGeneratedUrl = '';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-      
-      // Set today's date as default for reinstatement date
-      document.addEventListener('DOMContentLoaded', function() {
-        const today = new Date().toISOString().split('T')[0];
-        const reinstateElement = document.getElementById('snlReinstateDate');
-        if (reinstateElement) {
-          reinstateElement.value = today;
-        }
-      });
-    </script>
-  </div>
+            } else {
+                emailSubject = `Statement of No Loss - ${snlGeneratedData.company} Policy ${snlGeneratedData.policyNumber}`;
+                emailBody = `Dear ${snlGeneratedData.name},
 
-  <!-- Cancellation Tab (ACORD 35 Cancellation Generator) -->
+As requested, here is the link to complete your Statement of No Loss to reinstate your policy with ${snlGeneratedData.company}.
+
+Policy Number: ${snlGeneratedData.policyNumber}
+
+Please click the following link to complete the form:
+${snlGeneratedData.link}
+
+This form requires your electronic signature. Once completed, you will receive a confirmation.
+
+If you have any questions, please don't hesitate to contact us.
+
+Best regards,
+Bill Layne Insurance Agency
+336-835-1993
+Save@BillLayneInsurance.com`;
+            }
+            
+            document.getElementById('snlEmailTemplate').textContent = emailBody;
+            
+            // Store email data for Gmail compose
+            snlGeneratedData.emailSubject = emailSubject;
+            snlGeneratedData.emailBody = emailBody;
+        }
+        
+        function snlCopyToClipboard(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                // Update button text
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+        
+        // Copy text message and open Agency Matrix to specific customer phone
+        function snlCopyAndOpenMatrix() {
+            // Get the text template content
+            const textTemplate = document.getElementById('snlTextTemplate').textContent;
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(textTemplate).then(() => {
+                // Show success message
+                const successMsg = document.getElementById('snlSuccessMessage');
+                successMsg.classList.add('show');
+                
+                // Open Agency Matrix with phone number search
+                const phoneNumber = snlGeneratedData.phoneClean;
+                const agencyMatrixUrl = `https://agents.agencymatrix.com/#/customer/search?selection=Phone&query=${phoneNumber}`;
+                window.open(agencyMatrixUrl, '_blank');
+                
+                // Hide success message after 3 seconds
+                setTimeout(() => {
+                    successMsg.classList.remove('show');
+                }, 3000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+                alert('Failed to copy text. Please try again.');
+            });
+        }
+        
+        function snlOpenMatrix() {
+            // Open Agency Matrix with phone number search
+            const phoneNumber = snlGeneratedData.phoneClean;
+            const agencyMatrixUrl = `https://agents.agencymatrix.com/#/customer/search?selection=Phone&query=${phoneNumber}`;
+            window.open(agencyMatrixUrl, '_blank');
+        }
+        
+        function snlOpenGmailCompose(event) {
+            event.preventDefault();
+            
+            // Copy email body to clipboard for easy pasting
+            navigator.clipboard.writeText(snlGeneratedData.emailBody).then(() => {
+                // Build Gmail compose URL
+                const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(snlGeneratedData.email)}&su=${encodeURIComponent(snlGeneratedData.emailSubject)}&body=${encodeURIComponent(snlGeneratedData.emailBody)}`;
+                
+                // Open Gmail compose in new window
+                window.open(gmailUrl, '_blank');
+                
+                // Show brief success message
+                const successMsg = document.getElementById('snlSuccessMessage');
+                successMsg.textContent = '✅ Opening Gmail with email ready to send...';
+                successMsg.classList.add('show');
+                
+                setTimeout(() => {
+                    successMsg.classList.remove('show');
+                    successMsg.textContent = '✅ Text copied! Opening Agency Matrix to customer search...';
+                }, 2000);
+            });
+        }
+        
+        function snlCopyLinkOnly() {
+            navigator.clipboard.writeText(snlGeneratedData.link).then(() => {
+                const successMsg = document.getElementById('snlSuccessMessage');
+                successMsg.textContent = '✅ Link copied to clipboard!';
+                successMsg.classList.add('show');
+                
+                setTimeout(() => {
+                    successMsg.classList.remove('show');
+                    successMsg.textContent = '✅ Text copied! Opening Agency Matrix to customer search...';
+                }, 3000);
+            });
+        }
+        
+        function snlClearForm() {
+            document.getElementById('snlLinkGenerator').reset();
+            document.getElementById('snlOutput').classList.remove('show');
+            snlGeneratedData = {};
+        }
+    </script>
+</div>  <!-- Cancellation Tab (ACORD 35 Cancellation Generator) -->
   <div id="cancellation-tab" class="tab-content" style="display: none;">
     <style>
       .cancel-container {
