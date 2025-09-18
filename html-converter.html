@@ -1,0 +1,2349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI HTML Email Viewer Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #a78bfa;
+            --accent: #f97316;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-medium: #1e293b;
+            --bg-light: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(125deg, #6366f1 0%, #8b5cf6 25%, #ec4899 50%, #f97316 75%, #6366f1 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
+            opacity: 0.1;
+            z-index: -2;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+            z-index: -1;
+        }
+
+        .orb1 {
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            top: -150px;
+            left: -150px;
+            animation-delay: 0s;
+        }
+
+        .orb2 {
+            width: 400px;
+            height: 400px;
+            background: var(--secondary);
+            bottom: -200px;
+            right: -200px;
+            animation-delay: 5s;
+        }
+
+        .orb3 {
+            width: 250px;
+            height: 250px;
+            background: var(--accent);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, -50px) scale(1.1); }
+            50% { transform: translate(-50px, 50px) scale(0.9); }
+            75% { transform: translate(30px, 30px) scale(1.05); }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 1s ease;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+            animation: fadeInDown 1s ease 0.2s both;
+        }
+
+        .toolbar-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .toolbar-divider {
+            width: 1px;
+            height: 30px;
+            background: var(--glass-border);
+            margin: 0 0.5rem;
+        }
+
+        /* Main content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Glass panels */
+        .panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Make preview panel background darker for better contrast */
+        .panel:has(.preview-container) {
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        .panel-header i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .panel-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Code editor */
+        .code-editor {
+            position: relative;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-medium);
+            border-radius: 10px;
+        }
+
+        .editor-info {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Preview */
+        .preview-container {
+            position: relative;
+            height: 600px;
+            background: transparent;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .preview-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        /* Preview mode toggle buttons */
+        .preview-modes {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .preview-mode-btn {
+            padding: 0.5rem 1rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .preview-mode-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+        }
+
+        .preview-mode-btn:hover:not(.active) {
+            border-color: var(--primary);
+            color: var(--text-primary);
+        }
+
+        .preview-mode-btn i {
+            margin-right: 0.25rem;
+        }
+
+        /* Email validation panel */
+        .validation-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .validation-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .validation-item:last-child {
+            border-bottom: none;
+        }
+
+        .validation-item i {
+            font-size: 1.25rem;
+        }
+
+        .validation-item.success i {
+            color: var(--success);
+        }
+
+        .validation-item.warning i {
+            color: var(--warning);
+        }
+
+        .validation-item.error i {
+            color: var(--danger);
+        }
+
+        /* Template library */
+        .template-library {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .template-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .template-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .template-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .template-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .template-card p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Action buttons */
+        .actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn i {
+            font-size: 1.25rem;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-card p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* CodeMirror styles */
+        .CodeMirror {
+            height: 500px;
+            width: 100% !important;
+            border-radius: 10px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .CodeMirror-gutters {
+            background: var(--bg-medium);
+            border-right: 1px solid var(--bg-light);
+        }
+
+        .CodeMirror-linenumber {
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
+
+        .code-editor-wrapper {
+            border: 1px solid var(--bg-light);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .code-editor-wrapper:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .code-editor {
+            width: 100%;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast i {
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        /* Loading animation */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1001;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--glass-border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--bg-medium);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideInUp 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        /* Form inputs */
+        input[type="text"], input[type="email"], input[type="number"] {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="email"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        #findReplaceMessage {
+            color: var(--text-secondary);
+        }
+
+        #findReplaceResults {
+            transition: all 0.3s ease;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Hidden iframe for clean HTML copying */
+        #clean-copy-frame {
+            position: absolute;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            border: none;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated background orbs -->
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                Press Ctrl/Cmd + F for Find & Replace • Ctrl/Cmd + E for Live Edit • Drag images to optimize & insert
+            </p>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="toolbar-group">
+                <button class="btn btn-sm" onclick="formatHTML()">
+                    <i class="fas fa-indent"></i> Format
+                </button>
+                <button class="btn btn-sm" onclick="validateEmail()">
+                    <i class="fas fa-check-circle"></i> Validate
+                </button>
+                <button class="btn btn-sm" onclick="inlineCSS()">
+                    <i class="fas fa-compress"></i> Inline CSS
+                </button>
+                <button class="btn btn-sm" onclick="showFindReplace()">
+                    <i class="fas fa-search"></i> Find & Replace
+                </button>
+            </div>
+            <div class="toolbar-divider"></div>
+            <div class="toolbar-group">
+                <button class="btn btn-sm" onclick="showTemplates()">
+                    <i class="fas fa-file-alt"></i> Templates
+                </button>
+                <button class="btn btn-sm" onclick="insertSnippet()">
+                    <i class="fas fa-puzzle-piece"></i> Snippets
+                </button>
+            </div>
+            <div class="toolbar-divider"></div>
+            <div class="toolbar-group">
+                <button class="btn btn-sm" onclick="testEmailClients()">
+                    <i class="fas fa-envelope-open-text"></i> Test Clients
+                </button>
+                <button class="btn btn-sm" onclick="optimizeImages()">
+                    <i class="fas fa-image"></i> Optimize Images
+                </button>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="main-content">
+            <!-- Code Editor Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <i class="fas fa-code"></i>
+                    <h2>HTML Input</h2>
+                </div>
+                <div class="code-editor">
+                    <div class="editor-toolbar">
+                        <div class="editor-info">
+                            <span><i class="fas fa-file-code"></i> <span id="charCount">0</span> characters</span>
+                            <span><i class="fas fa-list-ol"></i> <span id="lineCount">0</span> lines</span>
+                            <span><i class="fas fa-exclamation-triangle"></i> <span id="errorCount">0</span> issues</span>
+                        </div>
+                        <button class="btn btn-sm" onclick="clearEditor()">
+                            <i class="fas fa-trash"></i> Clear
+                        </button>
+                    </div>
+                    <div class="code-editor-wrapper">
+                        <textarea 
+                            id="htmlInput" 
+                            placeholder="Paste your AI-generated HTML code here..."
+                            spellcheck="false"
+                        ></textarea>
+                    </div>
+                </div>
+                
+                <!-- Email Validation Results -->
+                <div id="validationPanel" class="validation-panel" style="display: none;">
+                    <h3 style="margin-bottom: 1rem;">Email Compatibility Check</h3>
+                    <div id="validationResults"></div>
+                </div>
+            </div>
+
+            <!-- Preview Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <i class="fas fa-eye"></i>
+                    <h2>Live Preview</h2>
+                </div>
+                <div class="preview-modes">
+                    <button class="preview-mode-btn active" onclick="setPreviewMode('styled')">
+                        <i class="fas fa-magic"></i> Styled
+                    </button>
+                    <button class="preview-mode-btn" onclick="setPreviewMode('raw')">
+                        <i class="fas fa-code"></i> Raw HTML
+                    </button>
+                    <button class="preview-mode-btn" onclick="setPreviewMode('mobile')">
+                        <i class="fas fa-mobile-alt"></i> Mobile
+                    </button>
+                    <button class="preview-mode-btn" onclick="setPreviewMode('gmail')">
+                        <i class="fas fa-envelope"></i> Gmail
+                    </button>
+                    <button class="preview-mode-btn" onclick="setPreviewMode('outlook')">
+                        <i class="fas fa-envelope-square"></i> Outlook
+                    </button>
+                    <button class="preview-mode-btn" onclick="setPreviewMode('apple')">
+                        <i class="fas fa-apple"></i> Apple Mail
+                    </button>
+                    <button class="btn btn-sm" onclick="toggleEditMode()" style="margin-left: auto;">
+                        <i class="fas fa-edit"></i> <span id="editModeText">Enable Live Edit</span>
+                    </button>
+                </div>
+                <div class="preview-container">
+                    <iframe id="preview" class="preview-frame"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="actions">
+            <button class="btn btn-primary" onclick="uploadHTML()">
+                <i class="fas fa-upload"></i> Upload HTML
+            </button>
+            <button class="btn btn-primary" onclick="downloadHTML()">
+                <i class="fas fa-download"></i> Download HTML
+            </button>
+            <button class="btn" onclick="printHTML()">
+                <i class="fas fa-print"></i> Print
+            </button>
+            <button class="btn" onclick="emailToGmail()">
+                <i class="fas fa-envelope"></i> Email to Gmail
+            </button>
+            <button class="btn" onclick="copyToClipboard()">
+                <i class="fas fa-copy"></i> Copy to Clipboard
+            </button>
+            <button class="btn" onclick="saveProject()">
+                <i class="fas fa-save"></i> Save Project
+            </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-card">
+                <i class="fas fa-code"></i>
+                <h3 id="tagCount">0</h3>
+                <p>HTML Tags</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-file-alt"></i>
+                <h3 id="sizeKB">0 KB</h3>
+                <p>File Size</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-mobile-alt"></i>
+                <h3 id="mobileScore">-</h3>
+                <p>Mobile Score</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-envelope-open-text"></i>
+                <h3 id="emailScore">-</h3>
+                <p>Email Score</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden iframe for clean HTML copying -->
+    <iframe id="clean-copy-frame" style="position: absolute; left: -9999px; width: 1px; height: 1px; border: none; background: white;"></iframe>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Action completed!</span>
+    </div>
+
+    <!-- Loading spinner -->
+    <div id="loading" class="loading">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Template Modal -->
+    <div id="templateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Email Templates</h3>
+                <button class="modal-close" onclick="closeModal('templateModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="template-library">
+                    <div class="template-card" onclick="loadTemplate('newsletter')">
+                        <i class="fas fa-newspaper"></i>
+                        <h4>Newsletter</h4>
+                        <p>Modern newsletter layout</p>
+                    </div>
+                    <div class="template-card" onclick="loadTemplate('promotional')">
+                        <i class="fas fa-tag"></i>
+                        <h4>Promotional</h4>
+                        <p>Sales & promotions</p>
+                    </div>
+                    <div class="template-card" onclick="loadTemplate('quote')">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <h4>Insurance Quote</h4>
+                        <p>Professional quote template</p>
+                    </div>
+                    <div class="template-card" onclick="loadTemplate('welcome')">
+                        <i class="fas fa-handshake"></i>
+                        <h4>Welcome Email</h4>
+                        <p>Client onboarding</p>
+                    </div>
+                    <div class="template-card" onclick="loadTemplate('reminder')">
+                        <i class="fas fa-bell"></i>
+                        <h4>Reminder</h4>
+                        <p>Policy renewal reminder</p>
+                    </div>
+                    <div class="template-card" onclick="loadTemplate('thank-you')">
+                        <i class="fas fa-heart"></i>
+                        <h4>Thank You</h4>
+                        <p>Customer appreciation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Find & Replace Modal -->
+    <div id="findReplaceModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>Find & Replace</h3>
+                <button class="modal-close" onclick="closeModal('findReplaceModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 1rem;">
+                    <label>Find:</label>
+                    <input type="text" id="findInput" placeholder="Enter text to find...">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label>Replace with:</label>
+                    <input type="text" id="replaceInput" placeholder="Enter replacement text...">
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="caseSensitive">
+                        <span>Case sensitive</span>
+                    </label>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn btn-sm" onclick="findNext()">
+                        <i class="fas fa-search"></i> Find Next
+                    </button>
+                    <button class="btn btn-sm" onclick="replaceNext()">
+                        <i class="fas fa-exchange-alt"></i> Replace
+                    </button>
+                    <button class="btn btn-sm btn-primary" onclick="replaceAll()">
+                        <i class="fas fa-sync"></i> Replace All
+                    </button>
+                </div>
+                <div id="findReplaceResults" style="margin-top: 1rem; padding: 0.75rem; background: var(--glass-bg); border-radius: 8px; display: none;">
+                    <span id="findReplaceMessage"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CodeMirror JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/closetag.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/comment/comment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/fold/foldcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/fold/foldgutter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/fold/xml-fold.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/fold/foldgutter.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/show-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/xml-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/html-hint.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/show-hint.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/search/searchcursor.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/search/search.min.js"></script>
+
+    <script>
+        // Initialize CodeMirror
+        let editor;
+        const htmlInput = document.getElementById('htmlInput');
+        const preview = document.getElementById('preview');
+        const charCount = document.getElementById('charCount');
+        const lineCount = document.getElementById('lineCount');
+        const tagCount = document.getElementById('tagCount');
+        const sizeKB = document.getElementById('sizeKB');
+        const errorCount = document.getElementById('errorCount');
+        const mobileScore = document.getElementById('mobileScore');
+        const emailScore = document.getElementById('emailScore');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const loading = document.getElementById('loading');
+        const validationPanel = document.getElementById('validationPanel');
+        const validationResults = document.getElementById('validationResults');
+
+        // Initialize CodeMirror
+        editor = CodeMirror.fromTextArea(htmlInput, {
+            mode: 'htmlmixed',
+            theme: 'dracula',
+            lineNumbers: true,
+            lineWrapping: true,
+            autoCloseTags: true,
+            autoCloseBrackets: true,
+            foldGutter: true,
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            placeholder: "Paste your AI-generated HTML code here...",
+            tabSize: 2,
+            indentUnit: 2,
+            indentWithTabs: false,
+            extraKeys: {
+                "Ctrl-Space": "autocomplete",
+                "Ctrl-/": "toggleComment",
+                "Cmd-/": "toggleComment",
+                "Ctrl-Q": function(cm){ cm.foldCode(cm.getCursor()); },
+                "Cmd-Q": function(cm){ cm.foldCode(cm.getCursor()); }
+            }
+        });
+
+        // Preview mode state
+        let currentPreviewMode = 'styled';
+
+        // Update preview in real-time
+        let updateTimer;
+        editor.on('change', () => {
+            clearTimeout(updateTimer);
+            updateTimer = setTimeout(() => {
+                updatePreview();
+                updateStats();
+            }, 500); // Debounce for performance
+        });
+
+        // Initial update
+        updateStats();
+        
+        // Fix CodeMirror sizing issue
+        setTimeout(() => {
+            editor.refresh();
+        }, 100);
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            editor.refresh();
+        });
+
+        function setPreviewMode(mode) {
+            currentPreviewMode = mode;
+            
+            // Update button states
+            document.querySelectorAll('.preview-mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.preview-mode-btn').classList.add('active');
+            
+            // Update preview
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const html = editor.getValue();
+            const previewDoc = preview.contentDocument || preview.contentWindow.document;
+            
+            let fullHTML = '';
+            
+            switch(currentPreviewMode) {
+                case 'raw':
+                    fullHTML = html;
+                    break;
+                case 'mobile':
+                    fullHTML = getMobileWrapper(html);
+                    break;
+                case 'gmail':
+                    fullHTML = getGmailWrapper(html);
+                    break;
+                case 'outlook':
+                    fullHTML = getOutlookWrapper(html);
+                    break;
+                case 'apple':
+                    fullHTML = getAppleMailWrapper(html);
+                    break;
+                default:
+                    fullHTML = getStyledWrapper(html);
+            }
+            
+            previewDoc.open();
+            previewDoc.write(fullHTML);
+            previewDoc.close();
+        }
+
+        function getStyledWrapper(html) {
+            return `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+        }
+        * {
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    ${html}
+</body>
+</html>`;
+        }
+
+        function getMobileWrapper(html) {
+            return `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 375px;
+            max-width: 375px;
+            margin: 0 auto;
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    ${html}
+</body>
+</html>`;
+        }
+
+        function getGmailWrapper(html) {
+            return `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Gmail-specific styles */
+        body {
+            margin: 0;
+            padding: 10px;
+            background: white;
+            font-family: Arial, sans-serif;
+        }
+        table {
+            border-collapse: collapse;
+        }
+        .gmail-hide {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div style="max-width: 600px; margin: 0 auto;">
+        ${html}
+    </div>
+</body>
+</html>`;
+        }
+
+        function getOutlookWrapper(html) {
+            return `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--[if mso]>
+    <noscript>
+        <xml>
+            <o:OfficeDocumentSettings>
+                <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+    </noscript>
+    <![endif]-->
+    <style>
+        /* Outlook-specific styles */
+        body {
+            margin: 0;
+            padding: 0;
+            background: white;
+            font-family: Arial, sans-serif;
+        }
+        table {
+            border-collapse: collapse;
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+    </style>
+</head>
+<body>
+    ${html}
+</body>
+</html>`;
+        }
+
+        function getAppleMailWrapper(html) {
+            return `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Apple Mail specific styles */
+        body {
+            margin: 0;
+            padding: 0;
+            background: white;
+            -webkit-text-size-adjust: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    ${html}
+</body>
+</html>`;
+        }
+
+        function updateStats() {
+            const text = editor.getValue();
+            
+            // Character and line count
+            charCount.textContent = text.length.toLocaleString();
+            lineCount.textContent = editor.lineCount().toLocaleString();
+            
+            // Count HTML tags
+            const tagMatches = text.match(/<[^>]+>/g) || [];
+            tagCount.textContent = tagMatches.length.toLocaleString();
+            
+            // Calculate size in KB
+            const sizeInBytes = new Blob([text]).size;
+            const sizeInKB = (sizeInBytes / 1024).toFixed(2);
+            sizeKB.textContent = `${sizeInKB} KB`;
+            
+            // Update scores
+            updateMobileScore(text);
+            updateEmailScore(text);
+        }
+
+        function updateMobileScore(html) {
+            let score = 100;
+            
+            // Check for viewport meta tag
+            if (!html.includes('viewport')) score -= 20;
+            
+            // Check for responsive design patterns
+            if (!html.includes('%') && !html.includes('max-width')) score -= 15;
+            
+            // Check for large fixed widths
+            const widthMatches = html.match(/width[:\s]*["']?(\d+)/gi) || [];
+            widthMatches.forEach(match => {
+                const width = parseInt(match.match(/\d+/)[0]);
+                if (width > 600) score -= 10;
+            });
+            
+            // Check for proper font sizes
+            const fontSizeMatches = html.match(/font-size[:\s]*["']?(\d+)/gi) || [];
+            fontSizeMatches.forEach(match => {
+                const size = parseInt(match.match(/\d+/)[0]);
+                if (size < 14) score -= 5;
+            });
+            
+            const mobileScore = document.getElementById('mobileScore');
+            if (mobileScore) {
+                mobileScore.textContent = Math.max(0, score) + '%';
+            }
+        }
+
+        function updateEmailScore(html) {
+            let score = 100;
+            let issues = 0;
+            
+            // Check for unsupported CSS
+            if (html.includes('position:') && !html.includes('position: relative')) { score -= 10; issues++; }
+            if (html.includes('float:')) { score -= 10; issues++; }
+            if (html.includes('flex')) { score -= 15; issues++; }
+            if (html.includes('grid')) { score -= 15; issues++; }
+            
+            // Check for JavaScript
+            if (html.includes('<script')) { score -= 20; issues++; }
+            
+            // Check for external CSS
+            if (html.includes('<link') && html.includes('stylesheet')) { score -= 15; issues++; }
+            
+            // Check for forms
+            if (html.includes('<form')) { score -= 10; issues++; }
+            
+            // Check for video/audio
+            if (html.includes('<video') || html.includes('<audio')) { score -= 10; issues++; }
+            
+            const emailScore = document.getElementById('emailScore');
+            const errorCount = document.getElementById('errorCount');
+            if (emailScore) {
+                emailScore.textContent = Math.max(0, score) + '%';
+            }
+            if (errorCount) {
+                errorCount.textContent = issues;
+            }
+        }
+
+        function formatHTML() {
+            const html = editor.getValue();
+            
+            // Simple HTML formatter
+            let formatted = html
+                .replace(/></g, '>\n<')
+                .replace(/\n\s*\n/g, '\n')
+                .trim();
+            
+            // Indent nested tags
+            const lines = formatted.split('\n');
+            let indentLevel = 0;
+            const formattedLines = lines.map(line => {
+                const trimmedLine = line.trim();
+                
+                // Decrease indent for closing tags
+                if (trimmedLine.startsWith('</')) {
+                    indentLevel = Math.max(0, indentLevel - 1);
+                }
+                
+                const indentedLine = '  '.repeat(indentLevel) + trimmedLine;
+                
+                // Increase indent for opening tags (not self-closing)
+                if (trimmedLine.startsWith('<') && !trimmedLine.startsWith('</') && 
+                    !trimmedLine.endsWith('/>') && !trimmedLine.includes('/>')) {
+                    // Check if it's not a void element
+                    const voidElements = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
+                    const tagName = trimmedLine.match(/<(\w+)/)?.[1]?.toLowerCase();
+                    if (!voidElements.includes(tagName)) {
+                        indentLevel++;
+                    }
+                }
+                
+                return indentedLine;
+            });
+            
+            editor.setValue(formattedLines.join('\n'));
+            showToast('HTML formatted successfully!');
+        }
+
+        function validateEmail() {
+            const html = editor.getValue();
+            const results = [];
+            
+            // Check for common email compatibility issues
+            const checks = [
+                {
+                    test: !html.includes('<!DOCTYPE'),
+                    type: 'error',
+                    message: 'Missing DOCTYPE declaration'
+                },
+                {
+                    test: html.includes('<script'),
+                    type: 'error',
+                    message: 'JavaScript is not supported in most email clients'
+                },
+                {
+                    test: html.includes('position:') && !html.includes('position: relative'),
+                    type: 'error',
+                    message: 'CSS positioning (except relative) is not well supported'
+                },
+                {
+                    test: html.includes('flex'),
+                    type: 'warning',
+                    message: 'Flexbox has limited support in email clients'
+                },
+                {
+                    test: html.includes('<form'),
+                    type: 'error',
+                    message: 'Forms are blocked in most email clients'
+                },
+                {
+                    test: !html.includes('<table'),
+                    type: 'warning',
+                    message: 'Consider using tables for better email client compatibility'
+                },
+                {
+                    test: html.includes('background-image'),
+                    type: 'warning',
+                    message: 'Background images have limited support'
+                },
+                {
+                    test: !html.includes('alt='),
+                    type: 'warning',
+                    message: 'Images should have alt text for accessibility'
+                },
+                {
+                    test: html.match(/width[:\s]*["']?(\d+)/gi)?.some(m => parseInt(m.match(/\d+/)[0]) > 600),
+                    type: 'warning',
+                    message: 'Content wider than 600px may not display properly'
+                },
+                {
+                    test: html.length > 102400,
+                    type: 'warning',
+                    message: 'HTML size exceeds 100KB - may be clipped by Gmail'
+                }
+            ];
+            
+            checks.forEach(check => {
+                if (check.test) {
+                    results.push(check);
+                }
+            });
+            
+            // Display validation results
+            if (results.length === 0) {
+                results.push({
+                    type: 'success',
+                    message: 'No major email compatibility issues found!'
+                });
+            }
+            
+            const validationPanel = document.getElementById('validationPanel');
+            const validationResults = document.getElementById('validationResults');
+            
+            validationResults.innerHTML = results.map(result => `
+                <div class="validation-item ${result.type}">
+                    <i class="fas fa-${result.type === 'error' ? 'times-circle' : result.type === 'warning' ? 'exclamation-triangle' : 'check-circle'}"></i>
+                    <span>${result.message}</span>
+                </div>
+            `).join('');
+            
+            validationPanel.style.display = 'block';
+            showToast(`Validation complete: ${results.filter(r => r.type === 'error').length} errors, ${results.filter(r => r.type === 'warning').length} warnings`);
+        }
+
+        function inlineCSS() {
+            showToast('Inlining CSS for email compatibility...', 'info');
+            
+            // This is a simplified version - in production, you'd use a proper CSS inliner
+            let html = editor.getValue();
+            
+            // Extract style blocks
+            const styleMatches = html.match(/<style[^>]*>([\s\S]*?)<\/style>/gi) || [];
+            let styles = '';
+            
+            styleMatches.forEach(styleBlock => {
+                const cssContent = styleBlock.replace(/<\/?style[^>]*>/gi, '');
+                styles += cssContent + '\n';
+                html = html.replace(styleBlock, '');
+            });
+            
+            // Simple CSS rule parser (very basic)
+            const rules = styles.match(/([^{]+){([^}]+)}/g) || [];
+            
+            rules.forEach(rule => {
+                const [selector, cssText] = rule.split('{');
+                const cleanSelector = selector.trim();
+                const cleanCss = cssText.replace('}', '').trim();
+                
+                // Apply styles inline (very simplified)
+                if (cleanSelector && !cleanSelector.includes(':') && !cleanSelector.includes('@')) {
+                    const regex = new RegExp(`<${cleanSelector}([^>]*)>`, 'gi');
+                    html = html.replace(regex, (match, attributes) => {
+                        if (attributes.includes('style=')) {
+                            return match.replace(/style="([^"]*)"/, `style="$1; ${cleanCss}"`);
+                        } else {
+                            return `<${cleanSelector}${attributes} style="${cleanCss}">`;
+                        }
+                    });
+                }
+            });
+            
+            editor.setValue(html);
+            showToast('CSS inlined successfully!');
+        }
+        
+        function showTemplates() {
+            document.getElementById('templateModal').classList.add('show');
+        }
+
+        function loadTemplate(templateType) {
+            const templates = {
+                'newsletter': `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newsletter</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; margin: 20px auto;">
+                    <!-- Header -->
+                    <tr>
+                        <td style="padding: 40px 30px; text-align: center; background-color: #2c3e50;">
+                            <h1 style="color: #ffffff; margin: 0;">Your Newsletter Title</h1>
+                        </td>
+                    </tr>
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <h2 style="color: #2c3e50; margin-bottom: 20px;">Hello [Name],</h2>
+                            <p style="color: #666666; line-height: 1.6; margin-bottom: 20px;">
+                                Welcome to our newsletter! Here's what's new this month...
+                            </p>
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td align="center" style="padding: 20px 0;">
+                                        <a href="#" style="display: inline-block; padding: 12px 30px; background-color: #3498db; color: #ffffff; text-decoration: none; border-radius: 5px;">Read More</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 30px; text-align: center; background-color: #ecf0f1;">
+                            <p style="color: #666666; margin: 0; font-size: 14px;">
+                                Bill Layne Insurance Agency<br>
+                                1283 N Bridge St, Elkin NC 28621<br>
+                                336-835-1993
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>`,
+                'quote': `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insurance Quote</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;">
+    <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; margin: 20px auto; border: 1px solid #e0e0e0;">
+                    <!-- Header -->
+                    <tr>
+                        <td style="padding: 30px; background-color: #1e3a8a;">
+                            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Your Insurance Quote</h1>
+                        </td>
+                    </tr>
+                    <!-- Quote Details -->
+                    <tr>
+                        <td style="padding: 30px;">
+                            <h2 style="color: #1e3a8a; margin-bottom: 20px;">Quote Summary</h2>
+                            <table width="100%" cellpadding="10" cellspacing="0" style="border: 1px solid #e0e0e0;">
+                                <tr style="background-color: #f8f9fa;">
+                                    <td style="font-weight: bold;">Coverage Type</td>
+                                    <td style="text-align: right;">Premium</td>
+                                </tr>
+                                <tr>
+                                    <td>Auto Insurance</td>
+                                    <td style="text-align: right;">$150/month</td>
+                                </tr>
+                                <tr style="background-color: #f8f9fa;">
+                                    <td>Home Insurance</td>
+                                    <td style="text-align: right;">$125/month</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold;">Total Monthly Premium</td>
+                                    <td style="text-align: right; font-weight: bold; color: #1e3a8a;">$275/month</td>
+                                </tr>
+                            </table>
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 30px;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="#" style="display: inline-block; padding: 15px 40px; background-color: #10b981; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">Accept Quote</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 20px; background-color: #f8f9fa; text-align: center;">
+                            <img src="https://i.imgur.com/cBAgeX8.png" alt="Bill Layne Insurance" style="max-width: 150px; margin-bottom: 10px;">
+                            <p style="color: #666666; margin: 5px 0; font-size: 14px;">
+                                Bill Layne Insurance Agency | 336-835-1993<br>
+                                Save@BillLayneInsurance.com
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>`
+            };
+            
+            if (templates[templateType]) {
+                editor.setValue(templates[templateType]);
+                closeModal('templateModal');
+                showToast(`${templateType} template loaded!`);
+            }
+        }
+
+        // Live Edit mode functionality
+        let isEditMode = false;
+        
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            const editModeText = document.getElementById('editModeText');
+            const preview = document.getElementById('preview');
+            
+            if (isEditMode) {
+                editModeText.textContent = 'Disable Live Edit';
+                // Make iframe content editable
+                const previewDoc = preview.contentDocument || preview.contentWindow.document;
+                previewDoc.designMode = 'on';
+                previewDoc.body.contentEditable = true;
+                showToast('Live edit mode enabled - click in preview to edit');
+            } else {
+                editModeText.textContent = 'Enable Live Edit';
+                const previewDoc = preview.contentDocument || preview.contentWindow.document;
+                previewDoc.designMode = 'off';
+                previewDoc.body.contentEditable = false;
+                // Update the editor with any changes made
+                const editedHTML = previewDoc.documentElement.outerHTML;
+                editor.setValue(editedHTML);
+                showToast('Live edit mode disabled - changes saved');
+            }
+        }
+
+        // Find & Replace functionality
+        let searchCursor = null;
+        
+        function showFindReplace() {
+            document.getElementById('findReplaceModal').classList.add('show');
+            document.getElementById('findInput').focus();
+        }
+        
+        function findNext() {
+            const findInput = document.getElementById('findInput').value;
+            const caseSensitive = document.getElementById('caseSensitive').checked;
+            
+            if (!findInput) {
+                showFindReplaceMessage('Please enter text to find', 'warning');
+                return;
+            }
+            
+            if (!searchCursor || searchCursor.findNext() === false) {
+                // Start new search or wrap around
+                searchCursor = editor.getSearchCursor(findInput, null, !caseSensitive);
+                if (!searchCursor.findNext()) {
+                    showFindReplaceMessage('No matches found', 'info');
+                    return;
+                }
+            }
+            
+            editor.setSelection(searchCursor.from(), searchCursor.to());
+            editor.scrollIntoView(searchCursor.from());
+            showFindReplaceMessage('Found match', 'success');
+        }
+        
+        function replaceNext() {
+            const findInput = document.getElementById('findInput').value;
+            const replaceInput = document.getElementById('replaceInput').value;
+            
+            if (!findInput) {
+                showFindReplaceMessage('Please enter text to find', 'warning');
+                return;
+            }
+            
+            if (searchCursor && searchCursor.from()) {
+                searchCursor.replace(replaceInput);
+                findNext();
+                showFindReplaceMessage('Replaced 1 occurrence', 'success');
+            } else {
+                findNext();
+            }
+        }
+        
+        function replaceAll() {
+            const findInput = document.getElementById('findInput').value;
+            const replaceInput = document.getElementById('replaceInput').value;
+            const caseSensitive = document.getElementById('caseSensitive').checked;
+            
+            if (!findInput) {
+                showFindReplaceMessage('Please enter text to find', 'warning');
+                return;
+            }
+            
+            let count = 0;
+            const cursor = editor.getSearchCursor(findInput, null, !caseSensitive);
+            
+            while (cursor.findNext()) {
+                cursor.replace(replaceInput);
+                count++;
+            }
+            
+            if (count > 0) {
+                showFindReplaceMessage(`Replaced ${count} occurrence${count > 1 ? 's' : ''}`, 'success');
+            } else {
+                showFindReplaceMessage('No matches found', 'info');
+            }
+            
+            searchCursor = null;
+        }
+        
+        function showFindReplaceMessage(message, type) {
+            const resultsDiv = document.getElementById('findReplaceResults');
+            const messageSpan = document.getElementById('findReplaceMessage');
+            
+            messageSpan.textContent = message;
+            resultsDiv.style.display = 'block';
+            
+            // Style based on type
+            resultsDiv.style.borderColor = type === 'success' ? 'var(--success)' : 
+                                          type === 'warning' ? 'var(--warning)' : 
+                                          'var(--primary)';
+        }
+
+        function insertSnippet() {
+            // Image button snippet with optimization
+            const snippetType = prompt('Choose snippet type:\n1. Button\n2. Image\n3. Two Column\n4. Social Icons', '1');
+            
+            let snippet = '';
+            
+            switch(snippetType) {
+                case '1':
+                    snippet = `<table width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+        <td align="center" style="padding: 20px 0;">
+            <a href="#" style="display: inline-block; padding: 15px 30px; background-color: #3498db; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">Call to Action</a>
+        </td>
+    </tr>
+</table>`;
+                    break;
+                case '2':
+                    snippet = `<table width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+        <td align="center" style="padding: 20px 0;">
+            <img src="" alt="Description" style="max-width: 100%; height: auto; display: block;">
+        </td>
+    </tr>
+</table>`;
+                    break;
+                case '3':
+                    snippet = `<table width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+        <td width="50%" style="padding: 20px; vertical-align: top;">
+            <h3 style="margin-top: 0;">Column 1</h3>
+            <p>Content for the first column.</p>
+        </td>
+        <td width="50%" style="padding: 20px; vertical-align: top;">
+            <h3 style="margin-top: 0;">Column 2</h3>
+            <p>Content for the second column.</p>
+        </td>
+    </tr>
+</table>`;
+                    break;
+                case '4':
+                    snippet = `<table width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+        <td align="center" style="padding: 20px;">
+            <a href="#" style="display: inline-block; margin: 0 5px;"><img src="https://img.icons8.com/color/48/facebook.png" alt="Facebook" width="32" height="32"></a>
+            <a href="#" style="display: inline-block; margin: 0 5px;"><img src="https://img.icons8.com/color/48/twitter.png" alt="Twitter" width="32" height="32"></a>
+            <a href="#" style="display: inline-block; margin: 0 5px;"><img src="https://img.icons8.com/color/48/linkedin.png" alt="LinkedIn" width="32" height="32"></a>
+        </td>
+    </tr>
+</table>`;
+                    break;
+                default:
+                    snippet = `<table width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+        <td align="center" style="padding: 20px 0;">
+            <a href="#" style="display: inline-block; padding: 15px 30px; background-color: #3498db; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">Call to Action</a>
+        </td>
+    </tr>
+</table>`;
+            }
+            
+            editor.replaceSelection(snippet);
+            showToast('Snippet inserted!');
+        }
+        
+        function clearEditor() {
+            if (confirm('Are you sure you want to clear all content?')) {
+                editor.setValue('');
+                editor.clearHistory();
+                updatePreview();
+                updateStats();
+                const validationPanel = document.getElementById('validationPanel');
+                if (validationPanel) {
+                    validationPanel.style.display = 'none';
+                }
+                showToast('Content cleared');
+            }
+        }
+
+        function downloadHTML() {
+            const html = editor.getValue();
+            if (!html.trim()) {
+                showToast('No HTML content to download', 'error');
+                return;
+            }
+
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `email-template-${Date.now()}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showToast('HTML downloaded successfully!');
+        }
+
+        function printHTML() {
+            const html = editor.getValue();
+            if (!html.trim()) {
+                showToast('No HTML content to print', 'error');
+                return;
+            }
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(html);
+            printWindow.document.close();
+            
+            printWindow.onload = function() {
+                printWindow.print();
+                printWindow.close();
+            };
+            
+            showToast('Opening print dialog...');
+        }
+
+        function emailToGmail() {
+            const html = editor.getValue();
+            if (!html.trim()) {
+                showToast('No HTML content to email', 'error');
+                return;
+            }
+
+            // Copy formatted HTML to clipboard for Gmail
+            copyFormattedHTMLToClipboard(html);
+            
+            const gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1&tf=1';
+            window.open(gmailUrl, '_blank');
+            
+            showToast('Formatted HTML copied! Paste it into your Gmail compose window.');
+        }
+
+        function uploadHTML() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.html,.htm';
+            
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                if (!file.name.endsWith('.html') && !file.name.endsWith('.htm')) {
+                    showToast('Please select an HTML file', 'error');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const content = event.target.result;
+                        editor.setValue(content);
+                        updatePreview();
+                        updateStats();
+                        showToast(`Loaded ${file.name} successfully!`);
+                    } catch (err) {
+                        showToast('Failed to load HTML file', 'error');
+                        console.error('Error loading file:', err);
+                    }
+                };
+                
+                reader.onerror = () => {
+                    showToast('Error reading file', 'error');
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        // NEW: Function to copy formatted HTML for Gmail
+        function copyFormattedHTMLToClipboard(html) {
+            // Clean the HTML for Gmail to prevent subject line duplication
+            const cleanedHTML = cleanHTMLForGmail(html);
+            
+            // Create a clean container for the HTML
+            const container = document.createElement('div');
+            container.innerHTML = cleanedHTML;
+            container.style.position = 'absolute';
+            container.style.left = '-9999px';
+            container.style.top = '-9999px';
+            container.style.background = 'white';
+            container.style.color = 'black';
+            container.style.fontFamily = 'Arial, sans-serif';
+            
+            document.body.appendChild(container);
+
+            // Try modern clipboard API first
+            if (navigator.clipboard && navigator.clipboard.write) {
+                // Create clipboard item with both HTML and plain text
+                const clipboardItem = new ClipboardItem({
+                    'text/html': new Blob([cleanedHTML], { type: 'text/html' }),
+                    'text/plain': new Blob([container.innerText || container.textContent], { type: 'text/plain' })
+                });
+                
+                navigator.clipboard.write([clipboardItem]).then(() => {
+                    document.body.removeChild(container);
+                    showToast('Formatted HTML copied for Gmail!');
+                }).catch(() => {
+                    // Fallback to selection method
+                    copyHTMLViaSelection(container, cleanedHTML);
+                });
+            } else {
+                // Fallback to selection method
+                copyHTMLViaSelection(container, cleanedHTML);
+            }
+        }
+
+        // Clean HTML for Gmail to prevent subject line duplication
+        function cleanHTMLForGmail(html) {
+            let cleaned = html;
+            
+            // Remove title tags that Gmail might interpret as subject
+            cleaned = cleaned.replace(/<title[^>]*>.*?<\/title>/gis, '');
+            
+            // Remove head section entirely to avoid conflicts
+            cleaned = cleaned.replace(/<head[^>]*>.*?<\/head>/gis, '');
+            
+            // Remove html and body tags, keep only the content
+            cleaned = cleaned.replace(/<\/?html[^>]*>/gi, '');
+            cleaned = cleaned.replace(/<\/?body[^>]*>/gi, '');
+            
+            // Remove DOCTYPE declaration
+            cleaned = cleaned.replace(/<!DOCTYPE[^>]*>/gi, '');
+            
+            // Clean up any extra whitespace
+            cleaned = cleaned.trim();
+            
+            return cleaned;
+        }
+
+        function copyHTMLViaSelection(container, html) {
+            try {
+                // Select the container content
+                const range = document.createRange();
+                range.selectNodeContents(container);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+
+                // Copy the selected content (this preserves HTML formatting)
+                document.execCommand('copy');
+                
+                // Clean up
+                selection.removeAllRanges();
+                document.body.removeChild(container);
+                
+                showToast('Formatted HTML copied for Gmail!');
+            } catch (err) {
+                // Final fallback - copy as plain text
+                document.body.removeChild(container);
+                copyRawHTMLToClipboard(html);
+                showToast('HTML copied as text - may need to switch to HTML mode in Gmail');
+            }
+        }
+
+        // Fixed function to copy raw HTML without contamination
+        function copyRawHTMLToClipboard(html) {
+            // Use the modern clipboard API with raw text
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(html).then(() => {
+                    showToast('Raw HTML copied to clipboard!');
+                }).catch(() => {
+                    fallbackCopyRawHTML(html);
+                });
+            } else {
+                fallbackCopyRawHTML(html);
+            }
+        }
+
+        function fallbackCopyRawHTML(html) {
+            // Fallback method - create a textarea with the raw HTML
+            const textarea = document.createElement('textarea');
+            textarea.value = html;
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            textarea.style.top = '-9999px';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            textarea.setSelectionRange(0, 99999);
+            
+            try {
+                document.execCommand('copy');
+                showToast('Raw HTML copied to clipboard!');
+            } catch (err) {
+                showToast('Failed to copy to clipboard', 'error');
+            }
+            
+            document.body.removeChild(textarea);
+        }
+
+        function fallbackCopyRawHTML(html) {
+            // Fallback method - create a textarea with the raw HTML
+            const textarea = document.createElement('textarea');
+            textarea.value = html;
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            textarea.style.top = '-9999px';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            textarea.setSelectionRange(0, 99999);
+            
+            try {
+                document.execCommand('copy');
+                showToast('Raw HTML copied to clipboard!');
+            } catch (err) {
+                showToast('Failed to copy to clipboard', 'error');
+            }
+            
+            document.body.removeChild(textarea);
+        }
+
+        function copyToClipboard(silent = false) {
+            const html = editor.getValue();
+            if (!html.trim()) {
+                if (!silent) showToast('No HTML content to copy', 'error');
+                return;
+            }
+
+            // Copy raw HTML for the regular copy button
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(html).then(() => {
+                    if (!silent) showToast('Raw HTML copied to clipboard!');
+                }).catch(() => {
+                    fallbackCopyRawHTML(html);
+                });
+            } else {
+                fallbackCopyRawHTML(html);
+            }
+        }
+
+        function saveProject() {
+            const html = editor.getValue();
+            const projectData = {
+                html: html,
+                timestamp: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            localStorage.setItem('emailProject', JSON.stringify(projectData));
+            showToast('Project saved locally!');
+        }
+
+        function loadProject() {
+            const saved = localStorage.getItem('emailProject');
+            if (saved) {
+                const projectData = JSON.parse(saved);
+                editor.setValue(projectData.html);
+                updatePreview();
+                updateStats();
+                showToast('Project loaded!');
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        function testEmailClients() {
+            showToast('Email client testing coming soon!', 'info');
+        }
+
+        function optimizeImages() {
+            const html = editor.getValue();
+            const imgRegex = /<img[^>]+>/gi;
+            const matches = html.match(imgRegex) || [];
+            
+            if (matches.length === 0) {
+                showToast('No images found to optimize', 'info');
+                return;
+            }
+            
+            let optimizedCount = 0;
+            let newHtml = html;
+            
+            matches.forEach(imgTag => {
+                let optimizedTag = imgTag;
+                let wasOptimized = false;
+                
+                // Check for width attributes
+                if (!imgTag.includes('width=') && !imgTag.includes('max-width')) {
+                    // Add responsive styling
+                    if (imgTag.includes('style=')) {
+                        optimizedTag = optimizedTag.replace(/style="([^"]*)"/, 'style="$1 max-width: 100%; height: auto;"');
+                    } else {
+                        optimizedTag = optimizedTag.replace('<img', '<img style="max-width: 100%; height: auto;"');
+                    }
+                    wasOptimized = true;
+                }
+                
+                // Add alt text if missing
+                if (!imgTag.includes('alt=')) {
+                    optimizedTag = optimizedTag.replace('<img', '<img alt=""');
+                    wasOptimized = true;
+                }
+                
+                // Add display block for better email rendering
+                if (!imgTag.includes('display:')) {
+                    if (optimizedTag.includes('style=')) {
+                        optimizedTag = optimizedTag.replace(/style="([^"]*)"/, 'style="$1 display: block;"');
+                    } else {
+                        optimizedTag = optimizedTag.replace('<img', '<img style="display: block;"');
+                    }
+                    wasOptimized = true;
+                }
+                
+                if (wasOptimized) {
+                    newHtml = newHtml.replace(imgTag, optimizedTag);
+                    optimizedCount++;
+                }
+            });
+            
+            if (optimizedCount > 0) {
+                editor.setValue(newHtml);
+                showToast(`Optimized ${optimizedCount} image${optimizedCount > 1 ? 's' : ''} for email`);
+            } else {
+                showToast('All images are already optimized!', 'success');
+            }
+        }
+
+        // Handle image drag & drop into the code editor
+        const editorElement = document.querySelector('.CodeMirror');
+        if (editorElement) {
+            editorElement.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+            
+            editorElement.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const files = e.dataTransfer.files;
+                for (let file of files) {
+                    if (file.type.startsWith('image/')) {
+                        optimizeAndInsertImage(file);
+                    }
+                }
+            });
+        }
+
+        function optimizeAndInsertImage(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    // Optimize the image
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Calculate new dimensions (max 600px width for email)
+                    let width = img.width;
+                    let height = img.height;
+                    const maxWidth = 600;
+                    
+                    if (width > maxWidth) {
+                        height = (maxWidth / width) * height;
+                        width = maxWidth;
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    // Draw and compress the image
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Convert to optimized base64
+                    const isPhoto = file.type === 'image/jpeg' || file.type === 'image/jpg';
+                    const outputFormat = isPhoto ? 'image/jpeg' : 'image/png';
+                    const quality = isPhoto ? 0.8 : 1; // 80% quality for JPEG
+                    
+                    canvas.toBlob((blob) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            // Create HTML img tag
+                            const imgHtml = `<img src="${e.target.result}" alt="" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">`;
+                            
+                            // Insert at cursor position
+                            editor.replaceSelection(imgHtml);
+                            
+                            // Calculate size reduction
+                            const originalSize = file.size;
+                            const optimizedSize = blob.size;
+                            const reduction = Math.round((1 - optimizedSize / originalSize) * 100);
+                            
+                            showToast(`Image optimized and inserted! Size reduced by ${reduction}% (${(optimizedSize / 1024).toFixed(1)}KB)`);
+                        };
+                        reader.readAsDataURL(blob);
+                    }, outputFormat, quality);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function showToast(message, type = 'success') {
+            toastMessage.textContent = message;
+            const icon = toast.querySelector('i');
+            
+            const iconClasses = {
+                'error': 'fas fa-exclamation-circle',
+                'warning': 'fas fa-exclamation-triangle',
+                'info': 'fas fa-info-circle',
+                'success': 'fas fa-check-circle'
+            };
+            
+            icon.className = iconClasses[type] || iconClasses.success;
+            icon.style.color = type === 'error' ? 'var(--danger)' : 
+                              type === 'warning' ? 'var(--warning)' : 
+                              type === 'info' ? 'var(--primary)' : 'var(--success)';
+            
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 's':
+                        e.preventDefault();
+                        saveProject();
+                        break;
+                    case 'o':
+                        e.preventDefault();
+                        loadProject();
+                        break;
+                    case 'd':
+                        e.preventDefault();
+                        downloadHTML();
+                        break;
+                    case 'p':
+                        e.preventDefault();
+                        printHTML();
+                        break;
+                    case 'l':
+                        e.preventDefault();
+                        clearEditor();
+                        break;
+                }
+            }
+        });
+
+        // Expose all functions to global scope for HTML onclick handlers
+        window.toggleEditMode = toggleEditMode;
+        window.setPreviewMode = setPreviewMode;
+        window.formatHTML = formatHTML;
+        window.validateEmail = validateEmail;
+        window.inlineCSS = inlineCSS;
+        window.showFindReplace = showFindReplace;
+        window.showTemplates = showTemplates;
+        window.insertSnippet = insertSnippet;
+        window.testEmailClients = testEmailClients;
+        window.optimizeImages = optimizeImages;
+        window.clearEditor = clearEditor;
+        window.uploadHTML = uploadHTML;
+        window.downloadHTML = downloadHTML;
+        window.printHTML = printHTML;
+        window.emailToGmail = emailToGmail;
+        window.copyToClipboard = copyToClipboard;
+        window.saveProject = saveProject;
+        window.closeModal = closeModal;
+        window.loadTemplate = loadTemplate;
+        window.findNext = findNext;
+        window.replaceNext = replaceNext;
+        window.replaceAll = replaceAll;
+    </script>
+</body>
+</html>

@@ -371,7 +371,7 @@
             </div>
 
             <!-- Search Input -->
-            <input id="dash-search" class="search-input" placeholder="Search Agency Matrix by name or address…" autocomplete="off"/>
+            <input id="dash-search" class="search-input" placeholder="Search Agency Matrix by name, phone, or address…" autocomplete="off"/>
 
             <!-- Action Buttons -->
             <div class="search-actions">
@@ -506,7 +506,7 @@
         // Dashboard search mode handling
         let dashSearchMode = "agency";
         const dashModeMeta = {
-          agency: { placeholder:"Search Agency Matrix by name or address…", showTax:false },
+          agency: { placeholder:"Search Agency Matrix by name, phone, or address…", showTax:false },
           web: { placeholder:"Search the web…", showTax:false },
           realestate: { placeholder:"Enter full address (City, NC)…", showTax:true },
           people: { placeholder:"Enter name, phone, or address…", showTax:false },
@@ -542,9 +542,22 @@
           document.getElementById("dash-searchCount").textContent = searchesToday;
 
           if(dashSearchMode==="agency"){
-            const isAddress = /\d+/.test(val) || /(street|st|ave|avenue|road|rd|drive|dr|lane|ln|blvd|boulevard|court|ct|circle|cir|way|wy)/i.test(val);
-            const selection = isAddress ? "Address" : "Name";
-            const url = `https://agents.agencymatrix.com/#/customer/search?selection=${selection}&query=${encodeURIComponent(val)}`;
+            // Check if it's a phone number (10 digits with or without formatting)
+            const phoneDigitsOnly = val.replace(/\D/g, '');
+            const isPhone = phoneDigitsOnly.length === 10 && /^\d{10}$/.test(phoneDigitsOnly);
+
+            let selection;
+            let searchQuery = val;
+
+            if (isPhone) {
+              selection = "Phone";
+              searchQuery = phoneDigitsOnly; // Use clean phone number for phone search
+            } else {
+              const isAddress = /\d+/.test(val) || /(street|st|ave|avenue|road|rd|drive|dr|lane|ln|blvd|boulevard|court|ct|circle|cir|way|wy)/i.test(val);
+              selection = isAddress ? "Address" : "Name";
+            }
+
+            const url = `https://agents.agencymatrix.com/#/customer/search?selection=${selection}&query=${encodeURIComponent(searchQuery)}`;
             window.open(url, "_blank");
             document.getElementById("dash-search").value="";
             return;
@@ -1773,12 +1786,22 @@ Elkin, NC 28621"></textarea>
 
       <div class="button-group">
         <button type="button" onclick="generateDocuments()">Generate Documents</button>
+        <button type="button" onclick="toggleHTMLConverter()" style="background-color: #8b5cf6;">HTML Converter</button>
       </div>
 
       <!-- Preview Section -->
       <div id="previewSection" style="display: none;">
         <h2>Generated Documents</h2>
         <div id="documentPreviewContainer"></div>
+      </div>
+
+      <!-- HTML Converter Section -->
+      <div id="htmlConverterSection" style="display: none; margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <h2>HTML Email Converter</h2>
+          <button type="button" onclick="closeHTMLConverter()" style="background-color: #ef4444; padding: 5px 15px;">Close</button>
+        </div>
+        <iframe src="html-converter.html" style="width: 100%; height: 800px; border: 2px solid #334155; border-radius: 8px;"></iframe>
       </div>
     </div>
   </div>
@@ -1857,7 +1880,7 @@ Elkin, NC 28621"></textarea>
           <ul style="list-style: none; padding: 0;">
             <li><a href="https://billlayne.github.io/coi-generator/" target="_blank">Certificate Maker</a></li>
             <li><a href="https://billlayne.github.io/NC-Grange-Home-Insurance-Photo-Guide/" target="_blank">NC Grange Photo Guide</a></li>
-            <li><a href="https://billlayne.github.io/insurance-image-upload/link-generator.html" target="_blank">Customer Photos</a></li>
+            <li><a href="https://myinsurancephoto.com/link-generator-simple.html" target="_blank">Customer Photos</a></li>
             <li><a href="#" onclick="alert('Coming soon!')">Premium Calculator</a></li>
             <li><a href="#" onclick="alert('Coming soon!')">Coverage Estimator</a></li>
             <li><a href="#" onclick="alert('Coming soon!')">Deductible Comparison</a></li>
@@ -4192,6 +4215,22 @@ Save@BillLayneInsurance.com`;
       URL.revokeObjectURL(url);
       
       showNotification(`Document saved as ${fileName}`, 'success');
+    }
+
+    // HTML Converter Functions
+    function toggleHTMLConverter() {
+      const converterSection = document.getElementById('htmlConverterSection');
+      if (converterSection.style.display === 'none') {
+        converterSection.style.display = 'block';
+        // Scroll to converter section
+        converterSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        converterSection.style.display = 'none';
+      }
+    }
+
+    function closeHTMLConverter() {
+      document.getElementById('htmlConverterSection').style.display = 'none';
     }
   </script>
 
