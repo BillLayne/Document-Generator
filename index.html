@@ -498,6 +498,19 @@
           </div>
         </div>
       </div>
+
+      <!-- HTML Converter Section -->
+      <div class="html-converter-section" style="margin-top: 30px; background: #ffffff; border-radius: 16px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <h2 style="font-size: 20px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-code"></i>
+            HTML Email Converter
+            <span style="background: linear-gradient(135deg, #8b5cf6, #a855f7); color: white; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Pro</span>
+          </h2>
+          <p style="font-size: 13px; color: #64748b; margin: 0;">Convert and optimize HTML for emails</p>
+        </div>
+        <iframe src="html-converter.html" style="width: 100%; height: 700px; border: 2px solid #e2e8f0; border-radius: 12px;"></iframe>
+      </div>
     </div>
 
     <script>
@@ -1786,7 +1799,6 @@ Elkin, NC 28621"></textarea>
 
       <div class="button-group">
         <button type="button" onclick="generateDocuments()">Generate Documents</button>
-        <button type="button" onclick="toggleHTMLConverter()" style="background-color: #8b5cf6;">HTML Converter</button>
       </div>
 
       <!-- Preview Section -->
@@ -1795,14 +1807,6 @@ Elkin, NC 28621"></textarea>
         <div id="documentPreviewContainer"></div>
       </div>
 
-      <!-- HTML Converter Section -->
-      <div id="htmlConverterSection" style="display: none; margin-top: 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h2>HTML Email Converter</h2>
-          <button type="button" onclick="closeHTMLConverter()" style="background-color: #ef4444; padding: 5px 15px;">Close</button>
-        </div>
-        <iframe src="html-converter.html" style="width: 100%; height: 800px; border: 2px solid #334155; border-radius: 8px;"></iframe>
-      </div>
     </div>
   </div>
 
@@ -4217,21 +4221,6 @@ Save@BillLayneInsurance.com`;
       showNotification(`Document saved as ${fileName}`, 'success');
     }
 
-    // HTML Converter Functions
-    function toggleHTMLConverter() {
-      const converterSection = document.getElementById('htmlConverterSection');
-      if (converterSection.style.display === 'none') {
-        converterSection.style.display = 'block';
-        // Scroll to converter section
-        converterSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else {
-        converterSection.style.display = 'none';
-      }
-    }
-
-    function closeHTMLConverter() {
-      document.getElementById('htmlConverterSection').style.display = 'none';
-    }
   </script>
 
   <!-- Load external JavaScript -->
