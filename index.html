@@ -384,6 +384,9 @@
               <button class="btn btn-secondary" id="dash-addCustomer">
                 <i class="fas fa-user-plus"></i> Add Customer
               </button>
+              <button class="btn btn-secondary" id="dash-taxBtn" style="display:none">
+                <i class="fas fa-map-pin"></i> Tax GIS
+              </button>
             </div>
 
             <!-- Quick Stats -->
@@ -425,7 +428,7 @@
           <!-- Quick Actions - Claude AI Projects -->
           <div class="quick-panel">
             <h3 style="font-size:16px;font-weight:700;margin:0 0 16px 0">
-              <i class="fa fa-robot"></i> Quick AI Actions
+              <i class="fas fa-robot"></i> Quick AI Actions
               <span style="font-size:10px;background:linear-gradient(135deg, #0f4c75, #3282b8);color:white;padding:2px 6px;border-radius:999px;margin-left:8px">CLAUDE</span>
             </h3>
             <div class="quick-actions">
@@ -503,11 +506,11 @@
         // Dashboard search mode handling
         let dashSearchMode = "agency";
         const dashModeMeta = {
-          agency: { placeholder:"Search Agency Matrix by name or address…" },
-          web: { placeholder:"Search the web…" },
-          realestate: { placeholder:"Enter full address (City, NC)…" },
-          people: { placeholder:"Enter name, phone, or address…" },
-          onedrive: { placeholder:"Search OneDrive files…" }
+          agency: { placeholder:"Search Agency Matrix by name or address…", showTax:false },
+          web: { placeholder:"Search the web…", showTax:false },
+          realestate: { placeholder:"Enter full address (City, NC)…", showTax:true },
+          people: { placeholder:"Enter name, phone, or address…", showTax:false },
+          onedrive: { placeholder:"Search OneDrive files…", showTax:false }
         };
 
         function setDashMode(mode){
@@ -517,6 +520,7 @@
           });
           const q = document.getElementById("dash-search");
           q.placeholder = dashModeMeta[mode].placeholder;
+          document.getElementById("dash-taxBtn").style.display = dashModeMeta[mode].showTax ? "" : "none";
           q.focus();
         }
 
@@ -882,6 +886,113 @@
 
         // Initialize favorites
         renderDashFavorites();
+
+        // Tax GIS Modal and Functionality
+        const countyTax = {
+          "mecklenburg":{name:"Mecklenburg County",url:"https://property.spatialest.com/nc/mecklenburg/"},
+          "wake":{name:"Wake County",url:"https://services.wake.gov/realestate/"},
+          "guilford":{name:"Guilford County",url:"https://guilford.county-taxes.com/public/search/property_address"},
+          "forsyth":{name:"Forsyth County",url:"https://gis.forsyth.cc/parcelviewer/"},
+          "iredell":{name:"Iredell County",url:"https://taxweb.iredellcountync.gov/PublicAccess/RealEstate.aspx"},
+          "cabarrus":{name:"Cabarrus County",url:"https://tax.cabarruscounty.us/"},
+          "rowan":{name:"Rowan County",url:"https://rowan.county-taxes.com/public/search/property_address"},
+          "union":{name:"Union County",url:"https://www.co.union.nc.us/departments/tax_administration/real_estate_search.php"},
+          "gaston":{name:"Gaston County",url:"https://gaston.county-taxes.com/public/search/property_address"},
+          "davidson":{name:"Davidson County",url:"https://davidson.county-taxes.com/public/search/property_address"},
+          "surry":{name:"Surry County",url:"http://www.gis.surryinfo.net/"},
+          "yadkin":{name:"Yadkin County",url:"https://www.bttaxpayerportal.com/ITSPublicYK/"},
+          "wilkes":{name:"Wilkes County",url:"https://wilkes.county-taxes.com/public/search/property_address"},
+          "stokes":{name:"Stokes County",url:"https://stokes.county-taxes.com/public/search/property_address"},
+          "lee":{name:"Lee County",url:"https://taxaccess.leecountync.gov/pt/search/commonsearch.aspx?mode=realprop"},
+          "chatham":{name:"Chatham County",url:"https://chatham.county-taxes.com/public/search/property_address"},
+          "moore":{name:"Moore County",url:"https://moore.county-taxes.com/public/search/property_address"},
+          "harnett":{name:"Harnett County",url:"https://harnett.county-taxes.com/public/search/property_address"}
+        };
+
+        const cityToCounty = {
+          "charlotte":"mecklenburg","raleigh":"wake","greensboro":"guilford","winston-salem":"forsyth",
+          "statesville":"iredell","mooresville":"iredell","concord":"cabarrus","kannapolis":"cabarrus",
+          "salisbury":"rowan","monroe":"union","gastonia":"gaston","lexington":"davidson",
+          "mount airy":"surry","pilot mountain":"surry","dobson":"surry","elkin":"surry",
+          "yadkinville":"yadkin","boonville":"yadkin","east bend":"yadkin","jonesville":"yadkin",
+          "wilkesboro":"wilkes","north wilkesboro":"wilkes","danbury":"stokes","walnut cove":"stokes","king":"stokes"
+        };
+
+        function guessCounty(address){
+          const s = address.toLowerCase();
+          for(const [city,county] of Object.entries(cityToCounty)){
+            if(s.includes(city)) return county;
+          }
+          for(const c of Object.keys(countyTax)){
+            if(s.includes(c+" county")||s.includes(c)) return c;
+          }
+          return null;
+        }
+
+        // Create Tax Modal if it doesn't exist
+        if(!document.getElementById("dash-taxModal")){
+          const modal = document.createElement("div");
+          modal.id = "dash-taxModal";
+          modal.style.cssText = `
+            position:fixed;
+            inset:0;
+            background:rgba(0,0,0,0.5);
+            display:none;
+            align-items:center;
+            justify-content:center;
+            z-index:9998;
+            backdrop-filter:blur(4px);
+          `;
+          modal.innerHTML = `
+            <div style="background:#ffffff;border-radius:12px;box-shadow:0 20px 25px rgba(0,0,0,0.2);padding:24px;max-width:500px;width:90%;animation:modalIn 0.3s ease">
+              <h3 style="font-size:18px;font-weight:700;margin:0 0 16px 0">Tax GIS Search</h3>
+              <div id="dash-taxBody" style="margin-bottom:20px;color:#64748b"></div>
+              <div style="display:flex;gap:10px;justify-content:flex-end">
+                <button class="btn btn-primary" id="dash-openCounty" style="background:linear-gradient(135deg, #0f4c75, #3282b8);color:white;border:none;cursor:pointer;font-weight:600;padding:12px 20px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:14px">
+                  <i class="fas fa-external-link-alt"></i> Open County Site
+                </button>
+                <button class="btn btn-secondary" id="dash-closeTax" style="background:#f8fafc;color:#1e293b;border:2px solid #e2e8f0;cursor:pointer;font-weight:600;padding:12px 20px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:14px">Cancel</button>
+              </div>
+            </div>
+          `;
+          document.body.appendChild(modal);
+
+          // Add modal close handlers
+          document.getElementById("dash-closeTax").addEventListener("click", ()=>{
+            document.getElementById("dash-taxModal").style.display = "none";
+          });
+
+          document.getElementById("dash-taxModal").addEventListener("click", (e)=>{
+            if(e.target.id === "dash-taxModal"){
+              document.getElementById("dash-taxModal").style.display = "none";
+            }
+          });
+        }
+
+        // Tax Button Handler
+        document.getElementById("dash-taxBtn").addEventListener("click", ()=>{
+          const addr = document.getElementById("dash-search").value.trim();
+          if(!addr){
+            alert("Enter an address first");
+            document.getElementById("dash-search").focus();
+            return;
+          }
+          const c = guessCounty(addr);
+          const body = document.getElementById("dash-taxBody");
+          let info, url;
+          if(c && countyTax[c]){
+            info = `<strong>Address:</strong> ${addr}<br><strong>County:</strong> ${countyTax[c].name}`;
+            url = countyTax[c].url;
+          } else {
+            info = `Could not determine county from:<br><em>${addr}</em><br><br>Please ensure the address includes the city name or county.`;
+            url = null;
+          }
+          body.innerHTML = info;
+          const openBtn = document.getElementById("dash-openCounty");
+          openBtn.disabled = !url;
+          openBtn.onclick = ()=>{ if(url) window.open(url, "_blank"); };
+          document.getElementById("dash-taxModal").style.display = "flex";
+        });
       })();
     </script>
   </div>
