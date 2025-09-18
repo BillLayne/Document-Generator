@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Bill Layne Insurance - Document Generator & Resources</title>
   <link rel="stylesheet" href="css/styles.css">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
   <!-- PDF.js for PDF viewing (optional) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   
@@ -20,7 +22,8 @@
 <body>
   <!-- Navigation Tabs -->
   <div class="navigation-tabs">
-    <button class="tab-button active" onclick="showTab('generator')">Document Generator</button>
+    <button class="tab-button active" onclick="showTab('dashboard')">Dashboard</button>
+    <button class="tab-button" onclick="showTab('generator')">Document Generator</button>
     <button class="tab-button" onclick="showTab('templates')">PDF Templates</button>
     <button class="tab-button" onclick="showTab('resources')">Resources</button>
     <button class="tab-button" onclick="showTab('prompts')">Prompt Manager</button>
@@ -29,8 +32,862 @@
     <button class="tab-button" onclick="logout()" style="float: right; background: linear-gradient(180deg, #e74c3c 0%, #c0392b 100%); border-color: #a93226;">Logout</button>
   </div>
 
+  <!-- Dashboard Tab (default active) -->
+  <div id="dashboard-tab" class="tab-content active">
+    <style>
+      /* Dashboard specific styles */
+      #dashboard-tab .dashboard-container{
+        display:grid;
+        grid-template-columns:1fr;
+        gap:20px;
+        max-width:1400px;
+        margin:0 auto;
+        padding:20px;
+      }
+
+      #dashboard-tab .dashboard-header{
+        background:#ffffff;
+        border-radius:12px;
+        box-shadow:0 2px 4px rgba(0,0,0,0.1);
+        padding:16px 20px;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        border:1px solid #e2e8f0;
+      }
+
+      #dashboard-tab .brand{
+        display:flex;
+        align-items:center;
+        gap:12px;
+      }
+
+      #dashboard-tab .brand-logo{
+        width:40px;
+        height:40px;
+        background:linear-gradient(135deg, #0f4c75, #3282b8);
+        border-radius:10px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        color:white;
+        font-weight:700;
+        font-size:18px;
+      }
+
+      #dashboard-tab .main-content{
+        display:grid;
+        grid-template-columns:1fr 380px;
+        gap:20px;
+      }
+
+      @media (max-width:1024px){
+        #dashboard-tab .main-content{
+          grid-template-columns:1fr;
+        }
+      }
+
+      #dashboard-tab .search-card{
+        background:#ffffff;
+        border-radius:12px;
+        box-shadow:0 4px 6px rgba(0,0,0,0.1);
+        padding:24px;
+        border:1px solid #e2e8f0;
+        position:relative;
+      }
+
+      #dashboard-tab .search-card::before{
+        content:'';
+        position:absolute;
+        top:0;
+        left:0;
+        right:0;
+        height:4px;
+        background:linear-gradient(90deg, #0f4c75, #3282b8, #0db4f3);
+      }
+
+      #dashboard-tab .mode-selector{
+        display:grid;
+        grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));
+        gap:8px;
+        margin-bottom:20px;
+      }
+
+      #dashboard-tab .mode-btn{
+        border:2px solid #e2e8f0;
+        background:#ffffff;
+        color:#64748b;
+        border-radius:8px;
+        padding:12px 16px;
+        font-weight:600;
+        cursor:pointer;
+        transition:all 0.2s;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:8px;
+        font-size:14px;
+      }
+
+      #dashboard-tab .mode-btn:hover{
+        transform:translateY(-2px);
+        box-shadow:0 4px 6px rgba(0,0,0,0.1);
+        border-color:#3282b8;
+      }
+
+      #dashboard-tab .mode-btn.active{
+        background:linear-gradient(135deg, #0f4c75, #3282b8);
+        color:white;
+        border-color:transparent;
+      }
+
+      #dashboard-tab .search-input{
+        width:100%;
+        border:2px solid #e2e8f0;
+        background:#f8fafc;
+        border-radius:8px;
+        padding:14px 16px;
+        font-size:15px;
+        outline:none;
+        transition:all 0.2s;
+        margin-bottom:16px;
+      }
+
+      #dashboard-tab .search-input:focus{
+        border-color:#0f4c75;
+        background:#ffffff;
+      }
+
+      #dashboard-tab .search-actions{
+        display:grid;
+        grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
+        gap:10px;
+      }
+
+      #dashboard-tab .btn{
+        border:none;
+        cursor:pointer;
+        font-weight:600;
+        padding:12px 20px;
+        border-radius:8px;
+        transition:all 0.2s;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        gap:8px;
+        font-size:14px;
+      }
+
+      #dashboard-tab .btn-primary{
+        background:linear-gradient(135deg, #0f4c75, #3282b8);
+        color:white;
+      }
+
+      #dashboard-tab .btn-secondary{
+        background:#f8fafc;
+        color:#1e293b;
+        border:2px solid #e2e8f0;
+      }
+
+      #dashboard-tab .stats-row{
+        display:grid;
+        grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
+        gap:12px;
+        margin-top:20px;
+        padding-top:20px;
+        border-top:1px solid #e2e8f0;
+      }
+
+      #dashboard-tab .stat-card{
+        background:#f8fafc;
+        border:1px solid #e2e8f0;
+        border-radius:8px;
+        padding:12px;
+        text-align:center;
+      }
+
+      #dashboard-tab .stat-value{
+        font-size:24px;
+        font-weight:700;
+        color:#0f4c75;
+      }
+
+      #dashboard-tab .stat-label{
+        font-size:12px;
+        color:#64748b;
+        text-transform:uppercase;
+        letter-spacing:0.5px;
+      }
+
+      #dashboard-tab .portals-card{
+        background:#ffffff;
+        border-radius:12px;
+        box-shadow:0 2px 4px rgba(0,0,0,0.1);
+        padding:20px;
+        border:1px solid #e2e8f0;
+      }
+
+      #dashboard-tab .portals-grid{
+        display:grid;
+        grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+        gap:12px;
+      }
+
+      #dashboard-tab .portal-tile{
+        background:#f8fafc;
+        border:1px solid #e2e8f0;
+        border-radius:8px;
+        padding:14px;
+        cursor:pointer;
+        transition:all 0.2s;
+      }
+
+      #dashboard-tab .portal-tile:hover{
+        transform:translateY(-3px);
+        box-shadow:0 4px 6px rgba(0,0,0,0.1);
+        border-color:#3282b8;
+      }
+
+      #dashboard-tab .quick-panel{
+        background:#ffffff;
+        border-radius:12px;
+        box-shadow:0 2px 4px rgba(0,0,0,0.1);
+        padding:20px;
+        border:1px solid #e2e8f0;
+      }
+
+      #dashboard-tab .quick-btn{
+        background:#f8fafc;
+        border:1px solid #e2e8f0;
+        border-radius:8px;
+        padding:12px 16px;
+        cursor:pointer;
+        transition:all 0.2s;
+        display:flex;
+        align-items:center;
+        gap:12px;
+        text-align:left;
+        width:100%;
+        margin-bottom:10px;
+      }
+
+      #dashboard-tab .quick-btn:hover{
+        background:linear-gradient(135deg, #0f4c75, #3282b8);
+        border-color:transparent;
+        transform:translateX(4px);
+      }
+
+      #dashboard-tab .quick-btn:hover * {
+        color:white !important;
+      }
+
+      #dashboard-tab .quick-btn-title {
+        color: #1e293b;
+      }
+
+      #dashboard-tab .quick-btn-desc {
+        color: #64748b;
+      }
+
+      #dashboard-tab .favorites-grid{
+        display:grid;
+        gap:10px;
+      }
+
+      #dashboard-tab .favorite-item{
+        background:#f8fafc;
+        border:1px solid #e2e8f0;
+        border-radius:8px;
+        padding:12px;
+        display:flex;
+        align-items:center;
+        gap:12px;
+        cursor:pointer;
+        transition:all 0.2s;
+      }
+
+      #dashboard-tab .favorite-item:hover{
+        background:#ffffff;
+        border-color:#3282b8;
+        padding-left:16px;
+      }
+    </style>
+
+    <div class="dashboard-container">
+      <!-- Dashboard Header -->
+      <div class="dashboard-header">
+        <div class="brand">
+          <div class="brand-logo">BL</div>
+          <div class="brand-text">
+            <div style="font-size:18px;font-weight:700;color:#1e293b">Customer Matrix Pro</div>
+            <div style="font-size:12px;color:#64748b">Bill Layne Insurance Command Center</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="icon-btn" id="dash-toolsToggle" title="AI Tools" style="border:1px solid #e2e8f0;background:#ffffff;color:#64748b;border-radius:8px;padding:8px 12px;cursor:pointer;transition:all 0.2s;font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:6px">
+            <i class="fas fa-robot"></i> AI Tools
+          </button>
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;background:#f8fafc;border-radius:999px;border:1px solid #e2e8f0">
+            <div style="width:8px;height:8px;border-radius:50%;background:#10b981;animation:pulse 2s infinite"></div>
+            <span style="font-size:12px;font-weight:600">Systems Online</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="main-content">
+        <!-- Primary Section -->
+        <div class="primary-section">
+          <!-- Enhanced Search Hub -->
+          <div class="search-card">
+            <div style="margin-bottom:20px">
+              <h2 style="font-size:20px;font-weight:700;margin:0 0 8px 0;display:flex;align-items:center;gap:10px">
+                <i class="fas fa-search"></i>
+                Unified Customer Search
+                <span style="background:linear-gradient(135deg, #0f4c75, #3282b8);color:white;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Pro</span>
+              </h2>
+              <div style="font-size:13px;color:#64748b">
+                Quick access: Press <kbd style="background:#f8fafc;border:1px solid #e2e8f0;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:11px">/</kbd> to focus search
+              </div>
+            </div>
+
+            <!-- Mode Selector -->
+            <div class="mode-selector" id="dash-modeBar">
+              <button class="mode-btn active" data-mode="agency">
+                <i class="fas fa-shield-alt"></i> Agency Matrix
+              </button>
+              <button class="mode-btn" data-mode="web">
+                <i class="fab fa-google"></i> Web Search
+              </button>
+              <button class="mode-btn" data-mode="realestate">
+                <i class="fas fa-home"></i> Real Estate
+              </button>
+              <button class="mode-btn" data-mode="people">
+                <i class="fas fa-user"></i> People
+              </button>
+              <button class="mode-btn" data-mode="onedrive">
+                <i class="fas fa-cloud"></i> OneDrive
+              </button>
+            </div>
+
+            <!-- Search Input -->
+            <input id="dash-search" class="search-input" placeholder="Search Agency Matrix by name or address…" autocomplete="off"/>
+
+            <!-- Action Buttons -->
+            <div class="search-actions">
+              <button class="btn btn-primary" id="dash-goBtn">
+                <i class="fas fa-search"></i> Search
+              </button>
+              <button class="btn btn-secondary" id="dash-openAM">
+                <i class="fas fa-external-link-alt"></i> Open Matrix
+              </button>
+              <button class="btn btn-secondary" id="dash-addCustomer">
+                <i class="fas fa-user-plus"></i> Add Customer
+              </button>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="stats-row">
+              <div class="stat-card">
+                <div class="stat-value" id="dash-searchCount">0</div>
+                <div class="stat-label">Searches Today</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">7</div>
+                <div class="stat-label">Active Portals</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value" id="dash-favoriteCount">0</div>
+                <div class="stat-label">Favorites</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">--</div>
+                <div class="stat-label">Last Sync</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Insurance Company Portals -->
+          <div class="portals-card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+              <h3 style="font-size:16px;font-weight:700;margin:0">
+                <i class="fas fa-building"></i> Insurance Company Portals
+              </h3>
+            </div>
+            <div class="portals-grid" id="dash-portalGrid">
+              <!-- Portals will be dynamically added here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+          <!-- Quick Actions - Claude AI Projects -->
+          <div class="quick-panel">
+            <h3 style="font-size:16px;font-weight:700;margin:0 0 16px 0">
+              <i class="fa fa-robot"></i> Quick AI Actions
+              <span style="font-size:10px;background:linear-gradient(135deg, #0f4c75, #3282b8);color:white;padding:2px 6px;border-radius:999px;margin-left:8px">CLAUDE</span>
+            </h3>
+            <div class="quick-actions">
+              <button class="quick-btn" onclick="window.open('https://claude.ai/project/01993948-a57c-7166-ae81-c547e60fe8fa','_blank')">
+                <div style="width:36px;height:36px;background:linear-gradient(135deg, #dc2626, #ef4444);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0">
+                  <i class="fas fa-file-pdf"></i>
+                </div>
+                <div style="flex:1">
+                  <div class="quick-btn-title" style="font-weight:600;font-size:14px;margin:0 0 2px 0">Create PDF Document</div>
+                  <div class="quick-btn-desc" style="font-size:12px;opacity:0.8;margin:0">Claude PDF generator project</div>
+                </div>
+              </button>
+              <button class="quick-btn" onclick="window.open('https://claude.ai/project/0198f624-8a25-73be-a9e1-98389bc44b2c','_blank')">
+                <div style="width:36px;height:36px;background:linear-gradient(135deg, #059669, #10b981);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0">
+                  <i class="fas fa-home"></i>
+                </div>
+                <div style="flex:1">
+                  <div class="quick-btn-title" style="font-weight:600;font-size:14px;margin:0 0 2px 0">Home Address Research</div>
+                  <div class="quick-btn-desc" style="font-size:12px;opacity:0.8;margin:0">Property & address analysis</div>
+                </div>
+              </button>
+              <button class="quick-btn" onclick="window.open('https://claude.ai/project/0197c35a-7c70-72f7-8d5c-83df3286f0a4','_blank')">
+                <div style="width:36px;height:36px;background:linear-gradient(135deg, #7c3aed, #a855f7);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0">
+                  <i class="fas fa-car"></i>
+                </div>
+                <div style="flex:1">
+                  <div class="quick-btn-title" style="font-weight:600;font-size:14px;margin:0 0 2px 0">Auto Quote Template</div>
+                  <div class="quick-btn-desc" style="font-size:12px;opacity:0.8;margin:0">Generate auto insurance quotes</div>
+                </div>
+              </button>
+              <button class="quick-btn" onclick="window.open('https://agents.agencymatrix.com/#/reports','_blank')">
+                <div style="width:36px;height:36px;background:#e2e8f0;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#0f4c75;flex-shrink:0">
+                  <i class="fas fa-chart-bar"></i>
+                </div>
+                <div style="flex:1">
+                  <div class="quick-btn-title" style="font-weight:600;font-size:14px;margin:0 0 2px 0">Reports</div>
+                  <div class="quick-btn-desc" style="font-size:12px;opacity:0.8;margin:0">View analytics</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Favorites -->
+          <div class="quick-panel">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+              <h3 style="font-size:16px;font-weight:700;margin:0">
+                <i class="fas fa-star"></i> Quick Access Favorites
+              </h3>
+              <div style="display:flex;gap:8px">
+                <button class="icon-btn" id="dash-addFav" title="Add Favorite" style="border:1px solid #e2e8f0;background:#ffffff;color:#64748b;border-radius:8px;padding:6px 10px;cursor:pointer;transition:all 0.2s;font-size:11px;display:inline-flex;align-items:center;gap:4px">
+                  <i class="fas fa-plus"></i>
+                </button>
+                <button class="icon-btn" id="dash-exportFavs" title="Export" style="border:1px solid #e2e8f0;background:#ffffff;color:#64748b;border-radius:8px;padding:6px 10px;cursor:pointer;transition:all 0.2s;font-size:11px;display:inline-flex;align-items:center;gap:4px">
+                  <i class="fas fa-download"></i>
+                </button>
+                <button class="icon-btn" id="dash-importFavs" title="Import" style="border:1px solid #e2e8f0;background:#ffffff;color:#64748b;border-radius:8px;padding:6px 10px;cursor:pointer;transition:all 0.2s;font-size:11px;display:inline-flex;align-items:center;gap:4px">
+                  <i class="fas fa-upload"></i>
+                </button>
+              </div>
+            </div>
+            <div class="favorites-grid" id="dash-favGrid">
+              <div style="text-align:center;padding:20px;color:#64748b" id="dash-no-favs">
+                No favorites yet. Add your frequently accessed links.
+              </div>
+            </div>
+            <input type="file" id="dash-favFile" accept=".json" style="display:none"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Dashboard specific JavaScript
+      (function(){
+        // Dashboard search mode handling
+        let dashSearchMode = "agency";
+        const dashModeMeta = {
+          agency: { placeholder:"Search Agency Matrix by name or address…" },
+          web: { placeholder:"Search the web…" },
+          realestate: { placeholder:"Enter full address (City, NC)…" },
+          people: { placeholder:"Enter name, phone, or address…" },
+          onedrive: { placeholder:"Search OneDrive files…" }
+        };
+
+        function setDashMode(mode){
+          dashSearchMode = mode;
+          document.querySelectorAll("#dash-modeBar button").forEach(b=>{
+            b.classList.toggle("active", b.dataset.mode===mode);
+          });
+          const q = document.getElementById("dash-search");
+          q.placeholder = dashModeMeta[mode].placeholder;
+          q.focus();
+        }
+
+        document.querySelectorAll("#dash-modeBar button").forEach(btn=>
+          btn.addEventListener("click", ()=>setDashMode(btn.dataset.mode))
+        );
+
+        // Dashboard search function
+        function dashSearch(){
+          const val = document.getElementById("dash-search").value.trim();
+          if(!val){
+            alert("Please enter a search term");
+            return;
+          }
+
+          // Update search count
+          let searchesToday = parseInt(localStorage.getItem("searchesToday")||"0") + 1;
+          localStorage.setItem("searchesToday", searchesToday.toString());
+          document.getElementById("dash-searchCount").textContent = searchesToday;
+
+          if(dashSearchMode==="agency"){
+            const isAddress = /\d+/.test(val) || /(street|st|ave|avenue|road|rd|drive|dr|lane|ln|blvd|boulevard|court|ct|circle|cir|way|wy)/i.test(val);
+            const selection = isAddress ? "Address" : "Name";
+            const url = `https://agents.agencymatrix.com/#/customer/search?selection=${selection}&query=${encodeURIComponent(val)}`;
+            window.open(url, "_blank");
+            document.getElementById("dash-search").value="";
+            return;
+          }
+          if(dashSearchMode==="web"){
+            window.open(`https://www.google.com/search?q=${encodeURIComponent(val)}`, "_blank");
+            return;
+          }
+          if(dashSearchMode==="realestate"){
+            window.open(`https://www.zillow.com/homes/${encodeURIComponent(val)}_rb/`, "_blank");
+            return;
+          }
+          if(dashSearchMode==="people"){
+            window.open(`https://www.truepeoplesearch.com/results?name=${encodeURIComponent(val)}`, "_blank");
+            return;
+          }
+          if(dashSearchMode==="onedrive"){
+            window.open(`https://onedrive.live.com/?id=root&qt=search&q=${encodeURIComponent(val)}&scope=drive`, "_blank");
+            return;
+          }
+        }
+
+        document.getElementById("dash-goBtn").addEventListener("click", dashSearch);
+        document.getElementById("dash-search").addEventListener("keydown", e=>{
+          if(e.key==="Enter") dashSearch();
+        });
+
+        // Quick buttons
+        document.getElementById("dash-openAM").addEventListener("click", ()=>
+          window.open("https://agents.agencymatrix.com/#/", "_blank")
+        );
+        document.getElementById("dash-addCustomer").addEventListener("click", ()=>
+          window.open("https://agents.agencymatrix.com/customerEdit.php?id=0", "_blank")
+        );
+
+        // Keyboard shortcut for search focus
+        document.addEventListener("keydown", (e)=>{
+          if(e.key==="/" && !e.ctrlKey && !e.metaKey && !e.altKey && document.getElementById("dashboard-tab").style.display !== "none"){
+            e.preventDefault();
+            document.getElementById("dash-search").focus();
+            document.getElementById("dash-search").select();
+          }
+        });
+
+        // Render portals
+        function renderDashPortals(){
+          const defaultPortals = [
+            { name:"Agency Matrix", url:"https://agents.agencymatrix.com/#/", icon:"fas fa-shield-alt", description:"Primary agent portal" },
+            { name:"Nationwide", url:"https://agentcenter.nationwide.com/home", icon:"fas fa-flag-usa", description:"Agent center portal" },
+            { name:"National General", url:"https://natgenagency.com/MainMenu.aspx", icon:"fas fa-globe", description:"Agency portal" },
+            { name:"Progressive", url:"https://www.foragentsonly.com/home/?Welcome=400", icon:"fas fa-chart-line", description:"For agents only portal" },
+            { name:"Foremost", url:"https://www.foremostagent.com/ia/portal/login", icon:"fas fa-house-user", description:"Agent portal login" },
+            { name:"Alamance", url:"https://alamance.britecore.com/agent/misc/ko_dashboard", icon:"fas fa-shield-alt", description:"BriteCore dashboard" },
+            { name:"NC Grange", url:"https://ncgm.com/", icon:"fas fa-leaf", description:"NC Grange portal" }
+          ];
+
+          const grid = document.getElementById("dash-portalGrid");
+          grid.innerHTML = defaultPortals.map(p=>`
+            <div class="portal-tile" onclick="window.open('${p.url}','_blank')" title="Open ${p.name}">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <div style="width:32px;height:32px;background:linear-gradient(135deg, #0f4c75, #3282b8);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-size:14px">
+                  <i class="${p.icon}"></i>
+                </div>
+              </div>
+              <h4 style="font-weight:600;font-size:14px;color:#1e293b;margin:0">${p.name}</h4>
+              <p style="font-size:12px;color:#64748b;margin:0;line-height:1.4">${p.description}</p>
+            </div>
+          `).join("");
+        }
+
+        // Initialize dashboard
+        renderDashPortals();
+
+        // Update counts
+        let searchesToday = parseInt(localStorage.getItem("searchesToday")||"0");
+        document.getElementById("dash-searchCount").textContent = searchesToday;
+
+        let favorites = JSON.parse(localStorage.getItem("matrixFavorites_v2")||"[]");
+        document.getElementById("dash-favoriteCount").textContent = favorites.length;
+
+        // Reset search count daily
+        const today = new Date().toDateString();
+        if(localStorage.getItem("searchDate") !== today){
+          localStorage.setItem("searchDate", today);
+          localStorage.setItem("searchesToday", "0");
+          document.getElementById("dash-searchCount").textContent = "0";
+        }
+
+        // Favorites Management
+        function renderDashFavorites(){
+          const grid = document.getElementById("dash-favGrid");
+          const favs = JSON.parse(localStorage.getItem("dashFavorites")||"[]");
+          document.getElementById("dash-favoriteCount").textContent = favs.length;
+
+          if(favs.length === 0){
+            grid.innerHTML = `<div style="text-align:center;padding:20px;color:#64748b">
+              No favorites yet. Add your frequently accessed links.
+            </div>`;
+            return;
+          }
+
+          grid.innerHTML = favs.map(f=>`
+            <div class="favorite-item" onclick="window.open('${f.url}','_blank')" title="Open ${f.name}" style="position:relative">
+              <div style="width:30px;height:30px;background:linear-gradient(135deg, #0f4c75, #3282b8);border-radius:6px;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;flex-shrink:0">
+                <i class="fas fa-star"></i>
+              </div>
+              <div style="flex:1;min-width:0">
+                <div style="font-weight:600;font-size:13px;margin:0 0 2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${f.name}</div>
+                <div style="font-size:11px;color:#64748b;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${f.description||f.url}</div>
+              </div>
+              <button onclick="removeDashFavorite('${f.id}');event.stopPropagation();" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:#64748b;cursor:pointer;padding:4px;opacity:0;transition:all 0.2s" onmouseover="this.style.opacity='1';this.style.color='#ef4444'" onmouseout="this.style.opacity='0'">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          `).join("");
+
+          // Add hover effect to show delete button
+          grid.querySelectorAll('.favorite-item').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+              const btn = item.querySelector('button');
+              if(btn) btn.style.opacity = '1';
+            });
+            item.addEventListener('mouseleave', () => {
+              const btn = item.querySelector('button');
+              if(btn) btn.style.opacity = '0';
+            });
+          });
+        }
+
+        function removeDashFavorite(id){
+          let favs = JSON.parse(localStorage.getItem("dashFavorites")||"[]");
+          favs = favs.filter(f=>f.id!==id);
+          localStorage.setItem("dashFavorites", JSON.stringify(favs));
+          renderDashFavorites();
+        }
+
+        // Add favorite button handler
+        document.getElementById("dash-addFav").addEventListener("click", ()=>{
+          const name = prompt("Favorite name:");
+          if(!name) return;
+          const url = prompt("URL:");
+          if(!url) return;
+          const desc = prompt("Description (optional):") || "";
+          const cleanUrl = url.startsWith("http") ? url : `https://${url}`;
+          try{ new URL(cleanUrl); }catch{ alert("Invalid URL"); return; }
+          const fav = {
+            id: String(Date.now()),
+            name: name.trim(),
+            url: cleanUrl.trim(),
+            description: desc.trim()
+          };
+          let favs = JSON.parse(localStorage.getItem("dashFavorites")||"[]");
+          favs.push(fav);
+          localStorage.setItem("dashFavorites", JSON.stringify(favs));
+          renderDashFavorites();
+        });
+
+        // Export favorites
+        document.getElementById("dash-exportFavs").addEventListener("click", ()=>{
+          const favs = JSON.parse(localStorage.getItem("dashFavorites")||"[]");
+          const searchesToday = localStorage.getItem("searchesToday")||"0";
+          const data = {
+            favorites: favs,
+            searchesToday: searchesToday,
+            exportDate: new Date().toISOString(),
+            version: "1.0"
+          };
+          const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `dashboard-favorites-${new Date().toISOString().split("T")[0]}.json`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+        });
+
+        // Import favorites
+        document.getElementById("dash-importFavs").addEventListener("click", ()=>
+          document.getElementById("dash-favFile").click()
+        );
+
+        document.getElementById("dash-favFile").addEventListener("change", (e)=>{
+          const file = e.target.files[0];
+          if(!file) return;
+          const reader = new FileReader();
+          reader.onload = ()=>{
+            try{
+              const data = JSON.parse(reader.result);
+              if(!data.favorites || !Array.isArray(data.favorites)){
+                throw new Error("Invalid file format");
+              }
+              const replace = confirm("Replace existing favorites?\nOK = Replace, Cancel = Merge");
+              let favs = replace ? [] : JSON.parse(localStorage.getItem("dashFavorites")||"[]");
+              if(!replace){
+                const urls = new Set(favs.map(f=>f.url));
+                const newFavs = data.favorites.filter(f=>!urls.has(f.url));
+                favs = [...favs, ...newFavs];
+              } else {
+                favs = data.favorites;
+              }
+              localStorage.setItem("dashFavorites", JSON.stringify(favs));
+              renderDashFavorites();
+              alert("Favorites imported successfully!");
+            }catch(err){
+              alert("Failed to import file: " + err.message);
+            }
+            e.target.value = "";
+          };
+          reader.readAsText(file);
+        });
+
+        // AI Tools Panel
+        document.getElementById("dash-toolsToggle").addEventListener("click", function(){
+          // Create AI tools panel if it doesn't exist
+          let panel = document.getElementById("dash-aiToolsPanel");
+          if(!panel){
+            panel = document.createElement("div");
+            panel.id = "dash-aiToolsPanel";
+            panel.style.cssText = `
+              position:fixed;
+              right:20px;
+              top:80px;
+              width:400px;
+              max-height:80vh;
+              background:#ffffff;
+              border-radius:12px;
+              box-shadow:0 10px 25px rgba(0,0,0,0.2);
+              border:1px solid #e2e8f0;
+              padding:20px;
+              z-index:9999;
+              overflow-y:auto;
+              display:none;
+            `;
+            panel.innerHTML = `
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                <h3 style="font-size:16px;font-weight:700;margin:0">
+                  <i class="fas fa-robot"></i> AI Insurance Assistant
+                </h3>
+                <button onclick="document.getElementById('dash-aiToolsPanel').style.display='none'" style="background:transparent;border:none;cursor:pointer;font-size:18px;color:#64748b">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+
+              <div style="margin-bottom:16px">
+                <label style="font-size:12px;color:#64748b;font-weight:600;display:block;margin-bottom:8px">QUICK TEMPLATES</label>
+                <div style="display:grid;gap:6px">
+                  <button class="template-btn" onclick="setAITemplate('quote')" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#64748b;text-align:left">
+                    <i class="fas fa-file-invoice-dollar"></i> Generate Quote Comparison
+                  </button>
+                  <button class="template-btn" onclick="setAITemplate('coverage')" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#64748b;text-align:left">
+                    <i class="fas fa-shield-alt"></i> Explain Coverage
+                  </button>
+                  <button class="template-btn" onclick="setAITemplate('claim')" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#64748b;text-align:left">
+                    <i class="fas fa-file-contract"></i> Draft Claim Letter
+                  </button>
+                  <button class="template-btn" onclick="setAITemplate('email')" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#64748b;text-align:left">
+                    <i class="fas fa-envelope"></i> Customer Email
+                  </button>
+                </div>
+              </div>
+
+              <textarea id="dash-aiPrompt" style="width:100%;border:1px solid #e2e8f0;background:#f8fafc;border-radius:8px;padding:12px;font-size:14px;min-height:100px;resize:vertical;font-family:inherit;margin-bottom:12px" placeholder="Type your custom prompt or select a template above..."></textarea>
+
+              <div style="display:grid;gap:8px">
+                <button onclick="openAIWithPrompt()" style="background:linear-gradient(135deg, #0f4c75, #3282b8);color:white;border:none;cursor:pointer;font-weight:600;padding:12px 20px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:14px">
+                  <i class="fas fa-robot"></i> Open Claude with Prompt
+                </button>
+                <button onclick="copyAIPrompt()" style="background:#f8fafc;color:#1e293b;border:2px solid #e2e8f0;cursor:pointer;font-weight:600;padding:12px 20px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:14px">
+                  <i class="fas fa-copy"></i> Copy to Clipboard
+                </button>
+              </div>
+            `;
+            document.body.appendChild(panel);
+          }
+
+          // Toggle panel visibility
+          panel.style.display = panel.style.display === "none" ? "block" : "none";
+        });
+
+        // AI Template functions
+        window.setAITemplate = function(type){
+          const templates = {
+            quote: "I need to create a comprehensive insurance quote comparison for a customer. Please help me analyze and present the following options:\n\nCustomer Details:\n[Enter customer name, age, location]\n\nCoverage Needed:\n[Auto/Home/Life/etc.]\n\nCarriers to Compare:\n- Nationwide\n- Progressive\n- [Other carriers]\n\nPlease provide a clear comparison table with coverage limits, deductibles, and annual premiums. Include pros/cons for each option and a recommendation based on the customer's needs.\n\nAgency: Bill Layne Insurance, Elkin NC",
+            coverage: "Please explain the following insurance coverage in simple, customer-friendly terms:\n\nCoverage Type: [Enter coverage type]\n\nCustomer Situation: [Brief description]\n\nInclude:\n1. What this coverage protects\n2. Common scenarios when it's used\n3. What's NOT covered\n4. Typical cost factors\n5. NC-specific requirements\n\nAgency: Bill Layne Insurance, Elkin NC",
+            claim: "Help me draft a professional claim letter/email:\n\nClaim Type: [Auto accident/Property damage/etc.]\n\nCarrier: [Insurance company name]\n\nSituation:\n[Describe the incident]\n\nDesired Outcome:\n[What resolution we're seeking]\n\nTone: Professional but firm, representing Bill Layne Insurance Agency.",
+            email: "Draft a professional email to a customer:\n\nPurpose: [Renewal reminder/Policy change/Follow-up/etc.]\n\nCustomer: [Name and brief context]\n\nKey Points to Cover:\n[List main points]\n\nBill Layne Insurance Agency\n336-835-1993\nSave@BillLayneInsurance.com"
+          };
+          const textarea = document.getElementById("dash-aiPrompt");
+          if(textarea && templates[type]){
+            textarea.value = templates[type];
+          }
+        };
+
+        window.openAIWithPrompt = function(){
+          const prompt = document.getElementById("dash-aiPrompt").value.trim();
+          if(!prompt){
+            alert("Please enter or select a prompt");
+            return;
+          }
+          navigator.clipboard.writeText(prompt).then(()=>{
+            window.open("https://claude.ai/new", "_blank");
+          }).catch(()=>{
+            const ta = document.createElement("textarea");
+            ta.value = prompt;
+            ta.style.position = "fixed";
+            ta.style.opacity = "0";
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            ta.remove();
+            window.open("https://claude.ai/new", "_blank");
+          });
+        };
+
+        window.copyAIPrompt = function(){
+          const prompt = document.getElementById("dash-aiPrompt").value.trim();
+          if(!prompt){
+            alert("Nothing to copy");
+            return;
+          }
+          navigator.clipboard.writeText(prompt).then(()=>{
+            alert("Prompt copied to clipboard!");
+          }).catch(()=>{
+            const ta = document.createElement("textarea");
+            ta.value = prompt;
+            ta.style.position = "fixed";
+            ta.style.opacity = "0";
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            ta.remove();
+            alert("Prompt copied to clipboard!");
+          });
+        };
+
+        window.removeDashFavorite = removeDashFavorite;
+
+        // Initialize favorites
+        renderDashFavorites();
+      })();
+    </script>
+  </div>
+
   <!-- Document Generator Tab (main content) -->
-  <div id="generator-tab" class="tab-content active">
+  <div id="generator-tab" class="tab-content" style="display: none;">
     <div class="form-container">
       <h2>Insurance Document Generator - Multi-Template</h2>
       

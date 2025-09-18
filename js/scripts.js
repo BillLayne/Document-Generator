@@ -159,13 +159,13 @@ function showTab(tabName) {
   document.querySelectorAll('.tab-button').forEach(btn => {
     btn.classList.remove('active');
   });
-  
+
   // Show selected tab
   document.getElementById(`${tabName}-tab`).style.display = 'block';
-  
-  // Find and activate the correct button
+
+  // Find and activate the correct button based on onclick attribute
   document.querySelectorAll('.tab-button').forEach(btn => {
-    if (btn.textContent.toLowerCase().includes(tabName.toLowerCase())) {
+    if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(`showTab('${tabName}')`)) {
       btn.classList.add('active');
     }
   });
