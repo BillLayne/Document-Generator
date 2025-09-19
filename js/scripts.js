@@ -563,6 +563,49 @@ function emailCurrentPDF() {
         sections: ['autoIDCardSection'],
         description: 'Generate digital auto insurance ID cards. Enter vehicle and policy information to create printable ID cards.',
         documents: ['autoIDCard']
+      },
+      'pdf-templates': {
+        sections: [],
+        description: 'Browse and download commonly used insurance forms and templates. Filter by category: ACORD Forms, State Forms, or Company Forms.',
+        documents: [],
+        customAction: function() {
+          // Hide the generator form and show the PDF templates
+          document.querySelector('.form-container').style.display = 'none';
+
+          // Create a temporary container for the PDF templates
+          const tempContainer = document.createElement('div');
+          tempContainer.id = 'pdf-templates-temp-container';
+          tempContainer.innerHTML = `
+            <div class="pdf-templates-container">
+              <h2>PDF Template Library</h2>
+              <p style="margin-bottom: 20px;">Browse and download commonly used insurance forms and templates.</p>
+              <div class="pdf-category-selector">
+                <label for="pdfCategory">Filter by Category:</label>
+                <select id="pdfCategory" onchange="loadPDFCategory()">
+                  <option value="all">All Templates</option>
+                  <option value="acord">ACORD Forms</option>
+                  <option value="state">State Forms</option>
+                  <option value="company">Company Forms</option>
+                </select>
+              </div>
+              <div id="pdfGrid" class="pdf-grid">
+                <!-- PDF cards will be dynamically loaded here -->
+              </div>
+              <button onclick="backToGenerator()" style="margin-top: 20px; padding: 10px 20px; background: #0f4c75; color: white; border: none; border-radius: 4px; cursor: pointer;">← Back to Document Generator</button>
+            </div>
+          `;
+
+          // Remove any existing temp container first
+          const existing = document.getElementById('pdf-templates-temp-container');
+          if (existing) {
+            existing.remove();
+          }
+
+          document.getElementById('generator-tab').appendChild(tempContainer);
+
+          // Load PDFs
+          loadPDFCategory();
+        }
       }
     };
 
@@ -595,6 +638,25 @@ function emailCurrentPDF() {
           agencyCodeField.value = '';
       }
     }
+
+    // Function to go back from PDF templates to document generator
+    function backToGenerator() {
+      // Remove the temporary PDF container
+      const tempContainer = document.getElementById('pdf-templates-temp-container');
+      if (tempContainer) {
+        tempContainer.remove();
+      }
+
+      // Show the form container again
+      document.querySelector('.form-container').style.display = 'block';
+
+      // Reset the dropdown to default option
+      document.getElementById('documentType').value = 'closing';
+      switchTemplate();
+    }
+
+    // Make function global
+    window.backToGenerator = backToGenerator;
 
     // Initialize on page load
     window.addEventListener('DOMContentLoaded', function() {
