@@ -30,7 +30,7 @@
     <button class="tab-button" onclick="showTab('prompts')">Prompt Manager</button>
     <button class="tab-button" onclick="showTab('html-converter')">HTML Converter</button>
     <button class="tab-button" onclick="showTab('snl')">SNL</button>
-    <button class="tab-button" onclick="console.log('Cancellation clicked'); document.getElementById('cancellation-tab').style.display='block'; document.querySelectorAll('.tab-content').forEach(t => { if(t.id !== 'cancellation-tab') t.style.display='none'; });">Cancellation</button>
+    <button class="tab-button" onclick="showTab('cancellation')">Cancellation</button>
     <button class="tab-button" onclick="logout()" style="float: right; background: linear-gradient(180deg, #e74c3c 0%, #c0392b 100%); border-color: #a93226;">Logout</button>
   </div>
 
@@ -3644,10 +3644,6 @@ Save@BillLayneInsurance.com`;
     </script>
   <!-- Cancellation Tab (ACORD 35 Cancellation Link Generator) -->
   <div id="cancellation-tab" class="tab-content" style="display: none;">
-    <div style="padding: 20px;">
-      <h1>TEST - CANCELLATION TAB IS WORKING</h1>
-      <p>If you can see this text, the tab switching is working correctly.</p>
-    </div>
     <div style="padding: 20px; background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); min-height: calc(100vh - 60px);">
       <div style="max-width: 800px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden;">
         <div style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 25px 20px; text-align: center;">
