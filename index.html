@@ -28,6 +28,7 @@
     <!-- <button class="tab-button" onclick="showTab('templates')">PDF Templates</button> -->
     <button class="tab-button" onclick="showTab('resources')">Resources</button>
     <button class="tab-button" onclick="showTab('prompts')">Prompt Manager</button>
+    <button class="tab-button" onclick="showTab('html-converter')">HTML Converter</button>
     <button class="tab-button" onclick="showTab('snl')">SNL</button>
     <button class="tab-button" onclick="showTab('cancellation')">Cancellation</button>
     <button class="tab-button" onclick="logout()" style="float: right; background: linear-gradient(180deg, #e74c3c 0%, #c0392b 100%); border-color: #a93226;">Logout</button>
@@ -2194,19 +2195,6 @@ Elkin, NC 28621"></textarea>
     </style>
     
     <div class="prompts-container">
-      <!-- HTML Converter Section -->
-      <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-          <h2 style="font-size: 24px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 10px;">
-            <i class="fas fa-code"></i>
-            HTML Email Converter
-            <span style="background: linear-gradient(135deg, #8b5cf6, #a855f7); color: white; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Pro</span>
-          </h2>
-          <p style="font-size: 14px; color: #64748b; margin: 0;">Convert and optimize HTML for emails</p>
-        </div>
-        <iframe src="html-converter.html" style="width: 100%; height: 800px; border: 2px solid #e2e8f0; border-radius: 12px;"></iframe>
-      </div>
-
       <!-- Prompts Section Header -->
       <div class="prompts-header">
         <h2>📝 Saved Prompts</h2>
@@ -2559,6 +2547,60 @@ Elkin, NC 28621"></textarea>
       });
     </script>
   </div>
+
+<!-- HTML Converter Tab -->
+<div id="html-converter-tab" class="tab-content" style="display: none;">
+  <style>
+    #html-converter-tab {
+      padding: 0;
+      height: calc(100vh - 60px); /* Full height minus navigation bar */
+      overflow: hidden;
+    }
+
+    .html-converter-container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      background: #f8f9fa;
+    }
+
+    .html-converter-header {
+      background: white;
+      padding: 20px 30px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .html-converter-iframe-container {
+      flex: 1;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .html-converter-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      background: white;
+    }
+  </style>
+
+  <div class="html-converter-container">
+    <div class="html-converter-header">
+      <h2 style="font-size: 28px; font-weight: 700; margin: 0 0 10px 0; display: flex; align-items: center; gap: 12px;">
+        <i class="fas fa-code" style="color: #8b5cf6;"></i>
+        HTML Email Converter
+        <span style="background: linear-gradient(135deg, #8b5cf6, #a855f7); color: white; padding: 6px 14px; border-radius: 999px; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Pro</span>
+      </h2>
+      <p style="font-size: 16px; color: #64748b; margin: 0;">Convert and optimize HTML for professional email templates. Full-page editor for better visibility.</p>
+    </div>
+    <div class="html-converter-iframe-container">
+      <iframe src="html-converter.html" class="html-converter-iframe"></iframe>
+    </div>
+  </div>
+</div>
 
 <!-- SNL Tab (Statement of No Loss Generator) -->
 <div id="snl-tab" class="tab-content" style="display: none;">
