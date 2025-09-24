@@ -989,6 +989,9 @@
                 <button class="btn btn-sm" onclick="optimizeImages()">
                     <i class="fas fa-image"></i> Optimize Images
                 </button>
+                <button class="btn btn-sm btn-success" onclick="optimizeForMobile()">
+                    <i class="fas fa-mobile-alt"></i> Mobile Optimize
+                </button>
             </div>
         </div>
 
@@ -1399,6 +1402,26 @@
         const loading = document.getElementById('loading');
         const validationPanel = document.getElementById('validationPanel');
         const validationResults = document.getElementById('validationResults');
+        
+        // Initialize variables that are used throughout the application
+        let currentPreviewMode = 'styled';
+        let pausePreviewUpdate = false;
+        let isEditMode = false;
+        let editCheckInterval = null;
+        let lastPreviewContent = '';
+        let searchCursor = null;
+        let updateTimer;
+        
+        // Variable Manager System - Initialize early to prevent reference errors
+        let variables = [];
+        let testData = {};
+        let variableSets = {
+            'default': ['client_name', 'email', 'phone', 'agent_name'],
+            'auto': ['client_name', 'policy_number', 'vehicle_make', 'vehicle_model', 'vehicle_year', 'vin', 'coverage_type', 'premium_amount', 'deductible', 'renewal_date', 'agent_name', 'agent_phone'],
+            'home': ['client_name', 'property_address', 'policy_number', 'coverage_amount', 'dwelling_coverage', 'personal_property', 'liability_coverage', 'deductible', 'premium_amount', 'renewal_date', 'agent_name'],
+            'life': ['client_name', 'policy_number', 'beneficiary_name', 'coverage_amount', 'premium_amount', 'policy_type', 'effective_date', 'term_length', 'agent_name', 'agent_phone'],
+            'custom': []
+        };
 
         // Initialize CodeMirror with Material theme
         editor = CodeMirror.fromTextArea(htmlInput, {
@@ -1423,17 +1446,15 @@
             }
         });
 
-        // Preview mode state
-        let currentPreviewMode = 'styled';
-
-        // Update preview in real-time
-        let updateTimer;
+        // Expose functions to global scope
         editor.on('change', () => {
-            clearTimeout(updateTimer);
-            updateTimer = setTimeout(() => {
-                updatePreview();
-                updateStats();
-            }, 500);
+            if (!pausePreviewUpdate) {
+                clearTimeout(updateTimer);
+                updateTimer = setTimeout(() => {
+                    updatePreview();
+                    updateStats();
+                }, 500);
+            }
         });
 
         // Initial update
@@ -2063,6 +2084,46 @@
                 fixCount++;
             }
             
+            // Fix 15: Fix small font sizes (less than 14px)
+            const fontSizeRegex = /font-size\s*:\s*(\d+(?:\.\d+)?)(px|pt)/gi;
+            html = html.replace(fontSizeRegex, (match, size, unit) => {
+                const sizeNum = parseFloat(size);
+                if (unit === 'px' && sizeNum < 14) {
+                    fixCount++;
+                    return 'font-size: 14px';
+                } else if (unit === 'pt' && sizeNum < 10.5) { // 10.5pt ≈ 14px
+                    fixCount++;
+                    return 'font-size: 10.5pt';
+                }
+                return match;
+            });
+            
+            // Fix 16: Add minimum font size to body if not specified
+            if (!html.includes('font-size') && html.includes('<body')) {
+                html = html.replace(/<body([^>]*)>/i, (match, attrs) => {
+                    if (attrs.includes('style=')) {
+                        return match.replace(/style="([^"]*)"/, 'style="$1; font-size: 14px;"');
+                    } else {
+                        return `<body${attrs} style="font-size: 14px;">`;
+                    }
+                });
+                fixCount++;
+            }
+            
+            // Fix 17: Ensure all text elements have readable sizes
+            const textTags = ['p', 'span', 'div', 'td', 'th', 'li', 'a'];
+            textTags.forEach(tag => {
+                const tagRegex = new RegExp(`<${tag}([^>]*style="[^"]*font-size\\s*:\\s*(\\d+(?:\\.\\d+)?)(px|pt)[^"]*"[^>]*)>`, 'gi');
+                html = html.replace(tagRegex, (match, beforeSize, size, unit) => {
+                    const sizeNum = parseFloat(size);
+                    if ((unit === 'px' && sizeNum < 14) || (unit === 'pt' && sizeNum < 10.5)) {
+                        fixCount++;
+                        return match.replace(/font-size\s*:\s*\d+(?:\.\d+)?(?:px|pt)/, 'font-size: 14px');
+                    }
+                    return match;
+                });
+            });
+            
             // Update editor with fixed HTML
             editor.setValue(html);
             updatePreview();
@@ -2497,31 +2558,171 @@
         }
 
         // Live Edit mode functionality
-        let isEditMode = false;
         
         function toggleEditMode() {
-            isEditMode = !isEditMode;
             const editModeText = document.getElementById('editModeText');
+            const previewFrame = document.getElementById('preview');
             
-            if (isEditMode) {
-                editModeText.textContent = 'Disable Live Edit';
-                const previewDoc = preview.contentDocument || preview.contentWindow.document;
-                previewDoc.designMode = 'on';
-                previewDoc.body.contentEditable = true;
-                showToast('Live edit mode enabled - click in preview to edit');
-            } else {
-                editModeText.textContent = 'Enable Live Edit';
-                const previewDoc = preview.contentDocument || preview.contentWindow.document;
-                previewDoc.designMode = 'off';
-                previewDoc.body.contentEditable = false;
-                const editedHTML = previewDoc.documentElement.outerHTML;
-                editor.setValue(editedHTML);
-                showToast('Live edit mode disabled - changes saved');
+            if (!previewFrame) {
+                showToast('Preview frame not found', 'error');
+                return;
+            }
+            
+            try {
+                const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+                
+                if (!previewDoc || !previewDoc.body) {
+                    showToast('Preview not loaded yet. Please wait...', 'warning');
+                    return;
+                }
+                
+                isEditMode = !isEditMode;
+                
+                if (isEditMode) {
+                    // Enable edit mode
+                    editModeText.textContent = 'Disable Live Edit';
+                    
+                    // Make preview editable
+                    previewDoc.body.contentEditable = 'true';
+                    previewDoc.designMode = 'on';
+                    
+                    // Add visual indication
+                    previewDoc.body.style.border = '3px dashed #3498db';
+                    previewDoc.body.style.padding = '5px';
+                    
+                    // Start monitoring for changes
+                    if (editCheckInterval) clearInterval(editCheckInterval);
+                    editCheckInterval = setInterval(() => {
+                        if (isEditMode) checkForPreviewChanges();
+                    }, 1000);
+                    
+                    showToast('Live edit enabled - Click in preview to edit!', 'success');
+                } else {
+                    // Disable edit mode
+                    editModeText.textContent = 'Enable Live Edit';
+                    
+                    // Make preview non-editable
+                    previewDoc.body.contentEditable = 'false';
+                    previewDoc.designMode = 'off';
+                    
+                    // Remove visual indication
+                    previewDoc.body.style.border = '';
+                    previewDoc.body.style.padding = '';
+                    
+                    // Stop monitoring
+                    if (editCheckInterval) {
+                        clearInterval(editCheckInterval);
+                        editCheckInterval = null;
+                    }
+                    
+                    // Do final sync
+                    extractAndSavePreviewContent();
+                    
+                    showToast('Live edit disabled - Changes saved!', 'success');
+                }
+            } catch (error) {
+                console.error('Error toggling edit mode:', error);
+                showToast('Error accessing preview. Try again.', 'error');
+                isEditMode = false;
+            }
+        }
+        
+        function checkForPreviewChanges() {
+            if (!isEditMode) return;
+            
+            try {
+                const previewFrame = document.getElementById('preview');
+                const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+                
+                if (previewDoc && previewDoc.body) {
+                    const currentContent = previewDoc.body.innerHTML;
+                    
+                    // Check if content changed
+                    if (currentContent !== lastPreviewContent) {
+                        lastPreviewContent = currentContent;
+                        extractAndSavePreviewContent();
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking preview changes:', error);
+            }
+        }
+        
+        function extractAndSavePreviewContent() {
+            try {
+                const previewFrame = document.getElementById('preview');
+                const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+                
+                if (!previewDoc || !previewDoc.body) return;
+                
+                let extractedHTML = '';
+                
+                // Get the content based on preview mode
+                if (currentPreviewMode === 'gmail') {
+                    const wrapper = previewDoc.querySelector('div[style*="max-width"]');
+                    extractedHTML = wrapper ? wrapper.innerHTML : previewDoc.body.innerHTML;
+                } else {
+                    extractedHTML = previewDoc.body.innerHTML;
+                }
+                
+                // Clean up browser-added attributes
+                extractedHTML = extractedHTML
+                    .replace(/ contenteditable="[^"]*"/gi, '')
+                    .replace(/ spellcheck="[^"]*"/gi, '')
+                    .replace(/ style="border[^"]*"/gi, '')
+                    .replace(/ style="padding[^"]*"/gi, '');
+                
+                // Check if we need to preserve HTML document structure
+                const originalContent = editor.getValue();
+                if (originalContent.includes('<!DOCTYPE') || originalContent.includes('<html')) {
+                    // Parse to get head content
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = originalContent;
+                    const headMatch = originalContent.match(/<head[^>]*>([\s\S]*?)<\/head>/i);
+                    
+                    if (headMatch) {
+                        extractedHTML = `<!DOCTYPE html>
+<html>
+<head>
+${headMatch[1]}
+</head>
+<body>
+${extractedHTML}
+</body>
+</html>`;
+                    }
+                }
+                
+                // Update CodeMirror without triggering preview update
+                pausePreviewUpdate = true;
+                
+                // Save cursor position
+                const cursor = editor.getCursor();
+                
+                // Update editor
+                editor.setValue(extractedHTML);
+                
+                // Try to restore cursor
+                try {
+                    editor.setCursor(cursor);
+                } catch (e) {
+                    // Cursor position might be invalid after content change
+                }
+                
+                // Re-enable preview updates
+                setTimeout(() => {
+                    pausePreviewUpdate = false;
+                }, 500);
+                
+                // Update stats
+                updateStats();
+                
+            } catch (error) {
+                console.error('Error extracting preview content:', error);
             }
         }
 
         // Find & Replace functionality
-        let searchCursor = null;
         
         function showFindReplace() {
             document.getElementById('findReplaceModal').classList.add('show');
@@ -2970,6 +3171,278 @@
             }
         }
 
+        function optimizeForMobile() {
+            showToast('Starting mobile optimization...', 'info');
+            
+            let html = editor.getValue();
+            let optimizations = 0;
+            const improvements = [];
+            
+            // 1. Add viewport meta tag if missing
+            if (!html.includes('viewport')) {
+                if (html.includes('<head>')) {
+                    html = html.replace('<head>', '<head>\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">');
+                    improvements.push('Added viewport meta tag');
+                    optimizations++;
+                } else if (!html.includes('<head>') && !html.includes('<!DOCTYPE')) {
+                    // If it's just body content, add the full structure
+                    html = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+${html}
+</body>
+</html>`;
+                    improvements.push('Added HTML structure with viewport');
+                    optimizations++;
+                }
+            }
+            
+            // 2. Fix all small font sizes (less than 14px)
+            const fontSizeRegex = /font-size\s*:\s*(\d+(?:\.\d+)?)(px|pt|em|rem)/gi;
+            let fontFixed = false;
+            html = html.replace(fontSizeRegex, (match, size, unit) => {
+                const sizeNum = parseFloat(size);
+                if (unit === 'px' && sizeNum < 14) {
+                    fontFixed = true;
+                    return 'font-size: 14px';
+                } else if (unit === 'pt' && sizeNum < 10.5) {
+                    fontFixed = true;
+                    return 'font-size: 10.5pt';
+                } else if (unit === 'em' && sizeNum < 0.875) {
+                    fontFixed = true;
+                    return 'font-size: 0.875em';
+                } else if (unit === 'rem' && sizeNum < 0.875) {
+                    fontFixed = true;
+                    return 'font-size: 0.875rem';
+                }
+                return match;
+            });
+            if (fontFixed) {
+                improvements.push('Fixed small font sizes');
+                optimizations++;
+            }
+            
+            // 3. Ensure responsive images
+            const imgRegex = /<img([^>]*?)>/gi;
+            let imgFixed = false;
+            html = html.replace(imgRegex, (match, attrs) => {
+                if (!attrs.includes('max-width') && !attrs.includes('width="100%"')) {
+                    imgFixed = true;
+                    if (attrs.includes('style=')) {
+                        return match.replace(/style="([^"]*)"/, 'style="$1; max-width: 100%; height: auto;"');
+                    } else {
+                        return `<img${attrs} style="max-width: 100%; height: auto;">`;
+                    }
+                }
+                return match;
+            });
+            if (imgFixed) {
+                improvements.push('Made images responsive');
+                optimizations++;
+            }
+            
+            // 4. Convert fixed widths to max-widths for better responsiveness
+            let widthFixed = false;
+            html = html.replace(/width\s*:\s*(\d+)px/gi, (match, width) => {
+                const widthNum = parseInt(width);
+                if (widthNum > 600) {
+                    widthFixed = true;
+                    return 'width: 100%; max-width: 600px';
+                } else if (widthNum > 100 && widthNum <= 600) {
+                    widthFixed = true;
+                    return `width: 100%; max-width: ${width}px`;
+                }
+                return match;
+            });
+            if (widthFixed) {
+                improvements.push('Converted fixed widths to responsive');
+                optimizations++;
+            }
+            
+            // 5. Ensure touch-friendly buttons (min 44px height)
+            let buttonFixed = false;
+            html = html.replace(/<a([^>]*style="[^"]*)"([^>]*)>/gi, (match, styleAttr, rest) => {
+                if (!styleAttr.includes('padding') || styleAttr.includes('padding: 5px') || styleAttr.includes('padding: 8px')) {
+                    buttonFixed = true;
+                    // Add or replace padding for better touch targets
+                    if (styleAttr.includes('padding:')) {
+                        return match.replace(/padding:\s*[^;]+;?/, 'padding: 12px 20px;');
+                    } else {
+                        return match.replace(/style="([^"]*)"/, 'style="$1; padding: 12px 20px;"');
+                    }
+                }
+                return match;
+            });
+            if (buttonFixed) {
+                improvements.push('Made buttons touch-friendly');
+                optimizations++;
+            }
+            
+            // 6. Add mobile-friendly table attributes
+            let tableFixed = false;
+            html = html.replace(/<table([^>]*?)>/gi, (match, attrs) => {
+                if (!attrs.includes('cellpadding')) {
+                    tableFixed = true;
+                    return `<table${attrs} cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width: 600px; margin: 0 auto;">`;
+                }
+                return match;
+            });
+            if (tableFixed) {
+                improvements.push('Optimized table structure');
+                optimizations++;
+            }
+            
+            // 7. Add mobile-specific CSS if missing
+            if (html.includes('</head>') && !html.includes('@media')) {
+                const mobileStyles = `
+    <style>
+        /* Mobile Responsive Styles */
+        @media only screen and (max-width: 600px) {
+            table[class="body-wrap"] { width: 100% !important; }
+            table[class="container"] { width: 100% !important; }
+            table[class="content"] { width: 100% !important; }
+            td[class="container"] { padding: 0 !important; }
+            
+            /* Make all tables responsive */
+            table { width: 100% !important; }
+            
+            /* Stack table cells on mobile */
+            td[class="column"], 
+            th[class="column"] { 
+                display: block !important; 
+                width: 100% !important; 
+                text-align: left !important;
+                padding: 10px !important;
+            }
+            
+            /* Responsive images */
+            img { 
+                max-width: 100% !important; 
+                height: auto !important; 
+                display: block !important;
+                margin: 0 auto !important;
+            }
+            
+            /* Responsive text */
+            p, span, div, td { 
+                font-size: 14px !important; 
+                line-height: 1.6 !important;
+            }
+            
+            /* Touch-friendly buttons */
+            a[class="button"], 
+            a[class="btn"] { 
+                display: block !important;
+                padding: 15px 20px !important;
+                margin: 10px 0 !important;
+                text-align: center !important;
+            }
+            
+            /* Hide elements marked for desktop only */
+            .desktop-only { display: none !important; }
+            
+            /* Show elements marked for mobile only */
+            .mobile-only { display: block !important; }
+        }
+        
+        /* Additional mobile-first improvements */
+        body {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+        
+        table {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+        
+        img {
+            -ms-interpolation-mode: bicubic;
+        }
+    </style>`;
+                html = html.replace('</head>', mobileStyles + '\n</head>');
+                improvements.push('Added responsive CSS media queries');
+                optimizations++;
+            }
+            
+            // 8. Add minimum line-height for readability
+            let lineHeightFixed = false;
+            html = html.replace(/<p([^>]*?)>/gi, (match, attrs) => {
+                if (!attrs.includes('line-height')) {
+                    lineHeightFixed = true;
+                    if (attrs.includes('style=')) {
+                        return match.replace(/style="([^"]*)"/, 'style="$1; line-height: 1.6;"');
+                    } else {
+                        return `<p${attrs} style="line-height: 1.6;">`;
+                    }
+                }
+                return match;
+            });
+            if (lineHeightFixed) {
+                improvements.push('Improved text line height');
+                optimizations++;
+            }
+            
+            // 9. Ensure proper character encoding
+            if (html.includes('<head>') && !html.includes('charset')) {
+                html = html.replace('<head>', '<head>\n    <meta charset="UTF-8">');
+                improvements.push('Added character encoding');
+                optimizations++;
+            }
+            
+            // 10. Add Apple-specific mobile optimizations
+            if (html.includes('<head>') && !html.includes('format-detection')) {
+                html = html.replace('<head>', `<head>
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="date=no">
+    <meta name="format-detection" content="address=no">
+    <meta name="format-detection" content="email=no">`);
+                improvements.push('Added Apple format detection tags');
+                optimizations++;
+            }
+            
+            // Update editor with optimized HTML
+            editor.setValue(html);
+            updatePreview();
+            updateStats();
+            
+            // Show detailed results
+            if (optimizations > 0) {
+                const message = `Mobile optimization complete! ${optimizations} improvements made:\n${improvements.map(i => '• ' + i).join('\n')}`;
+                showToast(message, 'success');
+                
+                // Also update validation panel with improvements
+                if (improvements.length > 0) {
+                    validationResults.innerHTML = `
+                        <div class="validation-item success">
+                            <i class="fas fa-check-circle"></i>
+                            <span><strong>Mobile optimizations applied (${optimizations}):</strong></span>
+                        </div>
+                        ${improvements.map(improvement => `
+                            <div class="validation-item success">
+                                <i class="fas fa-check"></i>
+                                <span>${improvement}</span>
+                            </div>
+                        `).join('')}
+                    `;
+                    validationPanel.style.display = 'block';
+                }
+            } else {
+                showToast('Your email is already mobile optimized!', 'success');
+                validationResults.innerHTML = `
+                    <div class="validation-item success">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Email is fully mobile optimized!</span>
+                    </div>
+                `;
+                validationPanel.style.display = 'block';
+            }
+        }
+
         // Handle image drag & drop
         const editorElement = document.querySelector('.CodeMirror');
         if (editorElement) {
@@ -3100,6 +3573,7 @@
         window.showTemplates = showTemplates;
         window.insertSnippet = insertSnippet;
         window.optimizeImages = optimizeImages;
+        window.optimizeForMobile = optimizeForMobile;
         window.clearEditor = clearEditor;
         window.uploadHTML = uploadHTML;
         window.downloadHTML = downloadHTML;
@@ -3112,17 +3586,6 @@
         window.findNext = findNext;
         window.replaceNext = replaceNext;
         window.replaceAll = replaceAll;
-
-        // Variable Manager System
-        let variables = [];
-        let testData = {};
-        let variableSets = {
-            'default': ['client_name', 'email', 'phone', 'agent_name'],
-            'auto': ['client_name', 'policy_number', 'vehicle_make', 'vehicle_model', 'vehicle_year', 'vin', 'coverage_type', 'premium_amount', 'deductible', 'renewal_date', 'agent_name', 'agent_phone'],
-            'home': ['client_name', 'property_address', 'policy_number', 'coverage_amount', 'dwelling_coverage', 'personal_property', 'liability_coverage', 'deductible', 'premium_amount', 'renewal_date', 'agent_name'],
-            'life': ['client_name', 'policy_number', 'beneficiary_name', 'coverage_amount', 'premium_amount', 'policy_type', 'effective_date', 'term_length', 'agent_name', 'agent_phone'],
-            'custom': []
-        };
 
         // Sample test data for common fields
         const sampleData = {
