@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI HTML Email Viewer Pro</title>
+    <title>Professional HTML Email Converter</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- CodeMirror CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/material.min.css">
     <style>
         * {
             margin: 0;
@@ -16,143 +16,51 @@
         }
 
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #a78bfa;
-            --accent: #f97316;
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --primary-light: #60a5fa;
+            --secondary: #64748b;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --bg-dark: #0f172a;
-            --bg-medium: #1e293b;
-            --bg-light: #334155;
-            --text-primary: #f1f5f9;
-            --text-secondary: #cbd5e1;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #cbd5e1;
+            --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
             min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* Animated background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(125deg, #6366f1 0%, #8b5cf6 25%, #ec4899 50%, #f97316 75%, #6366f1 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 20s ease infinite;
-            opacity: 0.1;
-            z-index: -2;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Floating orbs */
-        .orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(40px);
-            opacity: 0.3;
-            animation: float 20s infinite ease-in-out;
-            z-index: -1;
-        }
-
-        .orb1 {
-            width: 300px;
-            height: 300px;
-            background: var(--primary);
-            top: -150px;
-            left: -150px;
-            animation-delay: 0s;
-        }
-
-        .orb2 {
-            width: 400px;
-            height: 400px;
-            background: var(--secondary);
-            bottom: -200px;
-            right: -200px;
-            animation-delay: 5s;
-        }
-
-        .orb3 {
-            width: 250px;
-            height: 250px;
-            background: var(--accent);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation-delay: 10s;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(50px, -50px) scale(1.1); }
-            50% { transform: translate(-50px, 50px) scale(0.9); }
-            75% { transform: translate(30px, 30px) scale(1.05); }
+            color: var(--text-primary);
         }
 
         /* Container */
         .container {
             max-width: 1600px;
             margin: 0 auto;
-            padding: 2rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 3rem;
-            animation: fadeInDown 1s ease;
-        }
-
-        .header h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-            letter-spacing: -1px;
-        }
-
-        .header p {
-            color: var(--text-secondary);
-            font-size: 1.2rem;
+            padding: 1.5rem;
         }
 
         /* Toolbar */
         .toolbar {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            background: white;
+            border-radius: 10px;
             padding: 1rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
             align-items: center;
-            animation: fadeInDown 1s ease 0.2s both;
+            box-shadow: var(--shadow-sm);
         }
 
         .toolbar-group {
@@ -163,18 +71,17 @@
 
         .toolbar-divider {
             width: 1px;
-            height: 30px;
-            background: var(--glass-border);
-            margin: 0 0.5rem;
+            height: 24px;
+            background: var(--border);
+            margin: 0 0.25rem;
         }
 
-        /* Main content */
+        /* Main content grid */
         .main-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-            animation: fadeInUp 1s ease 0.2s both;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
         }
 
         @media (max-width: 1024px) {
@@ -183,63 +90,39 @@
             }
         }
 
-        /* Glass panels */
+        /* Panels */
         .panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 1px solid var(--glass-border);
-            padding: 2rem;
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-            position: relative;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
             overflow: hidden;
         }
 
-        /* Make preview panel background darker for better contrast */
-        .panel:has(.preview-container) {
-            background: rgba(15, 23, 42, 0.8);
-        }
-
-        .panel::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--primary), transparent);
-            animation: shimmer 3s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        .panel:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
-        }
-
         .panel-header {
+            background: var(--bg-secondary);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
-            margin-bottom: 1.5rem;
-            gap: 1rem;
+            gap: 0.75rem;
         }
 
         .panel-header i {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             color: var(--primary);
         }
 
         .panel-header h2 {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 600;
+            color: var(--text-primary);
         }
 
-        /* Code editor */
+        .panel-body {
+            padding: 1.5rem;
+        }
+
+        /* Code editor wrapper */
         .code-editor {
             position: relative;
         }
@@ -249,24 +132,55 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
-            padding: 0.75rem 1rem;
-            background: var(--bg-medium);
-            border-radius: 10px;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
         }
 
         .editor-info {
             display: flex;
-            gap: 1rem;
+            gap: 1.5rem;
             font-size: 0.875rem;
             color: var(--text-secondary);
+        }
+
+        .editor-info span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .editor-info i {
+            color: var(--text-muted);
+        }
+
+        /* CodeMirror customization */
+        .CodeMirror {
+            height: 500px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .CodeMirror-focused {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .code-editor-wrapper {
+            border-radius: 8px;
+            overflow: hidden;
         }
 
         /* Preview */
         .preview-container {
             position: relative;
-            height: 600px;
-            background: transparent;
-            border-radius: 10px;
+            height: 500px;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
             overflow: hidden;
         }
 
@@ -277,7 +191,7 @@
             background: white;
         }
 
-        /* Preview mode toggle buttons */
+        /* Preview mode buttons */
         .preview-modes {
             display: flex;
             gap: 0.5rem;
@@ -287,49 +201,53 @@
 
         .preview-mode-btn {
             padding: 0.5rem 1rem;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 8px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 6px;
             color: var(--text-secondary);
             font-size: 0.875rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         .preview-mode-btn.active {
             background: var(--primary);
             color: white;
             border-color: var(--primary);
-            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
         }
 
         .preview-mode-btn:hover:not(.active) {
             border-color: var(--primary);
-            color: var(--text-primary);
+            color: var(--primary);
+            background: var(--bg-secondary);
         }
 
         .preview-mode-btn i {
             margin-right: 0.25rem;
         }
 
-        /* Email validation panel */
+        /* Validation panel */
         .validation-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
             margin-top: 1rem;
-            animation: fadeInUp 0.3s ease;
+        }
+
+        .validation-panel h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
         }
 
         .validation-item {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
             padding: 0.5rem 0;
-            border-bottom: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--border);
         }
 
         .validation-item:last-child {
@@ -337,7 +255,7 @@
         }
 
         .validation-item i {
-            font-size: 1.25rem;
+            font-size: 1rem;
         }
 
         .validation-item.success i {
@@ -361,30 +279,32 @@
         }
 
         .template-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             text-align: center;
         }
 
         .template-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
             border-color: var(--primary);
         }
 
         .template-card i {
             font-size: 2rem;
             color: var(--primary);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
         }
 
         .template-card h4 {
             font-size: 1rem;
+            font-weight: 600;
             margin-bottom: 0.25rem;
+            color: var(--text-primary);
         }
 
         .template-card p {
@@ -392,31 +312,38 @@
             color: var(--text-secondary);
         }
 
-        /* Action buttons */
+        /* Action buttons section */
         .actions {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
             display: flex;
             gap: 1rem;
             justify-content: center;
             flex-wrap: wrap;
-            animation: fadeInUp 1s ease 0.4s both;
         }
 
+        /* Buttons */
         .btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 1rem 2rem;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
             color: var(--text-primary);
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
         }
 
         .btn-sm {
@@ -424,73 +351,63 @@
             font-size: 0.875rem;
         }
 
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .btn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border: none;
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
 
         .btn-primary:hover {
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            border-color: #059669;
         }
 
         .btn i {
-            font-size: 1.25rem;
+            font-size: 1rem;
         }
 
-        /* Stats */
+        /* Stats cards */
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
-            margin-top: 2rem;
-            animation: fadeInUp 1s ease 0.6s both;
+            margin-bottom: 1.5rem;
         }
 
         .stat-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
             padding: 1.5rem;
             text-align: center;
-            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
         }
 
         .stat-card:hover {
-            transform: scale(1.05);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
 
         .stat-card i {
-            font-size: 2rem;
+            font-size: 1.5rem;
             color: var(--primary);
             margin-bottom: 0.5rem;
         }
 
         .stat-card h3 {
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 0.25rem;
@@ -501,97 +418,6 @@
             font-size: 0.875rem;
         }
 
-        /* CodeMirror styles */
-        .CodeMirror {
-            height: 500px;
-            width: 100% !important;
-            border-radius: 10px;
-            font-family: 'Fira Code', 'Consolas', monospace;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        .CodeMirror-gutters {
-            background: var(--bg-medium);
-            border-right: 1px solid var(--bg-light);
-        }
-
-        .CodeMirror-linenumber {
-            color: var(--text-secondary);
-            opacity: 0.5;
-        }
-
-        .code-editor-wrapper {
-            border: 1px solid var(--bg-light);
-            border-radius: 10px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-
-        .code-editor-wrapper:focus-within {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-        
-        .code-editor {
-            width: 100%;
-        }
-
-        /* Toast notification */
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 1rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-            z-index: 1000;
-        }
-
-        .toast.show {
-            transform: translateX(0);
-        }
-
-        .toast i {
-            font-size: 1.25rem;
-            color: var(--primary);
-        }
-
-        /* Loading animation */
-        .loading {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1001;
-        }
-
-        .loading.show {
-            display: block;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid var(--glass-border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
         /* Modal */
         .modal {
             display: none;
@@ -600,10 +426,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
             z-index: 1000;
-            animation: fadeIn 0.3s ease;
         }
 
         .modal.show {
@@ -613,15 +438,14 @@
         }
 
         .modal-content {
-            background: var(--bg-medium);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
+            background: white;
+            border-radius: 12px;
             padding: 2rem;
             max-width: 800px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
-            animation: slideInUp 0.3s ease;
+            box-shadow: var(--shadow-xl);
         }
 
         .modal-header {
@@ -634,15 +458,18 @@
         .modal-header h3 {
             font-size: 1.5rem;
             font-weight: 600;
+            color: var(--text-primary);
         }
 
         .modal-close {
             background: none;
             border: none;
-            color: var(--text-secondary);
+            color: var(--text-muted);
             font-size: 1.5rem;
             cursor: pointer;
-            transition: color 0.3s ease;
+            padding: 0.25rem;
+            line-height: 1;
+            transition: color 0.2s ease;
         }
 
         .modal-close:hover {
@@ -650,25 +477,31 @@
         }
 
         .modal-body {
-            padding: 1.5rem;
+            padding: 0;
         }
 
-        /* Form inputs */
-        input[type="text"], input[type="email"], input[type="number"] {
+        /* Form elements */
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        textarea,
+        select {
             width: 100%;
             padding: 0.75rem;
-            background: var(--bg-light);
-            border: 1px solid var(--glass-border);
-            border-radius: 8px;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 6px;
             color: var(--text-primary);
             font-size: 1rem;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
-        input[type="text"]:focus, input[type="email"]:focus, input[type="number"]:focus {
+        input:focus,
+        textarea:focus,
+        select:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         input[type="checkbox"] {
@@ -685,51 +518,90 @@
             font-weight: 500;
         }
 
-        #findReplaceMessage {
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: white;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+            min-width: 250px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast i {
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        .toast.error {
+            border-left-color: var(--danger);
+        }
+
+        .toast.error i {
+            color: var(--danger);
+        }
+
+        .toast.warning {
+            border-left-color: var(--warning);
+        }
+
+        .toast.warning i {
+            color: var(--warning);
+        }
+
+        /* Loading spinner */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1001;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        .footer {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
             color: var(--text-secondary);
+            font-size: 0.875rem;
         }
 
-        #findReplaceResults {
-            transition: all 0.3s ease;
-        }
-
-        /* Animations */
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideInUp {
-            from {
-                transform: translateY(50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+        .footer p {
+            margin: 0.25rem 0;
         }
 
         /* Hidden iframe for clean HTML copying */
@@ -741,22 +613,23 @@
             border: none;
             background: white;
         }
+
+        /* Find & Replace modal specific styles */
+        #findReplaceResults {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        #findReplaceMessage {
+            color: var(--text-secondary);
+        }
     </style>
 </head>
 <body>
-    <!-- Animated background orbs -->
-    <div class="orb orb1"></div>
-    <div class="orb orb2"></div>
-    <div class="orb orb3"></div>
-
     <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;">
-                Press Ctrl/Cmd + F for Find & Replace • Ctrl/Cmd + E for Live Edit • Drag images to optimize & insert
-            </p>
-        </div>
-
         <!-- Toolbar -->
         <div class="toolbar">
             <div class="toolbar-group">
@@ -784,8 +657,8 @@
             </div>
             <div class="toolbar-divider"></div>
             <div class="toolbar-group">
-                <button class="btn btn-sm" onclick="testEmailClients()">
-                    <i class="fas fa-envelope-open-text"></i> Test Clients
+                <button class="btn btn-sm btn-primary" onclick="showVariables()">
+                    <i class="fas fa-database"></i> Variables
                 </button>
                 <button class="btn btn-sm" onclick="optimizeImages()">
                     <i class="fas fa-image"></i> Optimize Images
@@ -801,30 +674,35 @@
                     <i class="fas fa-code"></i>
                     <h2>HTML Input</h2>
                 </div>
-                <div class="code-editor">
-                    <div class="editor-toolbar">
-                        <div class="editor-info">
-                            <span><i class="fas fa-file-code"></i> <span id="charCount">0</span> characters</span>
-                            <span><i class="fas fa-list-ol"></i> <span id="lineCount">0</span> lines</span>
-                            <span><i class="fas fa-exclamation-triangle"></i> <span id="errorCount">0</span> issues</span>
+                <div class="panel-body">
+                    <div class="code-editor">
+                        <div class="editor-toolbar">
+                            <div class="editor-info">
+                                <span><i class="fas fa-font"></i> <span id="charCount">0</span> characters</span>
+                                <span><i class="fas fa-list-ol"></i> <span id="lineCount">0</span> lines</span>
+                                <span><i class="fas fa-exclamation-triangle"></i> <span id="errorCount">0</span> issues</span>
+                                <span id="variableIndicator" style="display: none; color: var(--primary);">
+                                    <i class="fas fa-database"></i> <span id="variableCount">0</span> variables
+                                </span>
+                            </div>
+                            <button class="btn btn-sm" onclick="clearEditor()">
+                                <i class="fas fa-trash"></i> Clear
+                            </button>
                         </div>
-                        <button class="btn btn-sm" onclick="clearEditor()">
-                            <i class="fas fa-trash"></i> Clear
-                        </button>
+                        <div class="code-editor-wrapper">
+                            <textarea 
+                                id="htmlInput" 
+                                placeholder="Paste your HTML email template here..."
+                                spellcheck="false"
+                            ></textarea>
+                        </div>
                     </div>
-                    <div class="code-editor-wrapper">
-                        <textarea 
-                            id="htmlInput" 
-                            placeholder="Paste your AI-generated HTML code here..."
-                            spellcheck="false"
-                        ></textarea>
+                    
+                    <!-- Email Validation Results -->
+                    <div id="validationPanel" class="validation-panel" style="display: none;">
+                        <h3>Email Compatibility Check</h3>
+                        <div id="validationResults"></div>
                     </div>
-                </div>
-                
-                <!-- Email Validation Results -->
-                <div id="validationPanel" class="validation-panel" style="display: none;">
-                    <h3 style="margin-bottom: 1rem;">Email Compatibility Check</h3>
-                    <div id="validationResults"></div>
                 </div>
             </div>
 
@@ -834,31 +712,33 @@
                     <i class="fas fa-eye"></i>
                     <h2>Live Preview</h2>
                 </div>
-                <div class="preview-modes">
-                    <button class="preview-mode-btn active" onclick="setPreviewMode('styled')">
-                        <i class="fas fa-magic"></i> Styled
-                    </button>
-                    <button class="preview-mode-btn" onclick="setPreviewMode('raw')">
-                        <i class="fas fa-code"></i> Raw HTML
-                    </button>
-                    <button class="preview-mode-btn" onclick="setPreviewMode('mobile')">
-                        <i class="fas fa-mobile-alt"></i> Mobile
-                    </button>
-                    <button class="preview-mode-btn" onclick="setPreviewMode('gmail')">
-                        <i class="fas fa-envelope"></i> Gmail
-                    </button>
-                    <button class="preview-mode-btn" onclick="setPreviewMode('outlook')">
-                        <i class="fas fa-envelope-square"></i> Outlook
-                    </button>
-                    <button class="preview-mode-btn" onclick="setPreviewMode('apple')">
-                        <i class="fas fa-apple"></i> Apple Mail
-                    </button>
-                    <button class="btn btn-sm" onclick="toggleEditMode()" style="margin-left: auto;">
-                        <i class="fas fa-edit"></i> <span id="editModeText">Enable Live Edit</span>
-                    </button>
-                </div>
-                <div class="preview-container">
-                    <iframe id="preview" class="preview-frame"></iframe>
+                <div class="panel-body">
+                    <div class="preview-modes">
+                        <button class="preview-mode-btn active" onclick="setPreviewMode('styled')">
+                            <i class="fas fa-magic"></i> Styled
+                        </button>
+                        <button class="preview-mode-btn" onclick="setPreviewMode('raw')">
+                            <i class="fas fa-code"></i> Raw HTML
+                        </button>
+                        <button class="preview-mode-btn" onclick="setPreviewMode('mobile')">
+                            <i class="fas fa-mobile-alt"></i> Mobile
+                        </button>
+                        <button class="preview-mode-btn" onclick="setPreviewMode('gmail')">
+                            <i class="fas fa-envelope"></i> Gmail
+                        </button>
+                        <button class="preview-mode-btn" onclick="setPreviewMode('outlook')">
+                            <i class="fas fa-envelope-square"></i> Outlook
+                        </button>
+                        <button class="preview-mode-btn" onclick="setPreviewMode('apple')">
+                            <i class="fas fa-apple"></i> Apple Mail
+                        </button>
+                        <button class="btn btn-sm" onclick="toggleEditMode()" style="margin-left: auto;">
+                            <i class="fas fa-edit"></i> <span id="editModeText">Enable Live Edit</span>
+                        </button>
+                    </div>
+                    <div class="preview-container">
+                        <iframe id="preview" class="preview-frame"></iframe>
+                    </div>
                 </div>
             </div>
         </div>
@@ -874,11 +754,11 @@
             <button class="btn" onclick="printHTML()">
                 <i class="fas fa-print"></i> Print
             </button>
-            <button class="btn" onclick="emailToGmail()">
-                <i class="fas fa-envelope"></i> Email to Gmail
+            <button class="btn btn-success" onclick="emailToGmail()">
+                <i class="fas fa-envelope"></i> Copy for Gmail
             </button>
             <button class="btn" onclick="copyToClipboard()">
-                <i class="fas fa-copy"></i> Copy to Clipboard
+                <i class="fas fa-copy"></i> Copy Raw HTML
             </button>
             <button class="btn" onclick="saveProject()">
                 <i class="fas fa-save"></i> Save Project
@@ -908,10 +788,17 @@
                 <p>Email Score</p>
             </div>
         </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Bill Layne Insurance Agency</strong></p>
+            <p>1283 N Bridge St, Elkin NC 28621 | 336-835-1993</p>
+            <p>Save@BillLayneInsurance.com | www.BillLayneInsurance.com</p>
+        </div>
     </div>
 
     <!-- Hidden iframe for clean HTML copying -->
-    <iframe id="clean-copy-frame" style="position: absolute; left: -9999px; width: 1px; height: 1px; border: none; background: white;"></iframe>
+    <iframe id="clean-copy-frame"></iframe>
 
     <!-- Toast notification -->
     <div id="toast" class="toast">
@@ -929,9 +816,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Email Templates</h3>
-                <button class="modal-close" onclick="closeModal('templateModal')">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="modal-close" onclick="closeModal('templateModal')">×</button>
             </div>
             <div class="modal-body">
                 <div class="template-library">
@@ -975,11 +860,9 @@
         <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
                 <h3>Find & Replace</h3>
-                <button class="modal-close" onclick="closeModal('findReplaceModal')">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="modal-close" onclick="closeModal('findReplaceModal')">×</button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding: 1.5rem;">
                 <div style="margin-bottom: 1rem;">
                     <label>Find:</label>
                     <input type="text" id="findInput" placeholder="Enter text to find...">
@@ -1005,8 +888,114 @@
                         <i class="fas fa-sync"></i> Replace All
                     </button>
                 </div>
-                <div id="findReplaceResults" style="margin-top: 1rem; padding: 0.75rem; background: var(--glass-bg); border-radius: 8px; display: none;">
+                <div id="findReplaceResults" style="margin-top: 1rem; display: none;">
                     <span id="findReplaceMessage"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Variable Manager Modal -->
+    <div id="variableModal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h3>Variable & Merge Field Manager</h3>
+                <button class="modal-close" onclick="closeModal('variableModal')">×</button>
+            </div>
+            <div class="modal-body" style="padding: 1.5rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <!-- Left Column - Variables -->
+                    <div>
+                        <h4 style="margin-bottom: 1rem; color: var(--text-primary);">
+                            <i class="fas fa-code" style="color: var(--primary);"></i> Available Variables
+                        </h4>
+                        <div id="variablesList" style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; max-height: 300px; overflow-y: auto;">
+                            <!-- Variables will be listed here -->
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                            <input type="text" id="newVarName" placeholder="Variable name (e.g., client_name)" style="flex: 1;">
+                            <button class="btn btn-sm btn-primary" onclick="addVariable()">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                        </div>
+                        <div>
+                            <label style="margin-bottom: 0.5rem; display: block;">Variable Set:</label>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <select id="variableSet" onchange="loadVariableSet()" style="flex: 1;">
+                                    <option value="default">Default Set</option>
+                                    <option value="auto">Auto Insurance</option>
+                                    <option value="home">Home Insurance</option>
+                                    <option value="life">Life Insurance</option>
+                                    <option value="custom">Custom Set</option>
+                                </select>
+                                <button class="btn btn-sm" onclick="saveVariableSet()">
+                                    <i class="fas fa-save"></i> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column - Test Data -->
+                    <div>
+                        <h4 style="margin-bottom: 1rem; color: var(--text-primary);">
+                            <i class="fas fa-vial" style="color: var(--success);"></i> Test Data
+                        </h4>
+                        <div id="testDataForm" style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; max-height: 300px; overflow-y: auto;">
+                            <!-- Test data inputs will be generated here -->
+                        </div>
+                        <div style="margin-top: 1rem; padding: 0.75rem; background: #f0f9ff; border-radius: 6px; border: 1px solid #0284c7;">
+                            <p style="margin: 0; font-size: 0.875rem; color: #0c4a6e;">
+                                <i class="fas fa-info-circle"></i> 
+                                Use {{variable_name}} format in your HTML. Variables will be replaced with test data when you click "Apply Test Data".
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Common Variables Quick Insert -->
+                <div style="margin-top: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-primary);">
+                        <i class="fas fa-bolt" style="color: var(--warning);"></i> Quick Insert Common Variables
+                    </h4>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                        <button class="btn btn-sm" onclick="insertVariable('client_name')">
+                            <i class="fas fa-user"></i> Client Name
+                        </button>
+                        <button class="btn btn-sm" onclick="insertVariable('policy_number')">
+                            <i class="fas fa-hashtag"></i> Policy #
+                        </button>
+                        <button class="btn btn-sm" onclick="insertVariable('renewal_date')">
+                            <i class="fas fa-calendar"></i> Renewal Date
+                        </button>
+                        <button class="btn btn-sm" onclick="insertVariable('premium_amount')">
+                            <i class="fas fa-dollar-sign"></i> Premium
+                        </button>
+                        <button class="btn btn-sm" onclick="insertVariable('agent_name')">
+                            <i class="fas fa-id-badge"></i> Agent Name
+                        </button>
+                        <button class="btn btn-sm" onclick="insertVariable('coverage_type')">
+                            <i class="fas fa-shield-alt"></i> Coverage
+                        </button>
+                        <button class="btn btn-sm" onclick="insertVariable('effective_date')">
+                            <i class="fas fa-clock"></i> Effective Date
+                        </button>
+                        <button class="btn btn-sm" onclick="insertVariable('deductible')">
+                            <i class="fas fa-file-invoice-dollar"></i> Deductible
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button class="btn" onclick="clearTestData()">
+                        <i class="fas fa-eraser"></i> Clear Test Data
+                    </button>
+                    <button class="btn btn-primary" onclick="applyTestData()">
+                        <i class="fas fa-play"></i> Apply Test Data
+                    </button>
+                    <button class="btn btn-success" onclick="removeAllVariables()">
+                        <i class="fas fa-broom"></i> Remove Variables
+                    </button>
                 </div>
             </div>
         </div>
@@ -1050,17 +1039,17 @@
         const validationPanel = document.getElementById('validationPanel');
         const validationResults = document.getElementById('validationResults');
 
-        // Initialize CodeMirror
+        // Initialize CodeMirror with Material theme
         editor = CodeMirror.fromTextArea(htmlInput, {
             mode: 'htmlmixed',
-            theme: 'dracula',
+            theme: 'material',
             lineNumbers: true,
             lineWrapping: true,
             autoCloseTags: true,
             autoCloseBrackets: true,
             foldGutter: true,
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-            placeholder: "Paste your AI-generated HTML code here...",
+            placeholder: "Paste your HTML email template here...",
             tabSize: 2,
             indentUnit: 2,
             indentWithTabs: false,
@@ -1083,7 +1072,7 @@
             updateTimer = setTimeout(() => {
                 updatePreview();
                 updateStats();
-            }, 500); // Debounce for performance
+            }, 500);
         });
 
         // Initial update
@@ -1102,13 +1091,11 @@
         function setPreviewMode(mode) {
             currentPreviewMode = mode;
             
-            // Update button states
             document.querySelectorAll('.preview-mode-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             event.target.closest('.preview-mode-btn').classList.add('active');
             
-            // Update preview
             updatePreview();
         }
 
@@ -1196,7 +1183,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* Gmail-specific styles */
         body {
             margin: 0;
             padding: 10px;
@@ -1235,7 +1221,6 @@
     </noscript>
     <![endif]-->
     <style>
-        /* Outlook-specific styles */
         body {
             margin: 0;
             padding: 0;
@@ -1262,7 +1247,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* Apple Mail specific styles */
         body {
             margin: 0;
             padding: 0;
@@ -1281,20 +1265,27 @@
         function updateStats() {
             const text = editor.getValue();
             
-            // Character and line count
             charCount.textContent = text.length.toLocaleString();
             lineCount.textContent = editor.lineCount().toLocaleString();
             
-            // Count HTML tags
             const tagMatches = text.match(/<[^>]+>/g) || [];
             tagCount.textContent = tagMatches.length.toLocaleString();
             
-            // Calculate size in KB
             const sizeInBytes = new Blob([text]).size;
             const sizeInKB = (sizeInBytes / 1024).toFixed(2);
             sizeKB.textContent = `${sizeInKB} KB`;
             
-            // Update scores
+            // Count variables
+            const variableMatches = text.match(/{{[^}]+}}/g) || [];
+            const variableIndicator = document.getElementById('variableIndicator');
+            const variableCount = document.getElementById('variableCount');
+            if (variableMatches.length > 0) {
+                variableIndicator.style.display = 'inline-flex';
+                variableCount.textContent = variableMatches.length;
+            } else {
+                variableIndicator.style.display = 'none';
+            }
+            
             updateMobileScore(text);
             updateEmailScore(text);
         }
@@ -1302,90 +1293,62 @@
         function updateMobileScore(html) {
             let score = 100;
             
-            // Check for viewport meta tag
             if (!html.includes('viewport')) score -= 20;
-            
-            // Check for responsive design patterns
             if (!html.includes('%') && !html.includes('max-width')) score -= 15;
             
-            // Check for large fixed widths
             const widthMatches = html.match(/width[:\s]*["']?(\d+)/gi) || [];
             widthMatches.forEach(match => {
                 const width = parseInt(match.match(/\d+/)[0]);
                 if (width > 600) score -= 10;
             });
             
-            // Check for proper font sizes
             const fontSizeMatches = html.match(/font-size[:\s]*["']?(\d+)/gi) || [];
             fontSizeMatches.forEach(match => {
                 const size = parseInt(match.match(/\d+/)[0]);
                 if (size < 14) score -= 5;
             });
             
-            const mobileScore = document.getElementById('mobileScore');
-            if (mobileScore) {
-                mobileScore.textContent = Math.max(0, score) + '%';
-            }
+            mobileScore.textContent = Math.max(0, score) + '%';
         }
 
         function updateEmailScore(html) {
             let score = 100;
             let issues = 0;
             
-            // Check for unsupported CSS
             if (html.includes('position:') && !html.includes('position: relative')) { score -= 10; issues++; }
             if (html.includes('float:')) { score -= 10; issues++; }
             if (html.includes('flex')) { score -= 15; issues++; }
             if (html.includes('grid')) { score -= 15; issues++; }
-            
-            // Check for JavaScript
             if (html.includes('<script')) { score -= 20; issues++; }
-            
-            // Check for external CSS
             if (html.includes('<link') && html.includes('stylesheet')) { score -= 15; issues++; }
-            
-            // Check for forms
             if (html.includes('<form')) { score -= 10; issues++; }
-            
-            // Check for video/audio
             if (html.includes('<video') || html.includes('<audio')) { score -= 10; issues++; }
             
-            const emailScore = document.getElementById('emailScore');
-            const errorCount = document.getElementById('errorCount');
-            if (emailScore) {
-                emailScore.textContent = Math.max(0, score) + '%';
-            }
-            if (errorCount) {
-                errorCount.textContent = issues;
-            }
+            emailScore.textContent = Math.max(0, score) + '%';
+            errorCount.textContent = issues;
         }
 
         function formatHTML() {
             const html = editor.getValue();
             
-            // Simple HTML formatter
             let formatted = html
                 .replace(/></g, '>\n<')
                 .replace(/\n\s*\n/g, '\n')
                 .trim();
             
-            // Indent nested tags
             const lines = formatted.split('\n');
             let indentLevel = 0;
             const formattedLines = lines.map(line => {
                 const trimmedLine = line.trim();
                 
-                // Decrease indent for closing tags
                 if (trimmedLine.startsWith('</')) {
                     indentLevel = Math.max(0, indentLevel - 1);
                 }
                 
                 const indentedLine = '  '.repeat(indentLevel) + trimmedLine;
                 
-                // Increase indent for opening tags (not self-closing)
                 if (trimmedLine.startsWith('<') && !trimmedLine.startsWith('</') && 
                     !trimmedLine.endsWith('/>') && !trimmedLine.includes('/>')) {
-                    // Check if it's not a void element
                     const voidElements = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
                     const tagName = trimmedLine.match(/<(\w+)/)?.[1]?.toLowerCase();
                     if (!voidElements.includes(tagName)) {
@@ -1404,7 +1367,6 @@
             const html = editor.getValue();
             const results = [];
             
-            // Check for common email compatibility issues
             const checks = [
                 {
                     test: !html.includes('<!DOCTYPE'),
@@ -1464,16 +1426,12 @@
                 }
             });
             
-            // Display validation results
             if (results.length === 0) {
                 results.push({
                     type: 'success',
                     message: 'No major email compatibility issues found!'
                 });
             }
-            
-            const validationPanel = document.getElementById('validationPanel');
-            const validationResults = document.getElementById('validationResults');
             
             validationResults.innerHTML = results.map(result => `
                 <div class="validation-item ${result.type}">
@@ -1489,10 +1447,8 @@
         function inlineCSS() {
             showToast('Inlining CSS for email compatibility...', 'info');
             
-            // This is a simplified version - in production, you'd use a proper CSS inliner
             let html = editor.getValue();
             
-            // Extract style blocks
             const styleMatches = html.match(/<style[^>]*>([\s\S]*?)<\/style>/gi) || [];
             let styles = '';
             
@@ -1502,7 +1458,6 @@
                 html = html.replace(styleBlock, '');
             });
             
-            // Simple CSS rule parser (very basic)
             const rules = styles.match(/([^{]+){([^}]+)}/g) || [];
             
             rules.forEach(rule => {
@@ -1510,7 +1465,6 @@
                 const cleanSelector = selector.trim();
                 const cleanCss = cssText.replace('}', '').trim();
                 
-                // Apply styles inline (very simplified)
                 if (cleanSelector && !cleanSelector.includes(':') && !cleanSelector.includes('@')) {
                     const regex = new RegExp(`<${cleanSelector}([^>]*)>`, 'gi');
                     html = html.replace(regex, (match, attributes) => {
@@ -1635,7 +1589,6 @@
                     <!-- Footer -->
                     <tr>
                         <td style="padding: 20px; background-color: #f8f9fa; text-align: center;">
-                            <img src="https://i.imgur.com/cBAgeX8.png" alt="Bill Layne Insurance" style="max-width: 150px; margin-bottom: 10px;">
                             <p style="color: #666666; margin: 5px 0; font-size: 14px;">
                                 Bill Layne Insurance Agency | 336-835-1993<br>
                                 Save@BillLayneInsurance.com
@@ -1663,11 +1616,9 @@
         function toggleEditMode() {
             isEditMode = !isEditMode;
             const editModeText = document.getElementById('editModeText');
-            const preview = document.getElementById('preview');
             
             if (isEditMode) {
                 editModeText.textContent = 'Disable Live Edit';
-                // Make iframe content editable
                 const previewDoc = preview.contentDocument || preview.contentWindow.document;
                 previewDoc.designMode = 'on';
                 previewDoc.body.contentEditable = true;
@@ -1677,7 +1628,6 @@
                 const previewDoc = preview.contentDocument || preview.contentWindow.document;
                 previewDoc.designMode = 'off';
                 previewDoc.body.contentEditable = false;
-                // Update the editor with any changes made
                 const editedHTML = previewDoc.documentElement.outerHTML;
                 editor.setValue(editedHTML);
                 showToast('Live edit mode disabled - changes saved');
@@ -1702,7 +1652,6 @@
             }
             
             if (!searchCursor || searchCursor.findNext() === false) {
-                // Start new search or wrap around
                 searchCursor = editor.getSearchCursor(findInput, null, !caseSensitive);
                 if (!searchCursor.findNext()) {
                     showFindReplaceMessage('No matches found', 'info');
@@ -1767,14 +1716,12 @@
             messageSpan.textContent = message;
             resultsDiv.style.display = 'block';
             
-            // Style based on type
             resultsDiv.style.borderColor = type === 'success' ? 'var(--success)' : 
                                           type === 'warning' ? 'var(--warning)' : 
                                           'var(--primary)';
         }
 
         function insertSnippet() {
-            // Image button snippet with optimization
             const snippetType = prompt('Choose snippet type:\n1. Button\n2. Image\n3. Two Column\n4. Social Icons', '1');
             
             let snippet = '';
@@ -1843,10 +1790,7 @@
                 editor.clearHistory();
                 updatePreview();
                 updateStats();
-                const validationPanel = document.getElementById('validationPanel');
-                if (validationPanel) {
-                    validationPanel.style.display = 'none';
-                }
+                validationPanel.style.display = 'none';
                 showToast('Content cleared');
             }
         }
@@ -1890,6 +1834,7 @@
             showToast('Opening print dialog...');
         }
 
+        // CRITICAL: Gmail copy function that preserves formatting
         function emailToGmail() {
             const html = editor.getValue();
             if (!html.trim()) {
@@ -1944,12 +1889,12 @@
             input.click();
         }
 
-        // NEW: Function to copy formatted HTML for Gmail
+        // Copy formatted HTML for Gmail (preserves styling)
         function copyFormattedHTMLToClipboard(html) {
-            // Clean the HTML for Gmail to prevent subject line duplication
+            // Clean the HTML for Gmail
             const cleanedHTML = cleanHTMLForGmail(html);
             
-            // Create a clean container for the HTML
+            // Create a container for the HTML
             const container = document.createElement('div');
             container.innerHTML = cleanedHTML;
             container.style.position = 'absolute';
@@ -1963,7 +1908,6 @@
 
             // Try modern clipboard API first
             if (navigator.clipboard && navigator.clipboard.write) {
-                // Create clipboard item with both HTML and plain text
                 const clipboardItem = new ClipboardItem({
                     'text/html': new Blob([cleanedHTML], { type: 'text/html' }),
                     'text/plain': new Blob([container.innerText || container.textContent], { type: 'text/plain' })
@@ -1973,66 +1917,50 @@
                     document.body.removeChild(container);
                     showToast('Formatted HTML copied for Gmail!');
                 }).catch(() => {
-                    // Fallback to selection method
                     copyHTMLViaSelection(container, cleanedHTML);
                 });
             } else {
-                // Fallback to selection method
                 copyHTMLViaSelection(container, cleanedHTML);
             }
         }
 
-        // Clean HTML for Gmail to prevent subject line duplication
+        // Clean HTML for Gmail
         function cleanHTMLForGmail(html) {
             let cleaned = html;
             
-            // Remove title tags that Gmail might interpret as subject
+            // Remove problematic tags
             cleaned = cleaned.replace(/<title[^>]*>.*?<\/title>/gis, '');
-            
-            // Remove head section entirely to avoid conflicts
             cleaned = cleaned.replace(/<head[^>]*>.*?<\/head>/gis, '');
-            
-            // Remove html and body tags, keep only the content
             cleaned = cleaned.replace(/<\/?html[^>]*>/gi, '');
             cleaned = cleaned.replace(/<\/?body[^>]*>/gi, '');
-            
-            // Remove DOCTYPE declaration
             cleaned = cleaned.replace(/<!DOCTYPE[^>]*>/gi, '');
             
-            // Clean up any extra whitespace
-            cleaned = cleaned.trim();
-            
-            return cleaned;
+            return cleaned.trim();
         }
 
         function copyHTMLViaSelection(container, html) {
             try {
-                // Select the container content
                 const range = document.createRange();
                 range.selectNodeContents(container);
                 const selection = window.getSelection();
                 selection.removeAllRanges();
                 selection.addRange(range);
 
-                // Copy the selected content (this preserves HTML formatting)
                 document.execCommand('copy');
                 
-                // Clean up
                 selection.removeAllRanges();
                 document.body.removeChild(container);
                 
                 showToast('Formatted HTML copied for Gmail!');
             } catch (err) {
-                // Final fallback - copy as plain text
                 document.body.removeChild(container);
                 copyRawHTMLToClipboard(html);
                 showToast('HTML copied as text - may need to switch to HTML mode in Gmail');
             }
         }
 
-        // Fixed function to copy raw HTML without contamination
+        // Copy raw HTML (as text)
         function copyRawHTMLToClipboard(html) {
-            // Use the modern clipboard API with raw text
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(html).then(() => {
                     showToast('Raw HTML copied to clipboard!');
@@ -2045,7 +1973,6 @@
         }
 
         function fallbackCopyRawHTML(html) {
-            // Fallback method - create a textarea with the raw HTML
             const textarea = document.createElement('textarea');
             textarea.value = html;
             textarea.style.position = 'fixed';
@@ -2066,45 +1993,14 @@
             document.body.removeChild(textarea);
         }
 
-        function fallbackCopyRawHTML(html) {
-            // Fallback method - create a textarea with the raw HTML
-            const textarea = document.createElement('textarea');
-            textarea.value = html;
-            textarea.style.position = 'fixed';
-            textarea.style.left = '-9999px';
-            textarea.style.top = '-9999px';
-            textarea.style.opacity = '0';
-            document.body.appendChild(textarea);
-            textarea.select();
-            textarea.setSelectionRange(0, 99999);
-            
-            try {
-                document.execCommand('copy');
-                showToast('Raw HTML copied to clipboard!');
-            } catch (err) {
-                showToast('Failed to copy to clipboard', 'error');
-            }
-            
-            document.body.removeChild(textarea);
-        }
-
-        function copyToClipboard(silent = false) {
+        function copyToClipboard() {
             const html = editor.getValue();
             if (!html.trim()) {
-                if (!silent) showToast('No HTML content to copy', 'error');
+                showToast('No HTML content to copy', 'error');
                 return;
             }
 
-            // Copy raw HTML for the regular copy button
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(html).then(() => {
-                    if (!silent) showToast('Raw HTML copied to clipboard!');
-                }).catch(() => {
-                    fallbackCopyRawHTML(html);
-                });
-            } else {
-                fallbackCopyRawHTML(html);
-            }
+            copyRawHTMLToClipboard(html);
         }
 
         function saveProject() {
@@ -2134,10 +2030,6 @@
             document.getElementById(modalId).classList.remove('show');
         }
 
-        function testEmailClients() {
-            showToast('Email client testing coming soon!', 'info');
-        }
-
         function optimizeImages() {
             const html = editor.getValue();
             const imgRegex = /<img[^>]+>/gi;
@@ -2155,9 +2047,7 @@
                 let optimizedTag = imgTag;
                 let wasOptimized = false;
                 
-                // Check for width attributes
                 if (!imgTag.includes('width=') && !imgTag.includes('max-width')) {
-                    // Add responsive styling
                     if (imgTag.includes('style=')) {
                         optimizedTag = optimizedTag.replace(/style="([^"]*)"/, 'style="$1 max-width: 100%; height: auto;"');
                     } else {
@@ -2166,13 +2056,11 @@
                     wasOptimized = true;
                 }
                 
-                // Add alt text if missing
                 if (!imgTag.includes('alt=')) {
                     optimizedTag = optimizedTag.replace('<img', '<img alt=""');
                     wasOptimized = true;
                 }
                 
-                // Add display block for better email rendering
                 if (!imgTag.includes('display:')) {
                     if (optimizedTag.includes('style=')) {
                         optimizedTag = optimizedTag.replace(/style="([^"]*)"/, 'style="$1 display: block;"');
@@ -2196,7 +2084,7 @@
             }
         }
 
-        // Handle image drag & drop into the code editor
+        // Handle image drag & drop
         const editorElement = document.querySelector('.CodeMirror');
         if (editorElement) {
             editorElement.addEventListener('dragover', (e) => {
@@ -2222,11 +2110,9 @@
             reader.onload = (e) => {
                 const img = new Image();
                 img.onload = () => {
-                    // Optimize the image
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
                     
-                    // Calculate new dimensions (max 600px width for email)
                     let width = img.width;
                     let height = img.height;
                     const maxWidth = 600;
@@ -2239,24 +2125,19 @@
                     canvas.width = width;
                     canvas.height = height;
                     
-                    // Draw and compress the image
                     ctx.drawImage(img, 0, 0, width, height);
                     
-                    // Convert to optimized base64
                     const isPhoto = file.type === 'image/jpeg' || file.type === 'image/jpg';
                     const outputFormat = isPhoto ? 'image/jpeg' : 'image/png';
-                    const quality = isPhoto ? 0.8 : 1; // 80% quality for JPEG
+                    const quality = isPhoto ? 0.8 : 1;
                     
                     canvas.toBlob((blob) => {
                         const reader = new FileReader();
                         reader.onload = (e) => {
-                            // Create HTML img tag
                             const imgHtml = `<img src="${e.target.result}" alt="" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">`;
                             
-                            // Insert at cursor position
                             editor.replaceSelection(imgHtml);
                             
-                            // Calculate size reduction
                             const originalSize = file.size;
                             const optimizedSize = blob.size;
                             const reduction = Math.round((1 - optimizedSize / originalSize) * 100);
@@ -2283,9 +2164,10 @@
             };
             
             icon.className = iconClasses[type] || iconClasses.success;
-            icon.style.color = type === 'error' ? 'var(--danger)' : 
-                              type === 'warning' ? 'var(--warning)' : 
-                              type === 'info' ? 'var(--primary)' : 'var(--success)';
+            
+            toast.classList.remove('error', 'warning');
+            if (type === 'error') toast.classList.add('error');
+            if (type === 'warning') toast.classList.add('warning');
             
             toast.classList.add('show');
             setTimeout(() => {
@@ -2313,15 +2195,16 @@
                         e.preventDefault();
                         printHTML();
                         break;
-                    case 'l':
-                        e.preventDefault();
-                        clearEditor();
-                        break;
                 }
             }
         });
 
-        // Expose all functions to global scope for HTML onclick handlers
+        // Auto-load saved project
+        window.addEventListener('load', () => {
+            loadProject();
+        });
+
+        // Expose functions to global scope
         window.toggleEditMode = toggleEditMode;
         window.setPreviewMode = setPreviewMode;
         window.formatHTML = formatHTML;
@@ -2330,7 +2213,6 @@
         window.showFindReplace = showFindReplace;
         window.showTemplates = showTemplates;
         window.insertSnippet = insertSnippet;
-        window.testEmailClients = testEmailClients;
         window.optimizeImages = optimizeImages;
         window.clearEditor = clearEditor;
         window.uploadHTML = uploadHTML;
@@ -2344,6 +2226,294 @@
         window.findNext = findNext;
         window.replaceNext = replaceNext;
         window.replaceAll = replaceAll;
+
+        // Variable Manager System
+        let variables = [];
+        let testData = {};
+        let variableSets = {
+            'default': ['client_name', 'email', 'phone', 'agent_name'],
+            'auto': ['client_name', 'policy_number', 'vehicle_make', 'vehicle_model', 'vehicle_year', 'vin', 'coverage_type', 'premium_amount', 'deductible', 'renewal_date', 'agent_name', 'agent_phone'],
+            'home': ['client_name', 'property_address', 'policy_number', 'coverage_amount', 'dwelling_coverage', 'personal_property', 'liability_coverage', 'deductible', 'premium_amount', 'renewal_date', 'agent_name'],
+            'life': ['client_name', 'policy_number', 'beneficiary_name', 'coverage_amount', 'premium_amount', 'policy_type', 'effective_date', 'term_length', 'agent_name', 'agent_phone'],
+            'custom': []
+        };
+
+        // Sample test data for common fields
+        const sampleData = {
+            'client_name': 'John Smith',
+            'email': 'john.smith@email.com',
+            'phone': '(555) 123-4567',
+            'policy_number': 'POL-2024-123456',
+            'renewal_date': 'March 15, 2025',
+            'premium_amount': '$275.00',
+            'agent_name': 'Bill Layne',
+            'agent_phone': '336-835-1993',
+            'coverage_type': 'Comprehensive Coverage',
+            'effective_date': 'February 1, 2025',
+            'deductible': '$500',
+            'vehicle_make': 'Honda',
+            'vehicle_model': 'Accord',
+            'vehicle_year': '2023',
+            'vin': '1HGBH41JXMN109186',
+            'property_address': '123 Main Street, Elkin, NC 28621',
+            'coverage_amount': '$350,000',
+            'dwelling_coverage': '$280,000',
+            'personal_property': '$70,000',
+            'liability_coverage': '$300,000',
+            'beneficiary_name': 'Jane Smith',
+            'policy_type': 'Term Life',
+            'term_length': '20 Years'
+        };
+
+        function showVariables() {
+            loadVariables();
+            renderVariables();
+            renderTestDataForm();
+            document.getElementById('variableModal').classList.add('show');
+        }
+
+        function loadVariables() {
+            const saved = localStorage.getItem('emailVariables');
+            if (saved) {
+                variables = JSON.parse(saved);
+                const savedTestData = localStorage.getItem('emailTestData');
+                if (savedTestData) {
+                    testData = JSON.parse(savedTestData);
+                }
+            } else {
+                // Load default set
+                loadVariableSet();
+            }
+        }
+
+        function saveVariables() {
+            localStorage.setItem('emailVariables', JSON.stringify(variables));
+            localStorage.setItem('emailTestData', JSON.stringify(testData));
+        }
+
+        function loadVariableSet() {
+            const setName = document.getElementById('variableSet').value;
+            variables = [...variableSets[setName]];
+            
+            // Initialize test data with samples
+            testData = {};
+            variables.forEach(varName => {
+                testData[varName] = sampleData[varName] || '';
+            });
+            
+            renderVariables();
+            renderTestDataForm();
+            saveVariables();
+        }
+
+        function saveVariableSet() {
+            const setName = prompt('Enter a name for this variable set:');
+            if (setName && setName.trim()) {
+                variableSets[setName.toLowerCase().replace(/\s+/g, '_')] = [...variables];
+                
+                // Add to select dropdown
+                const select = document.getElementById('variableSet');
+                const option = document.createElement('option');
+                option.value = setName.toLowerCase().replace(/\s+/g, '_');
+                option.textContent = setName;
+                select.appendChild(option);
+                select.value = option.value;
+                
+                showToast('Variable set saved!');
+                saveVariables();
+            }
+        }
+
+        function renderVariables() {
+            const container = document.getElementById('variablesList');
+            
+            if (variables.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted); text-align: center;">No variables defined. Add variables below.</p>';
+                return;
+            }
+            
+            container.innerHTML = variables.map(varName => `
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; background: white; margin-bottom: 0.5rem; border-radius: 4px;">
+                    <span style="font-family: monospace; color: var(--primary);">{{${varName}}}</span>
+                    <div style="display: flex; gap: 0.25rem;">
+                        <button class="btn btn-sm" onclick="insertVariable('${varName}')" title="Insert into document">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="btn btn-sm" onclick="removeVariable('${varName}')" title="Remove variable">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderTestDataForm() {
+            const container = document.getElementById('testDataForm');
+            
+            if (variables.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Add variables to create test data fields.</p>';
+                return;
+            }
+            
+            container.innerHTML = variables.map(varName => `
+                <div style="margin-bottom: 0.75rem;">
+                    <label style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.25rem; display: block;">
+                        ${varName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:
+                    </label>
+                    <input type="text" 
+                           id="test_${varName}" 
+                           value="${testData[varName] || ''}"
+                           placeholder="Enter test value..."
+                           oninput="updateTestData('${varName}', this.value)"
+                           style="width: 100%; padding: 0.5rem; font-size: 0.875rem;">
+                </div>
+            `).join('');
+        }
+
+        function updateTestData(varName, value) {
+            testData[varName] = value;
+            saveVariables();
+        }
+
+        function addVariable() {
+            const input = document.getElementById('newVarName');
+            const varName = input.value.trim().toLowerCase().replace(/\s+/g, '_');
+            
+            if (!varName) {
+                showToast('Please enter a variable name', 'warning');
+                return;
+            }
+            
+            if (variables.includes(varName)) {
+                showToast('Variable already exists', 'warning');
+                return;
+            }
+            
+            variables.push(varName);
+            testData[varName] = '';
+            input.value = '';
+            
+            renderVariables();
+            renderTestDataForm();
+            saveVariables();
+            showToast(`Variable {{${varName}}} added`);
+        }
+
+        function removeVariable(varName) {
+            variables = variables.filter(v => v !== varName);
+            delete testData[varName];
+            
+            renderVariables();
+            renderTestDataForm();
+            saveVariables();
+            showToast(`Variable {{${varName}}} removed`);
+        }
+
+        function insertVariable(varName) {
+            // Add to variables if not exists
+            if (!variables.includes(varName)) {
+                variables.push(varName);
+                testData[varName] = sampleData[varName] || '';
+                renderVariables();
+                renderTestDataForm();
+                saveVariables();
+            }
+            
+            // Insert into editor
+            const insertion = `{{${varName}}}`;
+            editor.replaceSelection(insertion);
+            showToast(`Inserted {{${varName}}}`);
+        }
+
+        function clearTestData() {
+            testData = {};
+            variables.forEach(varName => {
+                testData[varName] = '';
+            });
+            renderTestDataForm();
+            saveVariables();
+            showToast('Test data cleared');
+        }
+
+        function applyTestData() {
+            let html = editor.getValue();
+            let hasReplacements = false;
+            
+            // Save original HTML for undo
+            const originalHTML = html;
+            
+            // Replace all variables with test data
+            variables.forEach(varName => {
+                const value = testData[varName] || `[${varName}]`;
+                const regex = new RegExp(`{{${varName}}}`, 'gi');
+                if (html.match(regex)) {
+                    html = html.replace(regex, value);
+                    hasReplacements = true;
+                }
+            });
+            
+            if (hasReplacements) {
+                editor.setValue(html);
+                updatePreview();
+                showToast('Test data applied! Use "Remove Variables" to restore template.');
+                
+                // Store original for restoration
+                sessionStorage.setItem('originalHTMLBeforeVariables', originalHTML);
+            } else {
+                showToast('No variables found in the HTML', 'info');
+            }
+        }
+
+        function removeAllVariables() {
+            // Try to restore original HTML
+            const originalHTML = sessionStorage.getItem('originalHTMLBeforeVariables');
+            if (originalHTML) {
+                editor.setValue(originalHTML);
+                sessionStorage.removeItem('originalHTMLBeforeVariables');
+                showToast('Restored original template with variables');
+            } else {
+                // Fallback: replace test data back with variables
+                let html = editor.getValue();
+                let hasReplacements = false;
+                
+                Object.entries(testData).forEach(([varName, value]) => {
+                    if (value && value.trim()) {
+                        // Escape special regex characters in the value
+                        const escapedValue = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        const regex = new RegExp(escapedValue, 'g');
+                        if (html.match(regex)) {
+                            html = html.replace(regex, `{{${varName}}}`);
+                            hasReplacements = true;
+                        }
+                    }
+                });
+                
+                if (hasReplacements) {
+                    editor.setValue(html);
+                    showToast('Variables restored');
+                } else {
+                    showToast('No test data found to replace', 'info');
+                }
+            }
+            updatePreview();
+        }
+
+        // Initialize variables on load
+        window.addEventListener('load', () => {
+            loadVariables();
+        });
+
+        // Expose Variable Manager functions
+        window.showVariables = showVariables;
+        window.loadVariableSet = loadVariableSet;
+        window.saveVariableSet = saveVariableSet;
+        window.addVariable = addVariable;
+        window.removeVariable = removeVariable;
+        window.insertVariable = insertVariable;
+        window.updateTestData = updateTestData;
+        window.clearTestData = clearTestData;
+        window.applyTestData = applyTestData;
+        window.removeAllVariables = removeAllVariables;
     </script>
 </body>
 </html>
