@@ -418,6 +418,78 @@
             font-size: 0.875rem;
         }
 
+        /* Score breakdown tooltip */
+        .score-breakdown {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            box-shadow: var(--shadow-lg);
+            width: 250px;
+            display: none;
+            z-index: 100;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-breakdown::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid var(--bg-primary);
+        }
+
+        .stat-card:hover .score-breakdown {
+            display: block;
+        }
+
+        .score-breakdown h4 {
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            padding: 0.25rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .score-item:last-child {
+            border-bottom: none;
+        }
+
+        .score-item.pass {
+            color: var(--success);
+        }
+
+        .score-item.fail {
+            color: var(--danger);
+        }
+
+        .score-item.warning {
+            color: var(--warning);
+        }
+
+        .score-recommendation {
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
         /* Modal */
         .modal {
             display: none;
@@ -626,6 +698,260 @@
         #findReplaceMessage {
             color: var(--text-secondary);
         }
+
+        /* Variable highlighting in CodeMirror */
+        .cm-variable {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+
+        .cm-variable-empty {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        /* Visual score indicators */
+        .score-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .score-good { color: var(--success); }
+        .score-warning { color: var(--warning); }
+        .score-poor { color: var(--danger); }
+
+        /* Common Issues Indicator */
+        .issues-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.25rem;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        .issues-indicator:hover {
+            transform: scale(1.1);
+        }
+
+        .issues-indicator.critical {
+            background: var(--danger);
+            color: white;
+        }
+
+        .issues-indicator.warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .issues-indicator.good {
+            background: var(--success);
+            color: white;
+        }
+
+        .issues-panel {
+            position: absolute;
+            top: 3.5rem;
+            right: 1rem;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: var(--shadow-lg);
+            width: 350px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 11;
+        }
+
+        .issues-panel.show {
+            display: block;
+        }
+
+        .issue-item {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.875rem;
+        }
+
+        .issue-item:last-child {
+            border-bottom: none;
+        }
+
+        .issue-item i {
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .issue-critical i { color: var(--danger); }
+        .issue-warning i { color: var(--warning); }
+        .issue-info i { color: var(--primary); }
+
+        /* Collapsible sections */
+        .collapsible-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .collapsible-header:hover {
+            background: var(--bg-tertiary);
+            margin: -0.5rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .collapse-arrow {
+            transition: transform 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .collapsed .collapse-arrow {
+            transform: rotate(-90deg);
+        }
+
+        .collapsible-content {
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .collapsed .collapsible-content {
+            max-height: 0;
+        }
+
+        /* Smart detection notification */
+        .smart-detection {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .smart-detection.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .smart-detection h4 {
+            color: var(--warning);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .detected-variables {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .detected-var {
+            background: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-family: monospace;
+            font-size: 0.875rem;
+            border: 1px solid var(--border);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1400px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar {
+                flex-wrap: wrap;
+            }
+
+            .toolbar .btn span {
+                display: none;
+            }
+
+            .toolbar .btn {
+                padding: 0.5rem 0.75rem;
+            }
+
+            .toolbar .btn i {
+                margin: 0;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .actions {
+                flex-wrap: wrap;
+            }
+
+            .actions .btn {
+                flex: 1;
+                min-width: 140px;
+            }
+
+            .panel-body {
+                padding: 1rem;
+            }
+
+            .preview-modes {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.25rem;
+            }
+
+            .preview-mode-btn {
+                padding: 0.4rem 0.5rem;
+                font-size: 0.75rem;
+            }
+
+            .preview-mode-btn i {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.5rem;
+            }
+
+            .stats {
+                display: none;
+            }
+
+            .footer {
+                font-size: 0.75rem;
+                padding: 1rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -711,8 +1037,35 @@
                 <div class="panel-header">
                     <i class="fas fa-eye"></i>
                     <h2>Live Preview</h2>
+                    <!-- Common Issues Indicator -->
+                    <div id="issuesIndicator" class="issues-indicator good" onclick="toggleIssuesPanel()" title="Click to see details">
+                        <span>✓</span>
+                    </div>
+                    <div id="issuesPanel" class="issues-panel">
+                        <h4 style="margin: 0 0 0.75rem 0;">Email Compatibility Issues</h4>
+                        <div id="issuesList"></div>
+                        <div id="fixButton" style="margin-top: 1rem; display: none;">
+                            <button class="btn btn-sm btn-primary" onclick="autoFixIssues()" style="width: 100%;">
+                                <i class="fas fa-magic"></i> Auto-Fix All Issues
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div class="panel-body">
+                    <!-- Smart Detection Notification -->
+                    <div id="smartDetection" class="smart-detection">
+                        <h4><i class="fas fa-lightbulb"></i> Detected Potential Variables</h4>
+                        <p style="font-size: 0.875rem; margin-bottom: 0.5rem;">Found patterns that could be converted to variables:</p>
+                        <div id="detectedVariables" class="detected-variables"></div>
+                        <div style="margin-top: 0.75rem;">
+                            <button class="btn btn-sm btn-primary" onclick="convertDetectedVariables()">
+                                <i class="fas fa-magic"></i> Convert All
+                            </button>
+                            <button class="btn btn-sm" onclick="dismissSmartDetection()">
+                                <i class="fas fa-times"></i> Dismiss
+                            </button>
+                        </div>
+                    </div>
                     <div class="preview-modes">
                         <button class="preview-mode-btn active" onclick="setPreviewMode('styled')">
                             <i class="fas fa-magic"></i> Styled
@@ -777,15 +1130,23 @@
                 <h3 id="sizeKB">0 KB</h3>
                 <p>File Size</p>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" style="position: relative;">
                 <i class="fas fa-mobile-alt"></i>
-                <h3 id="mobileScore">-</h3>
+                <div class="score-indicator">
+                    <h3 id="mobileScore">-</h3>
+                    <span id="mobileIcon"></span>
+                </div>
                 <p>Mobile Score</p>
+                <div id="mobileBreakdown" class="score-breakdown"></div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" style="position: relative;">
                 <i class="fas fa-envelope-open-text"></i>
-                <h3 id="emailScore">-</h3>
+                <div class="score-indicator">
+                    <h3 id="emailScore">-</h3>
+                    <span id="emailIcon"></span>
+                </div>
                 <p>Email Score</p>
+                <div id="emailBreakdown" class="score-breakdown"></div>
             </div>
         </div>
 
@@ -1292,40 +1653,565 @@
 
         function updateMobileScore(html) {
             let score = 100;
+            const breakdown = [];
             
-            if (!html.includes('viewport')) score -= 20;
-            if (!html.includes('%') && !html.includes('max-width')) score -= 15;
+            // Check for viewport meta tag (-20 points)
+            if (!html.includes('viewport')) {
+                score -= 20;
+                breakdown.push({ status: 'fail', text: 'Missing viewport tag', points: '-20' });
+            } else {
+                breakdown.push({ status: 'pass', text: 'Has viewport tag', points: '✓' });
+            }
             
+            // Check for responsive design patterns (-15 points)
+            if (!html.includes('%') && !html.includes('max-width')) {
+                score -= 15;
+                breakdown.push({ status: 'fail', text: 'No responsive units', points: '-15' });
+            } else {
+                breakdown.push({ status: 'pass', text: 'Uses responsive design', points: '✓' });
+            }
+            
+            // Check for large fixed widths
             const widthMatches = html.match(/width[:\s]*["']?(\d+)/gi) || [];
+            let widthPenalty = 0;
             widthMatches.forEach(match => {
                 const width = parseInt(match.match(/\d+/)[0]);
-                if (width > 600) score -= 10;
+                if (width > 600) {
+                    widthPenalty += 10;
+                }
             });
+            if (widthPenalty > 0) {
+                score -= widthPenalty;
+                breakdown.push({ status: 'fail', text: `Width > 600px found`, points: `-${widthPenalty}` });
+            } else {
+                breakdown.push({ status: 'pass', text: 'All widths ≤ 600px', points: '✓' });
+            }
             
+            // Check for proper font sizes
             const fontSizeMatches = html.match(/font-size[:\s]*["']?(\d+)/gi) || [];
+            let fontPenalty = 0;
             fontSizeMatches.forEach(match => {
                 const size = parseInt(match.match(/\d+/)[0]);
-                if (size < 14) score -= 5;
+                if (size < 14) {
+                    fontPenalty += 5;
+                }
             });
+            if (fontPenalty > 0) {
+                score -= fontPenalty;
+                breakdown.push({ status: 'warning', text: `Small fonts < 14px`, points: `-${fontPenalty}` });
+            } else if (fontSizeMatches.length > 0) {
+                breakdown.push({ status: 'pass', text: 'Font sizes ≥ 14px', points: '✓' });
+            }
             
-            mobileScore.textContent = Math.max(0, score) + '%';
+            score = Math.max(0, score);
+            mobileScore.textContent = score + '%';
+            
+            // Add visual indicator
+            const mobileIcon = document.getElementById('mobileIcon');
+            const scoreElement = mobileScore.parentElement;
+            if (score >= 80) {
+                mobileIcon.innerHTML = '✓';
+                scoreElement.className = 'score-indicator score-good';
+            } else if (score >= 60) {
+                mobileIcon.innerHTML = '⚠';
+                scoreElement.className = 'score-indicator score-warning';
+            } else {
+                mobileIcon.innerHTML = '✗';
+                scoreElement.className = 'score-indicator score-poor';
+            }
+            
+            // Update breakdown tooltip
+            const breakdownEl = document.getElementById('mobileBreakdown');
+            let recommendation = '';
+            if (score >= 80) {
+                recommendation = '✓ Mobile-friendly';
+            } else if (score >= 60) {
+                recommendation = '⚠ Could be improved for mobile';
+            } else {
+                recommendation = '✗ Needs mobile optimization';
+            }
+            
+            breakdownEl.innerHTML = `
+                <h4>Mobile Score Breakdown</h4>
+                ${breakdown.map(item => `
+                    <div class="score-item ${item.status}">
+                        <span>${item.text}</span>
+                        <span>${item.points}</span>
+                    </div>
+                `).join('')}
+                <div class="score-recommendation">
+                    <strong>Status:</strong> ${recommendation}
+                </div>
+            `;
         }
 
         function updateEmailScore(html) {
             let score = 100;
             let issues = 0;
+            const issuesList = [];
+            const breakdown = [];
             
-            if (html.includes('position:') && !html.includes('position: relative')) { score -= 10; issues++; }
-            if (html.includes('float:')) { score -= 10; issues++; }
-            if (html.includes('flex')) { score -= 15; issues++; }
-            if (html.includes('grid')) { score -= 15; issues++; }
-            if (html.includes('<script')) { score -= 20; issues++; }
-            if (html.includes('<link') && html.includes('stylesheet')) { score -= 15; issues++; }
-            if (html.includes('<form')) { score -= 10; issues++; }
-            if (html.includes('<video') || html.includes('<audio')) { score -= 10; issues++; }
+            // Track issues with detailed breakdown
+            if (html.includes('position:') && !html.includes('position: relative')) { 
+                score -= 10; 
+                issues++;
+                const lineNum = getLineNumber(html, 'position:');
+                issuesList.push({ type: 'critical', message: `CSS positioning on line ${lineNum} - not supported in most email clients` });
+                breakdown.push({ status: 'fail', text: 'CSS positioning', points: '-10' });
+            } else {
+                breakdown.push({ status: 'pass', text: 'No positioning issues', points: '✓' });
+            }
             
-            emailScore.textContent = Math.max(0, score) + '%';
+            if (html.includes('float:')) { 
+                score -= 10; 
+                issues++;
+                const lineNum = getLineNumber(html, 'float:');
+                issuesList.push({ type: 'critical', message: `Float property on line ${lineNum} - use tables instead` });
+                breakdown.push({ status: 'fail', text: 'Float property', points: '-10' });
+            }
+            
+            if (html.includes('flex')) { 
+                score -= 15; 
+                issues++;
+                const lineNum = getLineNumber(html, 'flex');
+                issuesList.push({ type: 'warning', message: `Flexbox on line ${lineNum} - limited support` });
+                breakdown.push({ status: 'warning', text: 'Flexbox usage', points: '-15' });
+            }
+            
+            if (html.includes('grid')) { 
+                score -= 15; 
+                issues++;
+                const lineNum = getLineNumber(html, 'grid');
+                issuesList.push({ type: 'critical', message: `CSS Grid on line ${lineNum} - not supported` });
+                breakdown.push({ status: 'fail', text: 'CSS Grid', points: '-15' });
+            }
+            
+            if (html.includes('<script')) { 
+                score -= 20; 
+                issues++;
+                const lineNum = getLineNumber(html, '<script');
+                issuesList.push({ type: 'critical', message: `JavaScript on line ${lineNum} - will be blocked` });
+                breakdown.push({ status: 'fail', text: 'JavaScript', points: '-20' });
+            }
+            
+            if (html.includes('<link') && html.includes('stylesheet')) { 
+                score -= 15; 
+                issues++;
+                const lineNum = getLineNumber(html, '<link');
+                issuesList.push({ type: 'warning', message: `External CSS on line ${lineNum} - inline styles instead` });
+                breakdown.push({ status: 'warning', text: 'External CSS', points: '-15' });
+            }
+            
+            if (html.includes('<form')) { 
+                score -= 10; 
+                issues++;
+                const lineNum = getLineNumber(html, '<form');
+                issuesList.push({ type: 'critical', message: `Form on line ${lineNum} - blocked in email clients` });
+                breakdown.push({ status: 'fail', text: 'Form elements', points: '-10' });
+            }
+            
+            if (html.includes('<video') || html.includes('<audio')) { 
+                score -= 10; 
+                issues++;
+                const lineNum = getLineNumber(html, '<video') || getLineNumber(html, '<audio');
+                issuesList.push({ type: 'critical', message: `Media element on line ${lineNum} - not supported` });
+                breakdown.push({ status: 'fail', text: 'Media elements', points: '-10' });
+            }
+            
+            // Check for missing alt text
+            const imgMatches = html.match(/<img[^>]+>/gi) || [];
+            let altTextMissing = 0;
+            imgMatches.forEach((img, index) => {
+                if (!img.includes('alt=')) {
+                    altTextMissing++;
+                    const lineNum = getLineNumber(html, img);
+                    issuesList.push({ type: 'warning', message: `Image missing alt text on line ${lineNum}` });
+                }
+            });
+            if (altTextMissing > 0) {
+                breakdown.push({ status: 'warning', text: `${altTextMissing} images no alt`, points: '⚠' });
+            }
+            
+            // Check for table width
+            const tableMatches = html.match(/<table[^>]+>/gi) || [];
+            let wideTableCount = 0;
+            tableMatches.forEach(table => {
+                const widthMatch = table.match(/width[=:]["']?(\d+)/i);
+                if (widthMatch && parseInt(widthMatch[1]) > 600) {
+                    wideTableCount++;
+                    const lineNum = getLineNumber(html, table);
+                    issuesList.push({ type: 'warning', message: `Table width exceeds 600px on line ${lineNum}` });
+                }
+            });
+            if (wideTableCount > 0) {
+                breakdown.push({ status: 'warning', text: `${wideTableCount} wide tables`, points: '⚠' });
+            }
+            
+            // Bonus points for good practices
+            if (html.includes('<table')) {
+                breakdown.push({ status: 'pass', text: 'Uses tables', points: '✓' });
+            }
+            
+            score = Math.max(0, score);
+            emailScore.textContent = score + '%';
             errorCount.textContent = issues;
+            
+            // Add visual indicator
+            const emailIcon = document.getElementById('emailIcon');
+            const scoreElement = emailScore.parentElement;
+            if (score >= 80) {
+                emailIcon.innerHTML = '✓';
+                scoreElement.className = 'score-indicator score-good';
+            } else if (score >= 60) {
+                emailIcon.innerHTML = '⚠';
+                scoreElement.className = 'score-indicator score-warning';
+            } else {
+                emailIcon.innerHTML = '✗';
+                scoreElement.className = 'score-indicator score-poor';
+            }
+            
+            // Update breakdown tooltip
+            const breakdownEl = document.getElementById('emailBreakdown');
+            let recommendation = '';
+            if (score >= 80) {
+                recommendation = '✓ Email client compatible';
+            } else if (score >= 60) {
+                recommendation = '⚠ May have display issues';
+            } else {
+                recommendation = '✗ Will break in email clients';
+            }
+            
+            breakdownEl.innerHTML = `
+                <h4>Email Score Breakdown</h4>
+                ${breakdown.map(item => `
+                    <div class="score-item ${item.status}">
+                        <span>${item.text}</span>
+                        <span>${item.points}</span>
+                    </div>
+                `).join('')}
+                <div class="score-recommendation">
+                    <strong>Status:</strong> ${recommendation}
+                </div>
+            `;
+            
+            // Update Common Issues Indicator
+            updateIssuesIndicator(issuesList);
+        }
+
+        function getLineNumber(text, search) {
+            const index = text.indexOf(search);
+            if (index === -1) return 0;
+            return text.substring(0, index).split('\n').length;
+        }
+
+        function updateIssuesIndicator(issues) {
+            const indicator = document.getElementById('issuesIndicator');
+            const issuesListElement = document.getElementById('issuesList');
+            const fixButton = document.getElementById('fixButton');
+            
+            if (!issues || issues.length === 0) {
+                indicator.className = 'issues-indicator good';
+                indicator.innerHTML = '<span>✓</span>';
+                indicator.title = 'No issues detected';
+                issuesListElement.innerHTML = '<p style="color: var(--success);">✓ No compatibility issues found!</p>';
+                fixButton.style.display = 'none';
+            } else {
+                const critical = issues.filter(i => i.type === 'critical').length;
+                const warnings = issues.filter(i => i.type === 'warning').length;
+                
+                if (critical > 0) {
+                    indicator.className = 'issues-indicator critical';
+                    indicator.innerHTML = `<span>${critical}</span>`;
+                    indicator.title = `${critical} critical issue${critical > 1 ? 's' : ''}`;
+                } else if (warnings > 0) {
+                    indicator.className = 'issues-indicator warning';
+                    indicator.innerHTML = `<span>${warnings}</span>`;
+                    indicator.title = `${warnings} warning${warnings > 1 ? 's' : ''}`;
+                }
+                
+                // Populate issues list
+                issuesListElement.innerHTML = issues.map(issue => `
+                    <div class="issue-item issue-${issue.type}">
+                        <i class="fas fa-${issue.type === 'critical' ? 'times-circle' : 'exclamation-triangle'}"></i>
+                        <span>${issue.message}</span>
+                    </div>
+                `).join('');
+                
+                // Show fix button
+                fixButton.style.display = 'block';
+            }
+        }
+
+        function autoFixIssues() {
+            let html = editor.getValue();
+            let fixCount = 0;
+            
+            // Fix 1: Replace position absolute/fixed/relative with table layout
+            if (html.includes('position:')) {
+                html = html.replace(/position\s*:\s*(absolute|fixed|relative)[^;]*/gi, '');
+                fixCount++;
+            }
+            
+            // Fix 2: Replace float with table align
+            if (html.includes('float:')) {
+                // Replace float:left with align="left"
+                html = html.replace(/style\s*=\s*"([^"]*?)float\s*:\s*left[^;]*;?([^"]*?)"/gi, (match, before, after) => {
+                    const cleanStyle = (before + after).trim();
+                    return cleanStyle ? `style="${cleanStyle}" align="left"` : 'align="left"';
+                });
+                
+                // Replace float:right with align="right"
+                html = html.replace(/style\s*=\s*"([^"]*?)float\s*:\s*right[^;]*;?([^"]*?)"/gi, (match, before, after) => {
+                    const cleanStyle = (before + after).trim();
+                    return cleanStyle ? `style="${cleanStyle}" align="right"` : 'align="right"';
+                });
+                
+                // Clean up any remaining float properties
+                html = html.replace(/float\s*:\s*[^;]*/gi, '');
+                fixCount++;
+            }
+            
+            // Fix 3: Replace flexbox with table layout
+            if (html.includes('flex')) {
+                // Replace display:flex containers with tables
+                html = html.replace(/display\s*:\s*flex[^;]*/gi, 'display: table');
+                html = html.replace(/flex-direction[^;]*/gi, '');
+                html = html.replace(/justify-content[^;]*/gi, '');
+                html = html.replace(/align-items[^;]*/gi, '');
+                html = html.replace(/flex[^;]*/gi, '');
+                fixCount++;
+            }
+            
+            // Fix 4: Replace CSS Grid with table layout
+            if (html.includes('grid')) {
+                html = html.replace(/display\s*:\s*grid[^;]*/gi, 'display: table');
+                html = html.replace(/grid-template[^;]*/gi, '');
+                html = html.replace(/grid-column[^;]*/gi, '');
+                html = html.replace(/grid-row[^;]*/gi, '');
+                html = html.replace(/grid-gap[^;]*/gi, '');
+                fixCount++;
+            }
+            
+            // Fix 5: Add alt tags to images
+            const imgRegex = /<img(?![^>]*\balt\s*=)[^>]*>/gi;
+            html = html.replace(imgRegex, (match) => {
+                fixCount++;
+                // Insert alt="" before the closing >
+                return match.replace(/\/?>/, ' alt=""$&');
+            });
+            
+            // Fix 6: Reduce table widths over 600px
+            html = html.replace(/(<table[^>]*width\s*=\s*["']?)(\d+)([^0-9][^>]*>)/gi, (match, before, width, after) => {
+                const widthNum = parseInt(width);
+                if (widthNum > 600) {
+                    fixCount++;
+                    return before + '600' + after;
+                }
+                return match;
+            });
+            
+            // Fix 7: Remove script tags
+            if (html.includes('<script')) {
+                html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+                fixCount++;
+            }
+            
+            // Fix 8: Remove form tags but keep content
+            if (html.includes('<form')) {
+                html = html.replace(/<form[^>]*>/gi, '<div>');
+                html = html.replace(/<\/form>/gi, '</div>');
+                fixCount++;
+            }
+            
+            // Fix 9: Remove video and audio tags
+            if (html.includes('<video') || html.includes('<audio')) {
+                html = html.replace(/<video\b[^<]*(?:(?!<\/video>)<[^<]*)*<\/video>/gi, '');
+                html = html.replace(/<audio\b[^<]*(?:(?!<\/audio>)<[^<]*)*<\/audio>/gi, '');
+                fixCount++;
+            }
+            
+            // Fix 10: Convert external stylesheets to inline
+            if (html.includes('<link') && html.includes('stylesheet')) {
+                html = html.replace(/<link[^>]*stylesheet[^>]*>/gi, '');
+                fixCount++;
+            }
+            
+            // Fix 11: Wrap content in proper email table structure if missing
+            if (!html.includes('<table')) {
+                html = `<table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto;">
+    <tr>
+        <td>
+            ${html}
+        </td>
+    </tr>
+</table>`;
+                fixCount++;
+            }
+            
+            // Fix 12: Clean up empty style attributes
+            html = html.replace(/style\s*=\s*"[\s;]*"/gi, '');
+            
+            // Fix 13: Ensure proper DOCTYPE for email
+            if (!html.includes('<!DOCTYPE')) {
+                html = '<!DOCTYPE html>\n' + html;
+                fixCount++;
+            }
+            
+            // Fix 14: Add viewport meta tag if missing
+            if (!html.includes('viewport') && html.includes('<head>')) {
+                html = html.replace('<head>', '<head>\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">');
+                fixCount++;
+            }
+            
+            // Update editor with fixed HTML
+            editor.setValue(html);
+            updatePreview();
+            updateStats();
+            
+            // Hide issues panel after fixing
+            document.getElementById('issuesPanel').classList.remove('show');
+            
+            showToast(`Fixed ${fixCount} compatibility issue${fixCount !== 1 ? 's' : ''}! Your email is now optimized.`);
+        }
+
+        function toggleIssuesPanel() {
+            const panel = document.getElementById('issuesPanel');
+            panel.classList.toggle('show');
+        }
+
+        // Smart Variable Detection
+        function detectPotentialVariables() {
+            const html = editor.getValue();
+            const patterns = [
+                /\[([A-Z_]+)\]/g,           // [CLIENT_NAME]
+                /%([A-Z_]+)%/g,             // %POLICY_NUMBER%
+                /\{\{([^}]+)\}\}/g,         // {{variable}} (existing)
+                /\$\{([^}]+)\}/g,           // ${variable}
+                /\[\[([^\]]+)\]\]/g         // [[variable]]
+            ];
+            
+            const detectedVars = new Set();
+            const existingVars = new Set(variables);
+            
+            patterns.forEach(pattern => {
+                let match;
+                while ((match = pattern.exec(html)) !== null) {
+                    const varName = match[1].toLowerCase().replace(/\s+/g, '_');
+                    if (!existingVars.has(varName) && !varName.startsWith('{{')) {
+                        detectedVars.add(varName);
+                    }
+                }
+            });
+            
+            if (detectedVars.size > 0) {
+                showSmartDetection(Array.from(detectedVars));
+            }
+        }
+
+        function showSmartDetection(detectedVars) {
+            const container = document.getElementById('detectedVariables');
+            const notification = document.getElementById('smartDetection');
+            
+            container.innerHTML = detectedVars.map(varName => `
+                <span class="detected-var">${varName}</span>
+            `).join('');
+            
+            notification.classList.add('show');
+            
+            // Store for conversion
+            window.detectedVariables = detectedVars;
+        }
+
+        function convertDetectedVariables() {
+            if (!window.detectedVariables) return;
+            
+            let html = editor.getValue();
+            const patterns = [
+                { regex: /\[([A-Z_]+)\]/g, replace: (match, p1) => `{{${p1.toLowerCase()}}}` },
+                { regex: /%([A-Z_]+)%/g, replace: (match, p1) => `{{${p1.toLowerCase()}}}` },
+                { regex: /\$\{([^}]+)\}/g, replace: (match, p1) => `{{${p1.toLowerCase()}}}` },
+                { regex: /\[\[([^\]]+)\]\]/g, replace: (match, p1) => `{{${p1.toLowerCase()}}}` }
+            ];
+            
+            patterns.forEach(pattern => {
+                html = html.replace(pattern.regex, pattern.replace);
+            });
+            
+            // Add to variables list
+            window.detectedVariables.forEach(varName => {
+                if (!variables.includes(varName)) {
+                    variables.push(varName);
+                    testData[varName] = '';
+                }
+            });
+            
+            editor.setValue(html);
+            saveVariables();
+            dismissSmartDetection();
+            showToast(`Converted ${window.detectedVariables.length} variables`);
+            updateStats();
+        }
+
+        function dismissSmartDetection() {
+            const notification = document.getElementById('smartDetection');
+            notification.classList.remove('show');
+            window.detectedVariables = null;
+        }
+
+        // Variable Highlighting in CodeMirror
+        function highlightVariables() {
+            const text = editor.getValue();
+            const variableRegex = /\{\{([^}]+)\}\}/g;
+            let match;
+            
+            while ((match = variableRegex.exec(text)) !== null) {
+                const varName = match[1];
+                const from = editor.posFromIndex(match.index);
+                const to = editor.posFromIndex(match.index + match[0].length);
+                
+                const hasTestData = testData[varName] && testData[varName].trim();
+                const className = hasTestData ? 'cm-variable' : 'cm-variable-empty';
+                
+                editor.markText(from, to, { 
+                    className: className,
+                    title: hasTestData ? testData[varName] : 'No test data'
+                });
+            }
+        }
+
+        // Enhanced updateStats with detection
+        function updateStats() {
+            const text = editor.getValue();
+            
+            charCount.textContent = text.length.toLocaleString();
+            lineCount.textContent = editor.lineCount().toLocaleString();
+            
+            const tagMatches = text.match(/<[^>]+>/g) || [];
+            tagCount.textContent = tagMatches.length.toLocaleString();
+            
+            const sizeInBytes = new Blob([text]).size;
+            const sizeInKB = (sizeInBytes / 1024).toFixed(2);
+            sizeKB.textContent = `${sizeInKB} KB`;
+            
+            // Count variables
+            const variableMatches = text.match(/{{[^}]+}}/g) || [];
+            const variableIndicator = document.getElementById('variableIndicator');
+            const variableCount = document.getElementById('variableCount');
+            if (variableMatches.length > 0) {
+                variableIndicator.style.display = 'inline-flex';
+                variableCount.textContent = variableMatches.length;
+            } else {
+                variableIndicator.style.display = 'none';
+            }
+            
+            updateMobileScore(text);
+            updateEmailScore(text);
+            
+            // Check for potential variables
+            detectPotentialVariables();
+            
+            // Highlight variables in editor
+            setTimeout(highlightVariables, 100);
         }
 
         function formatHTML() {
@@ -2514,6 +3400,62 @@
         window.clearTestData = clearTestData;
         window.applyTestData = applyTestData;
         window.removeAllVariables = removeAllVariables;
+
+        // Expose new functions
+        window.toggleIssuesPanel = toggleIssuesPanel;
+        window.convertDetectedVariables = convertDetectedVariables;
+        window.dismissSmartDetection = dismissSmartDetection;
+        window.autoFixIssues = autoFixIssues;
+
+        // Click outside to close issues panel
+        document.addEventListener('click', function(e) {
+            const issuesPanel = document.getElementById('issuesPanel');
+            const issuesIndicator = document.getElementById('issuesIndicator');
+            
+            if (!issuesPanel.contains(e.target) && !issuesIndicator.contains(e.target)) {
+                issuesPanel.classList.remove('show');
+            }
+        });
+
+        // Make validation panel collapsible
+        setTimeout(() => {
+            const validPanel = document.getElementById('validationPanel');
+            if (validPanel) {
+                const header = validPanel.querySelector('h3');
+                if (header) {
+                    header.innerHTML = `
+                        <div class="collapsible-header" onclick="toggleCollapse('validationPanel')">
+                            <span>Email Compatibility Check</span>
+                            <span class="collapse-arrow">▼</span>
+                        </div>
+                    `;
+                    header.style.margin = '0';
+                }
+            }
+        }, 100);
+
+        function toggleCollapse(panelId) {
+            const panel = document.getElementById(panelId);
+            if (panel) {
+                panel.classList.toggle('collapsed');
+                // Save state
+                localStorage.setItem(`collapsed_${panelId}`, panel.classList.contains('collapsed'));
+            }
+        }
+
+        // Restore collapsed states on load
+        window.addEventListener('load', () => {
+            const panels = ['validationPanel'];
+            panels.forEach(panelId => {
+                const collapsed = localStorage.getItem(`collapsed_${panelId}`) === 'true';
+                if (collapsed) {
+                    const panel = document.getElementById(panelId);
+                    if (panel) panel.classList.add('collapsed');
+                }
+            });
+        });
+
+        window.toggleCollapse = toggleCollapse;
     </script>
 </body>
 </html>
